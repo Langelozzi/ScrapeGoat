@@ -1,0 +1,50 @@
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Dependency / build outputs
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Logs
+*.log
+
+# Type checker caches
+.mypy_cache/
+.pyright/
+.dmypy.json
+.pyre/
+
+# Ruff / lint caches
+.ruff_cache/
+
+# Local environment config
+.env
+*.env
