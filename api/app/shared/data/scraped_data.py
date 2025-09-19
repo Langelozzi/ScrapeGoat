@@ -10,3 +10,6 @@ def get_scraped_data(url: HttpUrl):
         data=[{"name": "Jerome", "age": 42, "occupation": "Dentist"}],
         createdAt=datetime.datetime.now(),
     )
+
+
+print("hello")

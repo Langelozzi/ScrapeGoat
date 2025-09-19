@@ -1,0 +1,7 @@
+# PYTHON
+__pycache__/
+build
+dist
+
+# GIT
+.git
