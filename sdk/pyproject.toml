@@ -14,9 +14,7 @@ authors = [
 requires-python = ">=3.12"
 
 dependencies = [
-  "requests>=2.0",
-  "beautifulsoup4>=4.12",
-  "lxml"
+  
 ]
 
 [project.urls]
