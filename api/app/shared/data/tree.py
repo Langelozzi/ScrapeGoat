@@ -157,6 +157,5 @@ root_node = HtmlNode(
 )
 
 
-mock_dom_tree = ScrapeGoatDOMTree(
-    url=HttpUrl("https://en.wikipedia.org/wiki/Oreo"), root=root_node
-)
+def get_mock_dom_tree(url: HttpUrl):
+    return ScrapeGoatDOMTree(url=url, root=root_node)
