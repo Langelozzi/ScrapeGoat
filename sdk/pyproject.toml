@@ -3,17 +3,16 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "webscrape-toolkit"                   # Distribution name on PyPI
-version = "0.1.0"                            # Start with 0.1.0 for new projects
+name = "scrapegoat"
+version = "0.2.0"
 description = "A toolkit of functions, classes, and utilities for creating web scrapers."
-readme = "README.md"
+readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 authors = [
   { name = "Arman Chinai", email = "chinaiarman@gmail.com" }
 ]
 requires-python = ">=3.12"
 
-# Install-time dependencies for users
 dependencies = [
   "requests>=2.0",
   "beautifulsoup4>=4.12",
@@ -21,9 +20,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Langelozzi/ScrapeGoat/tree/main/webscrape-toolkit"
-Documentation = "https://github.com/Langelozzi/ScrapeGoat/blob/main/webscrape-toolkit/README.md"
-Source = "https://github.com/Langelozzi/ScrapeGoat/tree/main/webscrape-toolkit"
+Homepage = "https://github.com/Langelozzi/ScrapeGoat"
+Documentation = "https://github.com/Langelozzi/ScrapeGoat/blob/main/sdk/README.md"
+Source = "https://github.com/Langelozzi/ScrapeGoat"
 Issues = "https://github.com/Langelozzi/ScrapeGoat/issues"
 
 [tool.setuptools]
