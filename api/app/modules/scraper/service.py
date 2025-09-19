@@ -1,5 +1,7 @@
 from pydantic import HttpUrl
+from app.shared.data.tree import mock_dom_tree
+from app.shared.models.html import ScrapeGoatDOMTree
 
 
-async def build_dom_tree(url: HttpUrl):
-    return {"url": url, "tree": "tree"}
+def build_dom_tree(url: HttpUrl) -> ScrapeGoatDOMTree:
+    return mock_dom_tree
