@@ -3,16 +3,10 @@
 
 
 class HTMLNode:
+    VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
     _id_counter = 0
 
-    def __init__(
-        self,
-        raw: str,
-        tag: str,
-        has_data: bool = False,
-        html_attributes: dict[str, any] = None,
-        body: str = "",
-    ):
+    def __init__(self, raw: str, tag: str, has_data: bool = False, html_attributes: dict[str, any] = None, body: str = "",):
         """
         """
         self.id = HTMLNode._id_counter
@@ -50,9 +44,9 @@ class HTMLNode:
         """
         attribute_string = " ".join(f'{k}="{v}"' for k, v in self.html_attributes.items())
         if attribute_string:
-            opening = f"<{self.tag} {attribute_string}>"
+            opening = f"{self.tag} {attribute_string}"
         else:
-            opening = f"<{self.tag}>"
+            opening = f"{self.tag}"
 
         text = f" {self.body}" if self.has_data else ""
 
@@ -62,7 +56,8 @@ class HTMLNode:
         for child in self.children:
             result += child.to_html(indent + 1)
 
-        result += f"{pad}</{self.tag}>\n"
+        if self.tag not in self.VOID_TAGS:
+            result += f"{pad}</{self.tag}>\n"
         return result
 
     def __str__(self):
