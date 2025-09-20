@@ -115,6 +115,22 @@ class HTMLGardener(HTMLParser):
             raw_html = raw_html.replace("<html>", "<html><body>", 1)
             raw_html = raw_html.replace("</html>", "</body></html>", 1)
         return raw_html
+    
+    def grow_tree(self, raw_html: str) -> None:
+        """
+        """
+        self.root = None
+        self.stack = []
+        self.reset()
+
+        wrapped_html = self.append_root_tag(raw_html)
+        self.feed(wrapped_html)
+        return
+
+    def get_root(self) -> HTMLNode:
+        """
+        """
+        return self.root
 
 
 def main():
@@ -122,11 +138,11 @@ def main():
     """
     html = """<div><span><b><i>Deep</i></b></span></div>"""
 
-    parser = HTMLGardener()
-    wrapped_html = parser.append_root_tag(html)
-    parser.feed(wrapped_html)
+    gardener = HTMLGardener()
+    gardener.grow_tree(html)
+    root = gardener.get_root()
 
-    print(parser.root.to_dict())
+    print(root.to_dict())
     return
 
 
