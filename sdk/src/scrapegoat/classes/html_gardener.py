@@ -56,6 +56,7 @@ class HTMLGardener(HTMLParser):
                     node.body = stripped
                 self.stack[-1].has_data = True
 
+
 def main():
     """
     """

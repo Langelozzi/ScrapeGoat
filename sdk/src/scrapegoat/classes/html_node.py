@@ -62,3 +62,13 @@ class HTMLNode:
 
     def __str__(self):
         return self.to_string()
+
+
+def main():
+    """
+    """
+    pass
+
+
+if __name__ == "__main__":
+    main()
