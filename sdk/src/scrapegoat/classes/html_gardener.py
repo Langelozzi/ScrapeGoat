@@ -60,7 +60,28 @@ class HTMLGardener(HTMLParser):
 def main():
     """
     """
-    pass
+    html = """
+    <html>
+        <head>
+            <title>Test</title>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Hello World</h1>
+                <p>This is a <a href="#">link</a>.</p>
+                <img src="image.jpg" />
+                <br>
+                <input type="text" />
+                <hr>
+            </div>
+        </body>
+    </html>
+    """
+
+    parser = HTMLGardener()
+    parser.feed(html)
+
+    print(parser.root.to_dict())
 
 
 if __name__ == "__main__":
