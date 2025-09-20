@@ -18,10 +18,10 @@ class HTMLGardener(HTMLParser):
         self.root = None
         self.stack = []
 
-    def handle_starttag(self, tag, attrs):
+    def handle_starttag(self, tag, attributes):
         """
         """
-        node = HTMLNode(raw=self.get_starttag_text(), tag=tag, html_attributes=dict(attrs))
+        node = HTMLNode(raw=self.get_starttag_text(), tag=tag, attributes=dict(attributes))
 
         if self.root is None:
             self.root = node

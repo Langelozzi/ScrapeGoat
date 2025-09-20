@@ -6,7 +6,7 @@ class HTMLNode:
     VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
     _id_counter = 0
 
-    def __init__(self, raw: str, tag: str, has_data: bool = False, html_attributes: dict[str, any] = None, body: str = "",):
+    def __init__(self, raw: str, tag: str, has_data: bool = False, attributes: dict[str, any] = None, body: str = "",):
         """
         """
         self.id = HTMLNode._id_counter
@@ -15,7 +15,7 @@ class HTMLNode:
         self.raw = raw
         self.tag = tag
         self.has_data = has_data
-        self.html_attributes = html_attributes if html_attributes else {}
+        self.attributes = attributes if attributes else {}
         self.body = body
         self.children = []
         self.retrieval_instructions = ""
@@ -28,7 +28,7 @@ class HTMLNode:
             "raw": self.raw,
             "tag": self.tag,
             "hasData": self.has_data,
-            "htmlAttributes": self.html_attributes,
+            "htmlAttributes": self.attributes,
             "body": self.body,
             "children": [child.to_dict() for child in self.children],
             "retrievalInstructions": self.retrieval_instructions,
@@ -37,12 +37,12 @@ class HTMLNode:
     def to_string(self) -> str:
         """
         """
-        return f"HTMLNode(id={self.id}, tag={self.tag}, hasData={self.has_data}, attributes={self.html_attributes}, body='{self.body}', children={len(self.children)})"
+        return f"HTMLNode(id={self.id}, tag={self.tag}, hasData={self.has_data}, attributes={self.attributes}, body='{self.body}', children={len(self.children)})"
 
     def to_html(self, indent=0) -> str:
         """
         """
-        attribute_string = " ".join(f'{k}="{v}"' for k, v in self.html_attributes.items())
+        attribute_string = " ".join(f'{k}="{v}"' for k, v in self.attributes.items())
         if attribute_string:
             opening = f"{self.tag} {attribute_string}"
         else:
