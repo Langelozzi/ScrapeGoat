@@ -19,6 +19,7 @@ class HTMLGardener(HTMLParser):
         "td": {"td", "th"},
         "th": {"td", "th"}
     }
+    INLINE_TAGS = {"b", "i", "strong", "em", "span", "u", "small", "mark", "sub", "sup"}
 
     def __init__(self):
         """
@@ -28,18 +29,31 @@ class HTMLGardener(HTMLParser):
         self.stack = []
 
     def _auto_close_before(self, new_tag: str):
+        """
+        """
         while self.stack:
-            current = self.stack[-1].tag
-            if current in self.AUTO_CLOSE and new_tag in self.AUTO_CLOSE[current]:
-                self.stack.pop()
+            current_node = next((n for n in reversed(self.stack) if n is not None), None)
+            if current_node is None:
+                break
+
+            current_tag = current_node.tag
+            if current_tag in self.AUTO_CLOSE and new_tag in self.AUTO_CLOSE[current_tag]:
+                while self.stack:
+                    popped = self.stack.pop()
+                    if popped is current_node:
+                        break
             else:
                 break
-        return
 
     def handle_starttag(self, tag, attributes):
         """
         """
         self._auto_close_before(tag)
+
+        if tag in self.INLINE_TAGS:
+            self.stack.append(None)
+            return
+
         node = HTMLNode(raw=self.get_starttag_text(), tag=tag, attributes=dict(attributes))
 
         if self.root is None:
@@ -48,8 +62,9 @@ class HTMLGardener(HTMLParser):
                 self.stack.append(node)
             return
 
-        if not self.stack:
-            self.root.children.append(node)
+        if not self.stack or self.stack[-1] is None:
+            parent = next((n for n in reversed(self.stack) if n is not None), self.root)
+            parent.children.append(node)
         else:
             self.stack[-1].children.append(node)
 
@@ -60,7 +75,12 @@ class HTMLGardener(HTMLParser):
     def handle_endtag(self, tag):
         """
         """
-        for i in range(len(self.stack) - 1, -1, -1):
+        if self.stack and self.stack[-1] is None:
+
+            self.stack.pop()
+            return
+
+        for i in range(len(self.stack)-1, -1, -1):
             if self.stack[i].tag == tag:
                 del self.stack[i:]
                 break
@@ -69,17 +89,18 @@ class HTMLGardener(HTMLParser):
     def handle_data(self, data):
         """
         """
-        if self.stack:
-            stripped = data.strip()
-            if stripped:
-                node = self.stack[-1]
-                if node.tag in self.VOID_TAGS:
-                    return  
-                if node.body:
-                    node.body += " " + stripped
-                else:
-                    node.body = stripped
-                node.has_data = True
+        stripped = data.strip()
+        if not stripped:
+            return
+
+        parent = next((n for n in reversed(self.stack) if n is not None), self.root)
+
+        if parent.body:
+            parent.body += " " + stripped
+        else:
+            parent.body = stripped
+
+        parent.has_data = True
         return
     
     def append_root_tag(self, raw_html: str) -> str:
@@ -99,9 +120,7 @@ class HTMLGardener(HTMLParser):
 def main():
     """
     """
-    html = """
-<p>This is <b>bold</b> and <i>italic</i>.</p>
-    """
+    html = """<div><span><b><i>Deep</i></b></span></div>"""
 
     parser = HTMLGardener()
     wrapped_html = parser.append_root_tag(html)
