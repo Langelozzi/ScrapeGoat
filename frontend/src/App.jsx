@@ -5,7 +5,7 @@ function App() {
   const [tree, setTree] = useState(null);
 
   const buildTree = async function() {
-    fetch('http://127.0.0.1:8000/api/v1/scraper/dom-tree/build', {
+    fetch(import.meta.env.VITE_API_URL + '/dom-tree/build', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
