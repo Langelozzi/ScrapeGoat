@@ -25,25 +25,28 @@ class Condition(ABC):
         return not result if self.negated else result
 
 
-class WhereCondition(Condition):
+class IfCondition(Condition):
     """
     """
-    def __init__(self, attribute: str, value: str, negated: bool = False):
+    def __init__(self, attribute: str, value: str, negated: bool = False, query_tag: str = None):
         """
         """
         super().__init__(negated)
         self.attribute = attribute
         self.value = value
+        self.query_tag = query_tag
 
-    def matches(self, node, root) -> bool:
+    def matches(self, node, _) -> bool:
         """
         """
-        return node.has_attribute(self.attribute, self.value)
+        if self.query_tag is None:
+            raise ValueError("query_tag is required for IF condition")
+        return node.has_attribute(self.attribute, self.value) and node.tag == self.query_tag
 
     def __str__(self):
         """
         """
-        return f"WhereCondition(attribute={self.attribute}, value={self.value}, negated={self.negated})"
+        return f"IfCondition(attribute={self.attribute}, value={self.value}, negated={self.negated}), query_tag={self.query_tag}"
     
 
 class InCondition(Condition):
@@ -74,3 +77,8 @@ class InCondition(Condition):
             return False
         else:
             return node.is_descendant_of(self.target)
+        
+    def __str__(self):
+        """
+        """
+        return f"InCondition(target={self.target}, value={self.value}, negated={self.negated}, query_tag={self.query_tag})"
