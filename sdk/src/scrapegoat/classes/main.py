@@ -9,20 +9,42 @@ from thistle_interpreter import ThistleInterpreter
 def main():
     """
     """
-    html = """<div><span><b><i>Deep</i></b></span></div>"""
+    html = """<html>
+  <body>
+    <section id="main">
+      <div class="container">
+        <article>
+          <p id="first">Hello</p>
+          <p id="second">World</p>
+        </article>
+        <article>
+          <p id="third">Foo</p>
+          <p id="fourth">Bar</p>
+        </article>
+      </div>
+    </section>
+    <section id="sidebar">
+      <div class="container">
+        <article>
+          <p id="fifth">Ignore Me</p>
+        </article>
+      </div>
+    </section>
+  </body>
+</html>"""
 
     gardener = HTMLGardener()
     gardener.grow_tree(html)
     root = gardener.get_root()
 
-    query = """SELECT 1 span;"""
+    query = """SCRAPE ALL p IN POSITION=5;"""
     interpreter = ThistleInterpreter()
     thistles = interpreter.interpret(query)
     for thistle in thistles:
         print(thistle)
 
-    goat = Goat(root, thistles)
-    results = goat.feast()
+    goat = Goat()
+    results = goat.feast(root, thistles)
 
     for result in results:
         print(result)
