@@ -46,7 +46,7 @@ class IfCondition(Condition):
     def __str__(self):
         """
         """
-        return f"IfCondition(attribute={self.attribute}, value={self.value}, negated={self.negated}), query_tag={self.query_tag}"
+        return f"IfCondition(attribute={self.attribute}, value={self.value}, negated={self.negated}, query_tag={self.query_tag})"
     
 
 class InCondition(Condition):
