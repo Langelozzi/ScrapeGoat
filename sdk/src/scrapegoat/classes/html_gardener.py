@@ -19,7 +19,7 @@ class HTMLGardener(HTMLParser):
         "td": {"td", "th"},
         "th": {"td", "th"}
     }
-    INLINE_TAGS = {"b", "i", "strong", "em", "span", "u", "small", "mark", "sub", "sup"}
+    INLINE_TAGS = {"b", "i", "strong", "em", "u", "small", "mark", "sub", "sup"}
 
     def __init__(self):
         """
@@ -139,14 +139,7 @@ class HTMLGardener(HTMLParser):
 def main():
     """
     """
-    html = """<div><span><b><i>Deep</i></b></span></div>"""
-
-    gardener = HTMLGardener()
-    gardener.grow_tree(html)
-    root = gardener.get_root()
-
-    print(root.to_dict())
-    return
+    pass
 
 
 if __name__ == "__main__":

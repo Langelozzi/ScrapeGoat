@@ -166,7 +166,7 @@ class ThistleInterpreter:
             i += 1
             # FLAGS
             # TODO: Implement flags parsing
-            
+
         return instructions
     
             
@@ -175,14 +175,7 @@ class ThistleInterpreter:
 def main():
     """
     """
-    query = """SELECT -20 div NOT IN body
-    SCRAPE ALL span IF class=highlighted;"""
-    interpreter = ThistleInterpreter()
-    thistles = interpreter.interpret(query)
-    for thistle in thistles:
-        print(thistle)
-        for cond in thistle.conditions:
-            print(f"  Condition: {cond}")
+    pass
 
 
 if __name__ == "__main__":
