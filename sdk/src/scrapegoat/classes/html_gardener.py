@@ -65,8 +65,11 @@ class HTMLGardener(HTMLParser):
         if not self.stack or self.stack[-1] is None:
             parent = next((n for n in reversed(self.stack) if n is not None), self.root)
             parent.children.append(node)
+            node.parent = parent
         else:
-            self.stack[-1].children.append(node)
+            parent = self.stack[-1]
+            parent.children.append(node)
+            node.parent = parent
 
         if tag not in self.VOID_TAGS:
             self.stack.append(node)
