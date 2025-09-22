@@ -3,7 +3,7 @@
 
 # IMPORTS
 from html.parser import HTMLParser
-from html_node import HTMLNode
+from .html_node import HTMLNode
 
 
 class HTMLGardener(HTMLParser):

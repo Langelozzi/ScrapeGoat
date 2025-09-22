@@ -1,7 +1,7 @@
 """
 """
 
-from conditions import InCondition
+from .conditions import InCondition
 
 class Thistle:
     """

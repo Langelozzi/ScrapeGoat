@@ -1,9 +1,7 @@
 """
 """
 
-from goat import Goat
-from html_gardener import HTMLGardener
-from thistle_interpreter import ThistleInterpreter
+from scrapegoat import Goat, HTMLGardener, ThistleInterpreter
 
 
 def main():

@@ -3,8 +3,8 @@
 
 # IMPORTS
 import re
-from thistle import Thistle
-from conditions import InCondition, IfCondition
+from .thistle import Thistle
+from .conditions import InCondition, IfCondition
 
 
 class Token:
