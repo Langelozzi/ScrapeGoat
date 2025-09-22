@@ -66,6 +66,81 @@ class HTMLNode:
 
     def __str__(self):
         return self.to_string()
+    
+    def get_parent(self):
+        """
+        """
+        return self.parent
+    
+    def get_children(self):
+        """
+        """
+        return self.children
+    
+    def get_siblings(self):
+        """
+        """
+        if not self.parent:
+            return []
+        return [child for child in self.parent.children if child != self]
+    
+    def get_next_sibling(self):
+        """
+        """
+        if not self.parent:
+            return None
+        siblings = self.parent.children
+        index = siblings.index(self)
+        return siblings[index + 1] if index + 1 < len(siblings) else None
+    
+    def get_previous_sibling(self):
+        """
+        """
+        if not self.parent:
+            return None
+        siblings = self.parent.children
+        index = siblings.index(self)
+        return siblings[index - 1] if index - 1 >= 0 else None
+    
+    def get_ancestors(self):
+        """
+        """
+        ancestors = []
+        current = self.parent
+        while current:
+            ancestors.append(current)
+            current = current.parent
+        return ancestors
+    
+    def get_descendants(self, tag: str = None, **attributes) -> list:
+        """
+        """
+        descendants = []
+        for child in self.children:
+            if (tag is None or child.tag == tag) and all(child.attributes.get(k) == v for k, v in attributes.items()):
+                descendants.append(child)
+            descendants.extend(child.get_descendants(tag, **attributes))
+        return descendants
+    
+    def preorder_traversal(self):
+        """
+        """
+        yield self
+        for child in self.children:
+            yield from child.preorder_traversal()
+
+    
+    def has_attribute(self, key, value=None) -> bool:
+        """
+        """
+        if value is None:
+            return key in self.attributes
+        return self.attributes.get(key) == value
+    
+    def is_descendant_of(self, tag) -> bool:
+        """
+        """
+        return any(ancestor.tag == tag for ancestor in self.get_ancestors())
 
 
 def main():
