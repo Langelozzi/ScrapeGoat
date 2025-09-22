@@ -77,31 +77,6 @@ class HTMLNode:
         """
         return self.children
     
-    def get_siblings(self):
-        """
-        """
-        if not self.parent:
-            return []
-        return [child for child in self.parent.children if child != self]
-    
-    def get_next_sibling(self):
-        """
-        """
-        if not self.parent:
-            return None
-        siblings = self.parent.children
-        index = siblings.index(self)
-        return siblings[index + 1] if index + 1 < len(siblings) else None
-    
-    def get_previous_sibling(self):
-        """
-        """
-        if not self.parent:
-            return None
-        siblings = self.parent.children
-        index = siblings.index(self)
-        return siblings[index - 1] if index - 1 >= 0 else None
-    
     def get_ancestors(self):
         """
         """
