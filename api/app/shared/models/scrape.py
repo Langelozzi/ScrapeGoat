@@ -1,19 +1,23 @@
 from datetime import datetime
 from typing import Any
 from pydantic import BaseModel, HttpUrl
-from app.shared.models.html import HtmlNode
+
+
+class NodeOutput(BaseModel):
+    location: str
+    key: str
 
 
 # TODO: This is not the finalized model but for now it'll work
 class RetrievalInstruction(BaseModel):
-    property_name: str
-    source_node: HtmlNode
-    action: str
+    node_query: str
+    output: NodeOutput
+    flags: dict
 
 
 class ScrapeConfig(BaseModel):
     url: HttpUrl
-    retrieval_instructions: list
+    retrieval_instructions: list[RetrievalInstruction]
 
 
 class ScrapedDataset(BaseModel):
