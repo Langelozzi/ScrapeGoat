@@ -19,12 +19,13 @@ class HTMLGardener(HTMLParser):
         "td": {"td", "th"},
         "th": {"td", "th"}
     }
-    INLINE_TAGS = {"b", "i", "strong", "em", "u", "small", "mark", "sub", "sup"}
+    INLINE_TAGS = {"b", "i", "strong", "em", "u", "small", "mark", "sub", "sup", "a", "span", "img", "br", "code", "s", "q", "cite"}
 
     def __init__(self):
         """
         """
         super().__init__()
+        self.tag_counts = {}
         self.root = None
         self.stack = []
 
@@ -50,11 +51,12 @@ class HTMLGardener(HTMLParser):
         """
         self._auto_close_before(tag)
 
-        if tag in self.INLINE_TAGS:
-            self.stack.append(None)
-            return
-
         node = HTMLNode(raw=self.get_starttag_text(), tag=tag, attributes=dict(attributes))
+
+        node.is_inline = tag in self.INLINE_TAGS
+
+        self.tag_counts[tag] = self.tag_counts.get(tag, 0) + 1
+        node.set_retrieval_instructions(f"SCRAPE 1 {tag} IN POSITION={self.tag_counts[tag]};")
 
         if self.root is None:
             self.root = node
@@ -62,27 +64,16 @@ class HTMLGardener(HTMLParser):
                 self.stack.append(node)
             return
 
-        if not self.stack or self.stack[-1] is None:
-            parent = next((n for n in reversed(self.stack) if n is not None), self.root)
-            parent.children.append(node)
-            node.parent = parent
-        else:
-            parent = self.stack[-1]
-            parent.children.append(node)
-            node.parent = parent
+        parent = next((n for n in reversed(self.stack) if n is not None), self.root)
+        parent.children.append(node)
+        node.parent = parent
 
         if tag not in self.VOID_TAGS:
             self.stack.append(node)
-        return
 
     def handle_endtag(self, tag):
         """
         """
-        if self.stack and self.stack[-1] is None:
-
-            self.stack.pop()
-            return
-
         for i in range(len(self.stack)-1, -1, -1):
             if self.stack[i].tag == tag:
                 del self.stack[i:]
@@ -96,15 +87,22 @@ class HTMLGardener(HTMLParser):
         if not stripped:
             return
 
-        parent = next((n for n in reversed(self.stack) if n is not None), self.root)
+        current = next((n for n in reversed(self.stack) if n is not None), self.root)
 
-        if parent.body:
-            parent.body += " " + stripped
+        # Add text to current node
+        if current.body:
+            current.body += " " + stripped
         else:
-            parent.body = stripped
+            current.body = stripped
+        current.has_data = True
 
-        parent.has_data = True
-        return
+        # Bubble text up if inline
+        if getattr(current, "is_inline", False) and current.parent is not None:
+            if current.parent.body:
+                current.parent.body += " " + stripped
+            else:
+                current.parent.body = stripped
+            current.parent.has_data = True
     
     def append_root_tag(self, raw_html: str) -> str:
         """
@@ -124,6 +122,7 @@ class HTMLGardener(HTMLParser):
         """
         self.root = None
         self.stack = []
+        self.tag_counts = {}
         self.reset()
 
         wrapped_html = self.append_root_tag(raw_html)

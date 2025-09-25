@@ -6,6 +6,8 @@ import requests
 
 
 class Sheepdog:
+    """
+    """
     HEADERS = {
         "User-Agent": "Mozilla/5.0 (ScrapeGoat SDK)",
         "Accept-Language": "en-US,en;q=0.9",
@@ -17,8 +19,7 @@ class Sheepdog:
         "Sec-Fetch-Dest": "document",
         "Sec-Fetch-Mode": "navigate",
     }
-    """
-    """
+    
     def __init__(self):
         """
         """

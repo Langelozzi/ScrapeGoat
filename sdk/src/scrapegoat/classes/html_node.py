@@ -41,7 +41,7 @@ class HTMLNode:
     def to_string(self) -> str:
         """
         """
-        return f"HTMLNode(id={self.id}, tag={self.tag}, hasData={self.has_data}, attributes={self.attributes}, body='{self.body}', children={len(self.children)}, parent={self.parent.id if self.parent else None})"
+        return f"HTMLNode(id={self.id}, tag={self.tag}, hasData={self.has_data}, attributes={self.attributes}, body='{self.body}', children={len(self.children)}, parent={self.parent.id if self.parent else None}, retrievalInstructions='{self.retrieval_instructions}')"
 
     def to_html(self, indent=0) -> str:
         """
@@ -116,6 +116,11 @@ class HTMLNode:
         """
         """
         return any(ancestor.tag == tag for ancestor in self.get_ancestors())
+    
+    def set_retrieval_instructions(self, instruction: str):
+        """
+        """
+        self.retrieval_instructions = instruction
 
 
 def main():
