@@ -11,7 +11,8 @@ def main():
 
     html = sheepdog.fetch("https://en.wikipedia.org/wiki/Web_scraping")
 
-    query = """SCRAPE ALL p IN POSITION=5;"""
+    query = """SELECT 1 div IF class="div-col"
+    SCRAPE 1 li IN POSITION=5;"""
     
     shepherd = Shepherd()
     root = shepherd.plant_seed(html)

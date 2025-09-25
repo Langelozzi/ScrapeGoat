@@ -48,9 +48,14 @@ class HTMLNode:
         """
         attribute_string = " ".join(f'{k}="{v}"' for k, v in self.attributes.items())
         if attribute_string:
-            opening = f"{self.tag} {attribute_string}"
+            opening = f"<{self.tag} {attribute_string}"
         else:
-            opening = f"{self.tag}"
+            opening = f"<{self.tag}"
+
+        if self.tag in self.VOID_TAGS:
+            opening += " />"
+        else:
+            opening += ">"
 
         text = f" {self.body}" if self.has_data else ""
 
