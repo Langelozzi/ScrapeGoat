@@ -1,35 +1,16 @@
 """
 """
 
-from scrapegoat import Shepherd
+from scrapegoat import Shepherd, Sheepdog
 
 
 def main():
     """
     """
-    html = """<html>
-      <body>
-        <section id="main">
-          <div class="container">
-            <article>
-              <p id="first">Hello</p>
-              <p id="second">World</p>
-            </article>
-            <article>
-              <p id="third">Foo</p>
-              <p id="fourth">Bar</p>
-            </article>
-          </div>
-        </section>
-        <section id="sidebar">
-          <div class="container">
-            <article>
-              <p id="fifth">Ignore Me</p>
-            </article>
-          </div>
-        </section>
-      </body>
-    </html>"""
+    sheepdog = Sheepdog()
+
+    html = sheepdog.fetch("https://en.wikipedia.org/wiki/Web_scraping")
+
     query = """SCRAPE ALL p IN POSITION=5;"""
     
     shepherd = Shepherd()
