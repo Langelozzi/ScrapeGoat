@@ -42,7 +42,7 @@ RULES:
 - I will make the langauge more flexible later. Currently the following rules apply:
   - Each string is a single command.
   - Each command must end with a semicolon (`;`).
-  - Commands can have multiple IF conditionals, but only one IN conditional.
+  - Commands can have multiple IF conditionals, but only one IN conditional. Conditionals must come after the command, and are separated by spaces.
   - Complex queries must be separated by a newline character (`\n`).
   - Commands are executed in the order they are written, from top to bottom.
   - The NOT keyword must come before a conditional to apply to it.
