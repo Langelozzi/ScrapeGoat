@@ -5,6 +5,9 @@ from goat import Goat
 from html_gardener import HTMLGardener
 from thistle_interpreter import ThistleInterpreter
 
+# UI TEST
+from tapestry.app import ScrapeGoatGUI
+# END UI TEST
 
 def main():
     """
@@ -36,6 +39,11 @@ def main():
     gardener = HTMLGardener()
     gardener.grow_tree(html)
     root = gardener.get_root()
+
+    # UI TEST
+    app = ScrapeGoatGUI(root)
+    app.run()
+    # END UI TEST
 
     query = """SCRAPE ALL p IN POSITION=5;"""
     interpreter = ThistleInterpreter()
