@@ -33,7 +33,7 @@ class ThistleInterpreter:
     NEGATIONS = {"NOT"}
     FLAGS = {}
     ALL = {"ALL"}
-    OPERATORS = {"="}
+    OPERATORS = {"=", "!="}
 
     def __init__(self):
         """
@@ -44,7 +44,7 @@ class ThistleInterpreter:
         """
         """
         tokens = []
-        pattern = r"(\bSELECT\b|\bSCRAPE\b|\bIN\b|\bIF\b|\bALL\b|==|=|;|\n|\"[^\"]*\"|'[^']*'|[A-Za-z_][A-Za-z0-9_-]*|\d+)"
+        pattern = r'(\bSELECT\b|\bSCRAPE\b|\bIN\b|\bIF\b|\bALL\b|!=|==|=|;|\n|"(?:[^"]*)"|\'(?:[^\']*)\'|[A-Za-z_][A-Za-z0-9_-]*|\d+)'
 
         for match in re.finditer(pattern, query):
             value = match.group(0)
@@ -151,6 +151,8 @@ class ThistleInterpreter:
                     token = tokens[i]
                     if token.type != "OPERATOR":
                         raise SyntaxError(f"Expected '=' after IF {attribute} at token {token}")
+                    if token.value == "!=":
+                        negated = True
                     i += 1
                     token = tokens[i]
                     if token.type not in {"IDENTIFIER", "NUMBER"}:
