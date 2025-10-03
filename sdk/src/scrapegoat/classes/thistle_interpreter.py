@@ -3,8 +3,8 @@
 
 # IMPORTS
 import re
-from thistle import Thistle
-from conditions import InCondition, IfCondition
+from .thistle import Thistle
+from .conditions import InCondition, IfCondition
 
 
 class Token:
@@ -33,7 +33,7 @@ class ThistleInterpreter:
     NEGATIONS = {"NOT"}
     FLAGS = {}
     ALL = {"ALL"}
-    OPERATORS = {"="}
+    OPERATORS = {"=", "!="}
 
     def __init__(self):
         """
@@ -44,7 +44,7 @@ class ThistleInterpreter:
         """
         """
         tokens = []
-        pattern = r"(\bSELECT\b|\bSCRAPE\b|\bIN\b|\bIF\b|\bALL\b|[A-Za-z_][A-Za-z0-9_-]*|\d+|==|=|;|\n)"
+        pattern = r'(\bSELECT\b|\bSCRAPE\b|\bIN\b|\bIF\b|\bALL\b|!=|==|=|;|\n|"(?:[^"]*)"|\'(?:[^\']*)\'|[A-Za-z_][A-Za-z0-9_-]*|\d+)'
 
         for match in re.finditer(pattern, query):
             value = match.group(0)
@@ -59,7 +59,7 @@ class ThistleInterpreter:
                 token_type = "KEYWORD"
             elif value in self.OPERATORS:
                 token_type = "OPERATOR"
-            elif re.match(r"^\d+$", value):
+            elif re.match(r'^\d+$', value):
                 token_type = "NUMBER"
             elif value in self.NEGATIONS:
                 token_type = "NEGATION"
@@ -68,14 +68,15 @@ class ThistleInterpreter:
             elif value in self.ALL:
                 token_type = "NUMBER"
                 value = 0
-            elif re.match(r"^[A-Za-z_][A-Za-z0-9_-]*$", value):
+            elif re.match(r'^(?:"[^"]*"|\'[^\']*\'|[A-Za-z_][A-Za-z0-9_-]*)$', value):
                 token_type = "IDENTIFIER"
+                if value[0] in ("'", '"'):
+                    value = value[1:-1]
             elif value == ";":
                 token_type = "SEMICOLON"
-            elif value == "\n":
-                token_type = "NEWLINE"
             else:
                 token_type = "UNKNOWN"
+
             tokens.append(Token(token_type, value, position, line))
         return tokens
         
@@ -111,7 +112,7 @@ class ThistleInterpreter:
             # Conditions
             conditions = []
             token = tokens[i]
-            while token.type != "SEMICOLON" and token.type != "NEWLINE":
+            while token.type != "SEMICOLON":
                 negated = False
                 if token.type == "NEGATION":
                     negated = True
@@ -124,11 +125,13 @@ class ThistleInterpreter:
 
                 if conditional == "IN":
                     token = tokens[i]
-                    if token.type == "KEYWORD" and token.value == "POSITION":
+                    if token.type == "KEYWORD":
                         i += 1
                         token = tokens[i]
-                        if token.type != "OPERATOR" or token.value != "=":
+                        if token.type != "OPERATOR":
                             raise SyntaxError(f"Expected '=' after IN POSITION at token {token}")
+                        if token.value == "!=":
+                            negated = True
                         i += 1
                         token = tokens[i]
                         if token.type != "NUMBER":
@@ -144,18 +147,20 @@ class ThistleInterpreter:
                 elif conditional == "IF":
                     token = tokens[i]
                     if token.type != "IDENTIFIER":
-                        raise SyntaxError(f"Expected attribute after IF at token {token}")
-                    attribute = token.value
+                        raise SyntaxError(f"Expected html_attribute after IF at token {token}")
+                    html_attribute = token.value
                     i += 1
                     token = tokens[i]
-                    if token.type != "OPERATOR" or token.value != "=":
-                        raise SyntaxError(f"Expected '=' after IF {attribute} at token {token}")
+                    if token.type != "OPERATOR":
+                        raise SyntaxError(f"Expected '=' after IF {html_attribute} at token {token}")
+                    if token.value == "!=":
+                        negated = True
                     i += 1
                     token = tokens[i]
                     if token.type not in {"IDENTIFIER", "NUMBER"}:
-                        raise SyntaxError(f"Expected value after IF {attribute} = at token {token}")
+                        raise SyntaxError(f"Expected value after IF {html_attribute} = at token {token}")
                     value = token.value
-                    condition = IfCondition(attribute=attribute, value=value, negated=negated, query_tag=element)
+                    condition = IfCondition(html_attribute=html_attribute, value=value, negated=negated, query_tag=element)
                 else:
                     raise SyntaxError(f"Unknown conditional {conditional} at token {token}")
                 conditions.append(condition)

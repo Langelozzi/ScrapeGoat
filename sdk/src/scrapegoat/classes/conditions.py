@@ -28,11 +28,11 @@ class Condition(ABC):
 class IfCondition(Condition):
     """
     """
-    def __init__(self, attribute: str, value: str, negated: bool = False, query_tag: str = None):
+    def __init__(self, html_attribute: str, value: str, negated: bool = False, query_tag: str = None):
         """
         """
         super().__init__(negated)
-        self.attribute = attribute
+        self.html_attribute = html_attribute
         self.value = value
         self.query_tag = query_tag
 
@@ -41,12 +41,12 @@ class IfCondition(Condition):
         """
         if self.query_tag is None:
             raise ValueError("query_tag is required for IF condition")
-        return node.has_attribute(self.attribute, self.value) and node.tag == self.query_tag
+        return node.has_html_attribute(self.html_attribute, self.value) and node.tag_type == self.query_tag
 
     def __str__(self):
         """
         """
-        return f"IfCondition(attribute={self.attribute}, value={self.value}, negated={self.negated}, query_tag={self.query_tag})"
+        return f"IfCondition(html_attribute={self.html_attribute}, value={self.value}, negated={self.negated}, query_tag={self.query_tag})"
     
 
 class InCondition(Condition):
@@ -70,7 +70,7 @@ class InCondition(Condition):
                 raise ValueError("query_tag is required for POSITION condition")
             position = 1
             for n in root.preorder_traversal():
-                if n.tag == self.query_tag:
+                if n.tag_type == self.query_tag:
                     if node == n:
                         return position == self.value
                     position += 1

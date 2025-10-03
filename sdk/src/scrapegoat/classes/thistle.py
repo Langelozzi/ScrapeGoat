@@ -1,7 +1,7 @@
 """
 """
 
-from conditions import InCondition
+from .conditions import InCondition
 
 class Thistle:
     """
@@ -43,7 +43,7 @@ class Thistle:
     def evaluate(self, node, root) -> bool:
         """
         """
-        if node.tag != self.element:
+        if node.tag_type != self.element:
             return False
         return all(cond.evaluate(node, root) for cond in self.conditions)
     
