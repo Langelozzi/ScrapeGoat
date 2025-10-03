@@ -37,7 +37,7 @@ class HTMLGardener(HTMLParser):
             if current_node is None:
                 break
 
-            current_tag = current_node.tag
+            current_tag = current_node.tag_type
             if current_tag in self.AUTO_CLOSE and new_tag in self.AUTO_CLOSE[current_tag]:
                 while self.stack:
                     popped = self.stack.pop()
@@ -46,21 +46,21 @@ class HTMLGardener(HTMLParser):
             else:
                 break
 
-    def handle_starttag(self, tag, attributes):
+    def handle_starttag(self, tag_type, html_attributes):
         """
         """
-        self._auto_close_before(tag)
+        self._auto_close_before(tag_type)
 
-        node = HTMLNode(raw=self.get_starttag_text(), tag=tag, attributes=dict(attributes))
+        node = HTMLNode(raw=self.get_starttag_text(), tag_type=tag_type, html_attributes=dict(html_attributes))
 
-        node.is_inline = tag in self.INLINE_TAGS
+        node.is_inline = tag_type in self.INLINE_TAGS
 
-        self.tag_counts[tag] = self.tag_counts.get(tag, 0) + 1
-        node.set_retrieval_instructions(f"SCRAPE 1 {tag} IN POSITION={self.tag_counts[tag]};")
+        self.tag_counts[tag_type] = self.tag_counts.get(tag_type, 0) + 1
+        node.set_retrieval_instructions(f"SCRAPE 1 {tag_type} IN POSITION={self.tag_counts[tag_type]};")
 
         if self.root is None:
             self.root = node
-            if tag not in self.VOID_TAGS:
+            if tag_type not in self.VOID_TAGS:
                 self.stack.append(node)
             return
 
@@ -68,14 +68,14 @@ class HTMLGardener(HTMLParser):
         parent.children.append(node)
         node.parent = parent
 
-        if tag not in self.VOID_TAGS:
+        if tag_type not in self.VOID_TAGS:
             self.stack.append(node)
 
-    def handle_endtag(self, tag):
+    def handle_endtag(self, tag_type):
         """
         """
         for i in range(len(self.stack)-1, -1, -1):
-            if self.stack[i].tag == tag:
+            if self.stack[i].tag_type == tag_type:
                 del self.stack[i:]
                 break
         return

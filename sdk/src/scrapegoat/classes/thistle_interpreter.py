@@ -147,20 +147,20 @@ class ThistleInterpreter:
                 elif conditional == "IF":
                     token = tokens[i]
                     if token.type != "IDENTIFIER":
-                        raise SyntaxError(f"Expected attribute after IF at token {token}")
-                    attribute = token.value
+                        raise SyntaxError(f"Expected html_attribute after IF at token {token}")
+                    html_attribute = token.value
                     i += 1
                     token = tokens[i]
                     if token.type != "OPERATOR":
-                        raise SyntaxError(f"Expected '=' after IF {attribute} at token {token}")
+                        raise SyntaxError(f"Expected '=' after IF {html_attribute} at token {token}")
                     if token.value == "!=":
                         negated = True
                     i += 1
                     token = tokens[i]
                     if token.type not in {"IDENTIFIER", "NUMBER"}:
-                        raise SyntaxError(f"Expected value after IF {attribute} = at token {token}")
+                        raise SyntaxError(f"Expected value after IF {html_attribute} = at token {token}")
                     value = token.value
-                    condition = IfCondition(attribute=attribute, value=value, negated=negated, query_tag=element)
+                    condition = IfCondition(html_attribute=html_attribute, value=value, negated=negated, query_tag=element)
                 else:
                     raise SyntaxError(f"Unknown conditional {conditional} at token {token}")
                 conditions.append(condition)
