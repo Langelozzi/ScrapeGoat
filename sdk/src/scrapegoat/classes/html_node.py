@@ -109,13 +109,14 @@ class HTMLNode:
         for child in self.children:
             yield from child.preorder_traversal()
 
-    
     def has_attribute(self, key, value=None) -> bool:
         """
         """
         if value is None:
             return key in self.attributes
-        return self.attributes.get(key) == value
+        if self.attributes.get(key) is None:
+            return False
+        return value in self.attributes.get(key)
     
     def is_descendant_of(self, tag) -> bool:
         """
