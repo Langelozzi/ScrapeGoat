@@ -6,7 +6,7 @@ from html_gardener import HTMLGardener
 from thistle_interpreter import ThistleInterpreter
 
 # UI TEST
-from tapestry.app import ScrapeGoatGUI
+from tapestry import ScrapeGoatGUI
 # END UI TEST
 
 def main():
