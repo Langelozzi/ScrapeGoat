@@ -125,7 +125,7 @@ class ThistleInterpreter:
 
                 if conditional == "IN":
                     token = tokens[i]
-                    if token.type == "KEYWORD" and token.value == "POSITION":
+                    if token.type == "KEYWORD":
                         i += 1
                         token = tokens[i]
                         if token.type != "OPERATOR":
