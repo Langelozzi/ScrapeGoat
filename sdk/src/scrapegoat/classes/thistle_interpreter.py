@@ -130,6 +130,8 @@ class ThistleInterpreter:
                         token = tokens[i]
                         if token.type != "OPERATOR":
                             raise SyntaxError(f"Expected '=' after IN POSITION at token {token}")
+                        if token.value == "!=":
+                            negated = True
                         i += 1
                         token = tokens[i]
                         if token.type != "NUMBER":
