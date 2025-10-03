@@ -22,9 +22,9 @@ class Shepherd:
         self.gardener.grow_tree(raw_html)
         return self.gardener.get_root()
     
-    def lead_goat(self, root, query: str) -> list:
+    def lead_goat(self, root, query: str) -> set:
         """
         """
         thistles = self.interpreter.interpret(query)
         results = self.goat.feast(root, thistles)
-        return results
+        return set(results)
