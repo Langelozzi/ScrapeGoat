@@ -1,7 +1,8 @@
 """
 """
 
-from scrapegoat import Shepherd, Sheepdog
+from classes import Shepherd, Sheepdog
+from classes.tapestry import ScrapeGoatGUI
 
 
 def main():
@@ -15,10 +16,7 @@ def main():
     
     shepherd = Shepherd()
     root = shepherd.plant_seed(html)
-    results = shepherd.lead_goat(root, query)
-    
-    for r in results:
-        print(r)
+    ScrapeGoatGUI(root).run()
 
 
 if __name__ == "__main__":
