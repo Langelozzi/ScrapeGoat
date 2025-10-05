@@ -3,10 +3,11 @@ import { useState } from "react";
 function TreeNode({ node, level = 0 }) {
   const [expanded, setExpanded] = useState(false);
 
-  // Each deeper level indents more and shrinks width
+  if (!node) return null;
+
   const nodeStyle = {
     marginLeft: `${level * 40}px`,
-    width: `calc(100% - ${level * 40}px)`, // full width minus indent
+    width: `calc(100% - ${level * 40}px)`,
   };
 
   return (
@@ -35,7 +36,7 @@ function TreeNode({ node, level = 0 }) {
             width: `calc(100% - ${(level + 1) * 20}px)`,
           }}
         >
-          {node.body && (
+          {node.hasData && node.body && (
             <div>
               <span className="font-bold text-purple-200">Body:</span>{" "}
               <span className="text-gray-200">{node.body}</span>
@@ -54,10 +55,22 @@ function TreeNode({ node, level = 0 }) {
               </ul>
             </div>
           )}
+
+          {node.retrieval_instructions &&
+            node.retrieval_instructions.length > 0 && (
+              <div>
+                <span className="font-bold text-purple-200">Retrieval:</span>
+                <ul className="list-disc list-inside ml-4 text-gray-200">
+                  {node.retrieval_instructions.map((inst, i) => (
+                    <li key={i}>{inst.action}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
         </div>
       )}
 
-      {/* Children always visible, just indented */}
+      {/* Children */}
       {node.children && node.children.length > 0 && (
         <div className="mt-2">
           {node.children.map((child) => (

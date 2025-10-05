@@ -38,7 +38,7 @@ function App() {
   }
 
   const buildTree = async function() {
-    fetch(import.meta.env.VITE_API_URL + '/dom-tree/build', {
+    fetch(import.meta.env.VITE_API_URL + '/api/v1/scraper/dom-tree/build', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -76,7 +76,7 @@ function App() {
 
       {/* Output */}
       <div className='w-[60rem]'>
-        {tree ? <TreeNode node={tree.root} /> : <TreeNode node={placeholder_data.root} />}
+        {tree ? <TreeNode node={tree} /> : <TreeNode node={placeholder_data.root} />}
       </div>
     </div>
   )
