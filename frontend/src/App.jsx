@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TreeNode from './TreeNode';
+import Selection from './Selection.jsx';
 
 function App() {
   const [url, setUrl] = useState("");
   const [tree, setTree] = useState(null);
+  const [retrieval_instructions, setInstructions] = useState([]);
 
   const placeholder_data = {
     "root": {
@@ -50,11 +52,49 @@ function App() {
       .then(json => { setTree(json.root); console.log(json); })
       .catch(error => console.error(error));
   }
-  
+
+  const scrape = async function() {
+    console.log(retrieval_instructions);
+    fetch(import.meta.env.VITE_API_URL + '/api/v1/scraper/scrape', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        url: url,
+        retrieval_instructions: retrieval_instructions,
+      })
+    })
+      .then(response => response.json())
+      .then(json => { console.log(json); })
+      .catch(error => console.error(error));
+  }
+
+  const addToInstructions = (instruction) => {
+    setInstructions(prev => [...prev, instruction]);
+  }
+
+  const handleSetKey = (index, value) => {
+    setInstructions(prev =>
+      prev.map((inst, i) =>
+        i === index
+          ? {
+              ...inst,
+              output: {
+                ...(inst.output || {}),
+                key: value,
+              },
+            }
+          : inst
+      )
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-fuchsia-950 via-purple-300 to-fuchsia-950 text-white p-8">
       {/* Title */}
-      <h1 className="text-6xl text-emerald-200 font-extrabold mt-20 mb-10">Scrapegoat</h1>
+      <h1 className="text-6xl text-emerald-200 font-extrabold mt-5 mb-5">Scrapegoat</h1>
 
       {/* Input */}
       <div className="flex space-x-4">
@@ -76,8 +116,27 @@ function App() {
 
       {/* Output */}
       <div className='w-[60rem]'>
-        {tree ? <TreeNode node={tree} /> : <TreeNode node={placeholder_data.root} />}
+        {tree
+          ? <TreeNode node={tree} addToInstructions={addToInstructions} />
+          : <TreeNode node={placeholder_data.root} addToInstructions={addToInstructions} />
+        }
       </div>
+
+      {/* Instruction Building */}
+      <h1 className="text-3xl font-bold mt-4 mb-2">Your Selection</h1>
+
+      <Selection
+        instructions={retrieval_instructions}
+        onSetKey={handleSetKey}
+      />
+
+      <button
+        className="mt-6 mb-6 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
+        onClick={scrape}
+      >
+        Scrape
+      </button>
+
     </div>
   )
 }
