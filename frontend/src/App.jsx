@@ -126,7 +126,7 @@ function App() {
       <h1 className="text-3xl font-bold">Your Selection</h1>
       <Selection
         instructions={retrieval_instructions}
-        onSetKey={handleSetKey}   // <-- pass the updater into Selection
+        onSetKey={handleSetKey}
       />
 
       <button

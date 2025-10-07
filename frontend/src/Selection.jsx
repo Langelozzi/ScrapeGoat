@@ -1,10 +1,12 @@
 export default function Selection({ instructions = [], onSetKey }) {
   if (!instructions || instructions.length === 0) {
     return (
-      <div className="w-[60rem] mt-4 p-6 rounded-2xl bg-black/40 text-gray-200">
-        <div className="text-lg text-purple-200 font-semibold mb-2">Nothing selected yet</div>
+      <div className="w-[60rem] mt-6 p-10 rounded-2xl bg-gradient-to-br from-violet-900/60 to-indigo-950/60 text-gray-200 shadow-xl border border-white/10">
+        <div className="text-xl text-purple-200 font-semibold mb-3">
+          Nothing selected yet
+        </div>
         <p className="text-sm opacity-80">
-          Click the <span className="text-green-400">➕</span> icon on any node to add it here.
+          Click the <span className="text-emerald-400 font-bold">➕</span> icon on any node to add it here.
         </p>
       </div>
     );
@@ -15,7 +17,7 @@ export default function Selection({ instructions = [], onSetKey }) {
   };
 
   return (
-    <div className="w-[60rem] mt-4 space-y-3">
+    <div className="w-[60rem] mt-6 space-y-4">
       {instructions.map((inst, idx) => {
         const pv = inst._preview || {};
         const leftPad = Math.min(5, pv.level ?? 0);
@@ -24,36 +26,44 @@ export default function Selection({ instructions = [], onSetKey }) {
         return (
           <div
             key={idx}
-            className="flex items-center px-6 py-4 rounded-lg bg-violet-950/90 shadow-md w-full gap-4"
+            className="relative flex items-center gap-5 px-6 py-5 rounded-xl bg-gradient-to-br from-violet-950/70 to-purple-900/60 border border-white/10 shadow-lg hover:shadow-purple-800/30 hover:border-purple-400/30 transition-all duration-200"
             style={{ marginLeft: `${leftPad * 12}px` }}
           >
-            {/* Inline key editor - moved to left */}
-            <label className="flex flex-col items-start gap-1 shrink-0 w-40">
-              <span className="text-xs text-purple-200/80">key</span>
+            {/* Index Badge */}
+            <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-purple-700 text-white text-xs font-bold flex items-center justify-center shadow-md">
+              {idx + 1}
+            </div>
+
+            {/* Key Input */}
+            <div className="flex flex-col w-44 shrink-0">
+              <label className="text-xs text-purple-300 uppercase tracking-wide mb-1">
+                Key
+              </label>
               <input
                 type="text"
                 value={currentKey}
                 onChange={(e) => handleKeyChange(idx, e.target.value)}
-                onBlur={(e) => handleKeyChange(idx, e.target.value)}
-                placeholder="enter key"
-                className="h-8 w-full px-2 rounded-md bg-violet-900/70 text-gray-100 placeholder-white/40 outline-none border border-white/10 focus:border-emerald-400/60"
+                placeholder="enter key..."
+                className="h-8 w-full px-2 rounded-md bg-violet-950/60 text-gray-100 placeholder-white/40 outline-none border border-white/10 focus:border-emerald-400/60 focus:ring-1 focus:ring-emerald-400/40 transition"
               />
-            </label>
+            </div>
 
-            <span className="text-xs text-white/60 select-none w-8 text-right">#{idx + 1}</span>
+            {/* Node Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline gap-2">
+                <span className="font-mono text-emerald-300 text-lg">
+                  &lt;{pv.tag_type || inst.output?.key || "node"}&gt;
+                </span>
+                <span className="text-sm text-gray-300 truncate">
+                  {pv.raw || "(no preview available)"}
+                </span>
+              </div>
 
-            <span className="font-mono text-emerald-300 text-lg whitespace-nowrap">
-              &lt;{pv.tag_type || inst.output?.key || "node"}&gt;
-            </span>
-
-            <span className="ml-1 text-base text-gray-200 truncate flex-1 min-w-0">
-              {pv.raw || "(no raw preview available)"}
-            </span>
-
-            {/* Right-side mini metadata */}
-            <div className="ml-1 text-xs text-purple-200/80 shrink-0">
-              {inst.node_query && <span className="mr-3">query: {inst.node_query}</span>}
-              {inst.output?.location && <span>slot: {inst.output.location}</span>}
+              {/* Metadata */}
+              <div className="text-xs text-purple-200/80 mt-1 space-x-3">
+                {inst.node_query && <span>query: {inst.node_query}</span>}
+                {inst.output?.location && <span>location: {inst.output.location}</span>}
+              </div>
             </div>
           </div>
         );
