@@ -4,6 +4,7 @@ import TreeNode from './TreeNode';
 function App() {
   const [url, setUrl] = useState("");
   const [tree, setTree] = useState(null);
+  const [retrieval_instructions, setInstructions] = useState([]);
 
   const placeholder_data = {
     "root": {
@@ -52,6 +53,7 @@ function App() {
   }
 
   const scrape = async function() {
+    console.log(retrieval_instructions);
     fetch(import.meta.env.VITE_API_URL + '/api/v1/scraper/scrape', {
       method: 'POST',
       headers: {
@@ -60,24 +62,7 @@ function App() {
       },
       body: JSON.stringify({ 
         url: url,
-        retrieval_instructions: [
-          {
-            node_query: "nq0",
-            output: {
-              location: "l0",
-              key: "k0"
-            },
-            flags: {}
-          },
-          {
-            node_query: "nq1",
-            output: {
-              location: "l1",
-              key: "k1"
-            },
-            flags: {}
-          },
-        ]   
+        retrieval_instructions: retrieval_instructions,
       })
     })
       .then(response => response.json())
@@ -85,8 +70,8 @@ function App() {
       .catch(error => console.error(error));
     }
 
-  const addToQuery = () => {
-    console.log("test");
+  const addToInstructions = (instruction) => {
+    setInstructions(prev => [...prev, instruction]);
   }
   
   return (
@@ -114,7 +99,7 @@ function App() {
 
       {/* Output */}
       <div className='w-[60rem]'>
-        {tree ? <TreeNode node={tree} addToQuery={addToQuery} /> : <TreeNode node={placeholder_data.root} addToQuery={addToQuery} />}
+        {tree ? <TreeNode node={tree} addToInstructions={addToInstructions} /> : <TreeNode node={placeholder_data.root} addToInstructions={addToInstructions} />}
       </div>
 
       {/* TEMP */}

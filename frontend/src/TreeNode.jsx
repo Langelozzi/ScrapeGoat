@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function TreeNode({ node, addToQuery, level = 0 }) {
+function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
   const [expanded, setExpanded] = useState(false);
 
   if (!node) return null;
@@ -8,6 +8,21 @@ function TreeNode({ node, addToQuery, level = 0 }) {
   const nodeStyle = {
     marginLeft: `${level * 40}px`,
     width: `calc(100% - ${level * 40}px)`,
+  };
+
+  const handleAdd = (e) => {
+    e.stopPropagation();
+
+    const instruction = {
+      node_query: `nq_${node.id}`,
+      output: {
+        location: `l${level}`,
+        key: node.tag_type || `k_${node.id}`,
+      },
+      flags: {}, // ← empty as requested
+    };
+
+    addToInstructions(instruction);
   };
 
   return (
@@ -25,10 +40,8 @@ function TreeNode({ node, addToQuery, level = 0 }) {
         <div className="ml-auto flex items-center space-x-3">
           <span
             className="text-green-400 hover:text-green-300 cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              addToQuery();
-            }}
+            onClick={handleAdd}
+            title="Add to query"
           >
             ➕
           </span>
@@ -67,24 +80,28 @@ function TreeNode({ node, addToQuery, level = 0 }) {
             </div>
           )}
 
-          {node.retrieval_instructions &&
-            node.retrieval_instructions.length > 0 && (
-              <div>
-                <span className="font-bold text-purple-200">Retrieval:</span>
-                <ul className="list-disc list-inside ml-4 text-gray-200">
-                  {node.retrieval_instructions.map((inst, i) => (
-                    <li key={i}>{inst.action}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          {node.retrieval_instructions?.length > 0 && (
+            <div>
+              <span className="font-bold text-purple-200">Retrieval:</span>
+              <ul className="list-disc list-inside ml-4 text-gray-200">
+                {node.retrieval_instructions.map((inst, i) => (
+                  <li key={i}>{inst.action}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
-      {node.children && node.children.length > 0 && (
+      {node.children?.length > 0 && (
         <div className="mt-2">
           {node.children.map((child) => (
-            <TreeNode key={child.id} node={child} addToQuery={addToQuery} level={level + 1} />
+            <TreeNode
+              key={child.id}
+              node={child}
+              level={level + 1}
+              addToInstructions={addToInstructions} // keep forwarding
+            />
           ))}
         </div>
       )}
