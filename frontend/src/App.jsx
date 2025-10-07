@@ -50,6 +50,44 @@ function App() {
       .then(json => { setTree(json.root); console.log(json); })
       .catch(error => console.error(error));
   }
+
+  const scrape = async function() {
+    fetch(import.meta.env.VITE_API_URL + '/api/v1/scraper/scrape', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        url: url,
+        retrieval_instructions: [
+          {
+            node_query: "nq0",
+            output: {
+              location: "l0",
+              key: "k0"
+            },
+            flags: {
+              "f0": "v0",
+            }
+          },
+          {
+            node_query: "nq1",
+            output: {
+              location: "l1",
+              key: "k1"
+            },
+            flags: {
+              "f1": "v1",
+            }
+          },
+        ]   
+      })
+    })
+      .then(response => response.json())
+      .then(json => { console.log(json); })
+      .catch(error => console.error(error));
+    }
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-fuchsia-950 via-purple-300 to-fuchsia-950 text-white p-8">
@@ -78,6 +116,14 @@ function App() {
       <div className='w-[60rem]'>
         {tree ? <TreeNode node={tree} /> : <TreeNode node={placeholder_data.root} />}
       </div>
+
+      {/* TEMP */}
+      <button
+          className="mb-10 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
+          onClick={scrape}
+        >
+          Submit
+      </button>
     </div>
   )
 }
