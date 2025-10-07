@@ -6,3 +6,6 @@ dist
 
 # GIT
 .git
+
+# SDK
+*.egg-info
