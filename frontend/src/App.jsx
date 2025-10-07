@@ -94,7 +94,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-fuchsia-950 via-purple-300 to-fuchsia-950 text-white p-8">
       {/* Title */}
-      <h1 className="text-6xl text-emerald-200 font-extrabold mt-20 mb-10">Scrapegoat</h1>
+      <h1 className="text-6xl text-emerald-200 font-extrabold mt-5 mb-5">Scrapegoat</h1>
 
       {/* Input */}
       <div className="flex space-x-4">
@@ -123,18 +123,20 @@ function App() {
       </div>
 
       {/* Instruction Building */}
-      <h1 className="text-3xl font-bold">Your Selection</h1>
+      <h1 className="text-3xl font-bold mt-4 mb-2">Your Selection</h1>
+
       <Selection
         instructions={retrieval_instructions}
         onSetKey={handleSetKey}
       />
 
       <button
-        className="mb-10 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
+        className="mt-4 mb-8 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
         onClick={scrape}
       >
         Scrape
       </button>
+
     </div>
   )
 }
