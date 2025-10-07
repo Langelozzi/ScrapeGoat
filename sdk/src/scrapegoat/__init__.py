@@ -1,3 +1,3 @@
-from .classes import Goat, HTMLNode, Condition, InCondition, IfCondition, HTMLGardener, ThistleInterpreter, Thistle, Shepherd, Sheepdog
+from .classes import Goat, HTMLNode, Condition, InCondition, IfCondition, HTMLGardener, ThistleInterpreter, Thistle, Shepherd, Sheepdog, Tapestry
 
-__all__ = ["Goat", "HTMLNode", "Condition", "InCondition", "IfCondition", "HTMLGardener", "ThistleInterpreter", "Thistle", "Shepherd", "Sheepdog"]
+__all__ = ["Goat", "HTMLNode", "Condition", "InCondition", "IfCondition", "HTMLGardener", "ThistleInterpreter", "Thistle", "Shepherd", "Sheepdog", "Tapestry"]

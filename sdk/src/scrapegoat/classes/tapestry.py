@@ -54,8 +54,8 @@ class ControlPanel(VerticalGroup):
 			lines = [line for line in lines if line.strip() != self.current_node.retrieval_instructions]
 			text_area.text = "\n".join(lines) if lines else "..."
 
-class ScrapeGoatGUI(App):
-	CSS_PATH = "tapestry.tcss"
+class Tapestry(App):
+	CSS_PATH = "../gui-styles/tapestry.tcss"
 	BINDINGS = []
 
 	def __init__(self, root_node, **kwargs):
