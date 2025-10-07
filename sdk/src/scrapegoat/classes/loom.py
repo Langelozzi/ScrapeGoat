@@ -54,7 +54,7 @@ class ControlPanel(VerticalGroup):
 			lines = [line for line in lines if line.strip() != self.current_node.retrieval_instructions]
 			text_area.text = "\n".join(lines) if lines else "..."
 
-class Tapestry(App):
+class Loom(App):
 	CSS_PATH = "../gui-styles/tapestry.tcss"
 	BINDINGS = []
 
@@ -107,7 +107,6 @@ class Tapestry(App):
 			if self.control_panel and self.control_panel.current_node:
 				self.control_panel.remove_node()
 
-
 	def compose(self):
 		yield Header(show_clock=True, name="ScrapeGoat", icon="🐐")
 		dom_tree = self._create_tree_from_root_node(self.root_node)
@@ -119,3 +118,6 @@ class Tapestry(App):
 		yield ctrl
 
 		yield Footer()
+
+	def weave(self):
+		self.run()

@@ -1,7 +1,7 @@
 """
 """
 
-from scrapegoat import Shepherd, Sheepdog, Tapestry
+from scrapegoat import Shepherd, Sheepdog, Loom
 
 
 def main():
@@ -14,8 +14,7 @@ def main():
     shepherd = Shepherd()
     root = shepherd.plant_seed(html)
 
-    # tapestry = Tapestry(root)
-    # tapestry.run()
+    Loom(root).weave()
 
     # query = "SELECT ALL div IF class='mw-heading';SCRAPE 1 h2;"
     # results = shepherd.lead_goat(root, query)
