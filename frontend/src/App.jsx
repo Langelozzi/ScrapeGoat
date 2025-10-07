@@ -131,7 +131,7 @@ function App() {
       />
 
       <button
-        className="mt-4 mb-8 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
+        className="mt-6 mb-6 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
         onClick={scrape}
       >
         Scrape
