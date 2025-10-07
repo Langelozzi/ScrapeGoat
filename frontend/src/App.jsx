@@ -67,9 +67,7 @@ function App() {
               location: "l0",
               key: "k0"
             },
-            flags: {
-              "f0": "v0",
-            }
+            flags: {}
           },
           {
             node_query: "nq1",
@@ -77,9 +75,7 @@ function App() {
               location: "l1",
               key: "k1"
             },
-            flags: {
-              "f1": "v1",
-            }
+            flags: {}
           },
         ]   
       })
@@ -88,6 +84,10 @@ function App() {
       .then(json => { console.log(json); })
       .catch(error => console.error(error));
     }
+
+  const addToQuery = () => {
+    console.log("test");
+  }
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-fuchsia-950 via-purple-300 to-fuchsia-950 text-white p-8">
@@ -114,7 +114,7 @@ function App() {
 
       {/* Output */}
       <div className='w-[60rem]'>
-        {tree ? <TreeNode node={tree} /> : <TreeNode node={placeholder_data.root} />}
+        {tree ? <TreeNode node={tree} addToQuery={addToQuery} /> : <TreeNode node={placeholder_data.root} addToQuery={addToQuery} />}
       </div>
 
       {/* TEMP */}
@@ -122,7 +122,7 @@ function App() {
           className="mb-10 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
           onClick={scrape}
         >
-          Submit
+          Scrape
       </button>
     </div>
   )
