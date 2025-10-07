@@ -1,6 +1,7 @@
 from textual.app import App
 from textual.widgets import Header, Footer, Tree, Button, Label, TextArea
 from textual.containers import HorizontalGroup, VerticalGroup
+from importlib.resources import files
 
 TextNodes = [
 	"p", "h1", "h2", "h3", "h4", "h5", "h6", "span", "li", "a"
@@ -55,7 +56,7 @@ class ControlPanel(VerticalGroup):
 			text_area.text = "\n".join(lines) if lines else "..."
 
 class Loom(App):
-	CSS_PATH = "../gui-styles/tapestry.tcss"
+	CSS_PATH = str(files("scrapegoat").joinpath("gui-styles/tapestry.tcss"))
 	BINDINGS = []
 
 	def __init__(self, root_node, **kwargs):
