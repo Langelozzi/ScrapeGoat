@@ -6,5 +6,6 @@ from .thistle_interpreter import ThistleInterpreter
 from .thistle import Thistle
 from .shepherd import Shepherd
 from .sheepdog import Sheepdog
+from .loom import Loom
 
-__all__ = ["Goat", "HTMLNode", "Condition", "InCondition", "IfCondition", "HTMLGardener", "ThistleInterpreter", "Thistle", "Shepherd", "Sheepdog"]
+__all__ = ["Goat", "HTMLNode", "Condition", "InCondition", "IfCondition", "HTMLGardener", "ThistleInterpreter", "Thistle", "Shepherd", "Sheepdog", "Loom"]

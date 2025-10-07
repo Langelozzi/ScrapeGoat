@@ -1,6 +1,7 @@
 from textual.app import App
 from textual.widgets import Header, Footer, Tree, Button, Label, TextArea
 from textual.containers import HorizontalGroup, VerticalGroup
+from importlib.resources import files
 
 TextNodes = [
 	"p", "h1", "h2", "h3", "h4", "h5", "h6", "span", "li", "a"
@@ -54,8 +55,8 @@ class ControlPanel(VerticalGroup):
 			lines = [line for line in lines if line.strip() != self.current_node.retrieval_instructions]
 			text_area.text = "\n".join(lines) if lines else "..."
 
-class ScrapeGoatGUI(App):
-	CSS_PATH = "tapestry.tcss"
+class Loom(App):
+	CSS_PATH = str(files("scrapegoat").joinpath("gui-styles/tapestry.tcss"))
 	BINDINGS = []
 
 	def __init__(self, root_node, **kwargs):
@@ -107,7 +108,6 @@ class ScrapeGoatGUI(App):
 			if self.control_panel and self.control_panel.current_node:
 				self.control_panel.remove_node()
 
-
 	def compose(self):
 		yield Header(show_clock=True, name="ScrapeGoat", icon="🐐")
 		dom_tree = self._create_tree_from_root_node(self.root_node)
@@ -119,3 +119,6 @@ class ScrapeGoatGUI(App):
 		yield ctrl
 
 		yield Footer()
+
+	def weave(self):
+		self.run()
