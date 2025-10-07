@@ -19,7 +19,13 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
         location: `l${level}`,
         key: node.tag_type || `k_${node.id}`,
       },
-      flags: {}, // ← empty as requested
+      flags: {},
+      _preview: {
+        id: node.id,
+        tag_type: node.tag_type,
+        raw: node.raw,
+        level
+      }  
     };
 
     addToInstructions(instruction);

@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TreeNode from './TreeNode';
+import Selection from './Selection.jsx';
 
 function App() {
   const [url, setUrl] = useState("");
@@ -68,12 +69,28 @@ function App() {
       .then(response => response.json())
       .then(json => { console.log(json); })
       .catch(error => console.error(error));
-    }
+  }
 
   const addToInstructions = (instruction) => {
     setInstructions(prev => [...prev, instruction]);
   }
-  
+
+  const handleSetKey = (index, value) => {
+    setInstructions(prev =>
+      prev.map((inst, i) =>
+        i === index
+          ? {
+              ...inst,
+              output: {
+                ...(inst.output || {}),
+                key: value,
+              },
+            }
+          : inst
+      )
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-fuchsia-950 via-purple-300 to-fuchsia-950 text-white p-8">
       {/* Title */}
@@ -99,15 +116,24 @@ function App() {
 
       {/* Output */}
       <div className='w-[60rem]'>
-        {tree ? <TreeNode node={tree} addToInstructions={addToInstructions} /> : <TreeNode node={placeholder_data.root} addToInstructions={addToInstructions} />}
+        {tree
+          ? <TreeNode node={tree} addToInstructions={addToInstructions} />
+          : <TreeNode node={placeholder_data.root} addToInstructions={addToInstructions} />
+        }
       </div>
 
-      {/* TEMP */}
+      {/* Instruction Building */}
+      <h1 className="text-3xl font-bold">Your Selection</h1>
+      <Selection
+        instructions={retrieval_instructions}
+        onSetKey={handleSetKey}   // <-- pass the updater into Selection
+      />
+
       <button
-          className="mb-10 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
-          onClick={scrape}
-        >
-          Scrape
+        className="mb-10 px-8 py-4 text-lg font-bold bg-white rounded-2xl text-black shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 hover:bg-purple-200 transition"
+        onClick={scrape}
+      >
+        Scrape
       </button>
     </div>
   )
