@@ -1,20 +1,33 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
 from app.modules.scraper.routes import router as scraper_router
+from app.shared.config import settings
+from app.shared.db.session import init_db
 
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await init_db()
+    print("✅ Database initialized")
 
-app = FastAPI()
+    yield
+
+    # Shutdown
+    print("🛑 App shutting down")
+
+
+app = FastAPI(lifespan=lifespan)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv('FRONTEND_URL')],
+    allow_origins=[settings.frontend_url],
     allow_methods=["POST"],
     allow_headers=["Accept", "Content-Type"],
 )
+
 
 OPEN_API_PREFIX = "/api/v1"
 # Register the routes

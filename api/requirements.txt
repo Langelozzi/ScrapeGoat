@@ -1,3 +1,6 @@
 fastapi
 uvicorn
 python-dotenv
+asyncpg # Postgresql dependency
+greenlet # sqlalchemy dependency
+sqlalchemy
