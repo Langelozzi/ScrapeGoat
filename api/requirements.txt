@@ -1,3 +1,7 @@
 fastapi
 uvicorn
 python-dotenv
+-e ../sdk
+
+textual>=6.2.1
+requests>=2.31.0

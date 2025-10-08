@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.modules.scraper.models import BuildDomTreeRequest
-from app.shared.models.html import ScrapeGoatDOMTree
+from app.shared.models.html import DOMTree
 from app.shared.models.scrape import ScrapeConfig, ScrapedDataset
 from .service import build_dom_tree, scrape
 
@@ -14,7 +14,7 @@ def get_health_check():
 
 
 @router.post("/dom-tree/build")
-def post_build_dom_tree(req: BuildDomTreeRequest) -> ScrapeGoatDOMTree:
+def post_build_dom_tree(req: BuildDomTreeRequest) -> DOMTree:
     return build_dom_tree(req.url)
 
 
