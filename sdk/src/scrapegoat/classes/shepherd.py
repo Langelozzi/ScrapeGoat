@@ -16,7 +16,7 @@ class Shepherd:
         self.interpreter = ThistleInterpreter()
         self.goat = Goat()
 
-    def plant_seed(self, raw_html: str):
+    def sow(self, raw_html: str):
         """
         """
         self.gardener.grow_tree(raw_html)
