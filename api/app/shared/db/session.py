@@ -2,6 +2,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from app.shared.db.base import Base
 from app.shared.config import settings
 
+# Import models into memory that should be created as tables
+from .models.user import User
+
 engine = create_async_engine(
     settings.db_connection_string, connect_args={"ssl": "require"}, echo=True
 )
@@ -19,4 +22,3 @@ async def init_db():
     """Create all database tables (development use only)."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-
