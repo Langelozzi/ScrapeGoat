@@ -4,3 +4,4 @@ python-dotenv
 asyncpg # Postgresql dependency
 greenlet # sqlalchemy dependency
 sqlalchemy
+pydantic[email]

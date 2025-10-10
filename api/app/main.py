@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.modules.scraper.routes import router as scraper_router
+from app.modules.users.routes import router as users_router
 from app.shared.config import settings
 from app.shared.db.session import init_db
 
@@ -34,3 +35,4 @@ OPEN_API_PREFIX = "/api/v1"
 app.include_router(
     scraper_router, prefix=f"{OPEN_API_PREFIX}/scraper", tags=["Scraper"]
 )
+app.include_router(users_router, prefix=f"{OPEN_API_PREFIX}/users", tags=["Users"])
