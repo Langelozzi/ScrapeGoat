@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import TreeNode from './TreeNode';
-import Selection from './Selection.jsx';
-import Navbar from './Navbar.jsx';
+import TreeNode from './components/TreeNode.jsx';
+import Selection from './components/Selection.jsx';
+import Navbar from './components/Navbar.jsx';
 
 function App() {
   const [url, setUrl] = useState("");
