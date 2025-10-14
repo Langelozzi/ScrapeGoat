@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import TreeNode from './TreeNode';
 import Selection from './Selection.jsx';
+import Navbar from './Navbar.jsx';
 
 function App() {
   const [url, setUrl] = useState("");
@@ -92,7 +93,9 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-fuchsia-950 via-purple-300 to-fuchsia-950 text-white p-8">
+    <div className="min-h-screen flex flex-col items-center justify-start">
+      <Navbar/>
+
       {/* Title */}
       <h1 className="text-6xl text-emerald-200 font-extrabold mt-5 mb-5">Scrapegoat</h1>
 
