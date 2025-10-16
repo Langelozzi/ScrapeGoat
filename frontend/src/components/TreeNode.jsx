@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function TreeNode({ node, level = 0 }) {
+function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
   const [expanded, setExpanded] = useState(false);
 
   if (!node) return null;
@@ -10,11 +10,31 @@ function TreeNode({ node, level = 0 }) {
     width: `calc(100% - ${level * 40}px)`,
   };
 
+  const handleAdd = (e) => {
+    e.stopPropagation();
+
+    const instruction = {
+      node_query: `nq_${node.id}`,
+      output: {
+        location: `l${level}`,
+        key: node.tag_type || `k_${node.id}`,
+      },
+      flags: {},
+      _preview: {
+        id: node.id,
+        tag_type: node.tag_type,
+        raw: node.raw,
+        level
+      }  
+    };
+
+    addToInstructions(instruction);
+  };
+
   return (
     <div className="my-3">
-      {/* Node summary */}
       <div
-        className="flex items-center cursor-pointer px-6 py-4 rounded-lg bg-violet-950 hover:bg-purple-800 shadow-md w-full"
+        className="flex items-center px-6 py-4 rounded-lg bg-violet-950 hover:bg-purple-800 shadow-md w-full cursor-pointer"
         style={nodeStyle}
         onClick={() => setExpanded(!expanded)}
       >
@@ -22,12 +42,22 @@ function TreeNode({ node, level = 0 }) {
           &lt;{node.tag_type}&gt;
         </span>
         <span className="ml-4 text-base text-gray-300 truncate">{node.raw}</span>
-        <span className="ml-auto text-sm text-purple-300">
-          {expanded ? "▲" : "▼"}
-        </span>
+
+        <div className="ml-auto flex items-center space-x-3">
+          <span
+            className="text-green-400 hover:text-green-300 cursor-pointer"
+            onClick={handleAdd}
+            title="Add to query"
+          >
+            ➕
+          </span>
+
+          <span className="text-sm text-purple-300 cursor-pointer">
+            {expanded ? "▲" : "▼"}
+          </span>
+        </div>
       </div>
 
-      {/* Expanded details */}
       {expanded && (
         <div
           className="mt-2 p-4 rounded-lg bg-black/70 text-sm space-y-3 shadow-inner w-full"
@@ -56,25 +86,28 @@ function TreeNode({ node, level = 0 }) {
             </div>
           )}
 
-          {node.retrieval_instructions &&
-            node.retrieval_instructions.length > 0 && (
-              <div>
-                <span className="font-bold text-purple-200">Retrieval:</span>
-                <ul className="list-disc list-inside ml-4 text-gray-200">
-                  {node.retrieval_instructions.map((inst, i) => (
-                    <li key={i}>{inst.action}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          {node.retrieval_instructions?.length > 0 && (
+            <div>
+              <span className="font-bold text-purple-200">Retrieval:</span>
+              <ul className="list-disc list-inside ml-4 text-gray-200">
+                {node.retrieval_instructions.map((inst, i) => (
+                  <li key={i}>{inst.action}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Children */}
-      {node.children && node.children.length > 0 && (
+      {node.children?.length > 0 && (
         <div className="mt-2">
           {node.children.map((child) => (
-            <TreeNode key={child.id} node={child} level={level + 1} />
+            <TreeNode
+              key={child.id}
+              node={child}
+              level={level + 1}
+              addToInstructions={addToInstructions} // keep forwarding
+            />
           ))}
         </div>
       )}
