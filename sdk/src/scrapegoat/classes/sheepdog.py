@@ -9,7 +9,7 @@ class Sheepdog:
     """
     """
     HEADERS = {
-        "User-Agent": "Mozilla/5.0 (ScrapeGoat SDK)",
+        "User-Agent": "Mozilla/5.0 (Scrapegoat)",
         "Accept-Language": "en-US,en;q=0.9",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",

@@ -9,3 +9,7 @@ dist
 
 # SDK
 *.egg-info
+
+# OUTPUT FILES
+*.csv
+*.json

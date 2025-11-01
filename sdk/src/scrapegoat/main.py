@@ -1,7 +1,7 @@
 """
 """
 
-from scrapegoat import Shepherd, Sheepdog, Loom
+from scrapegoat import Shepherd, Sheepdog
 
 
 def main():
@@ -12,9 +12,16 @@ def main():
     html = sheepdog.fetch("https://en.wikipedia.org/wiki/Web_scraping")
     
     shepherd = Shepherd()
-    root = shepherd.sow(html)
+    root = shepherd.pasture(html)
 
-    Loom(root).weave()
+    query = """
+    SCRAPE p;
+    EXTRACT id, body;
+    OUTPUT csv --filename "test" --filepath "./outputs";
+    """
+    results = shepherd.herd(root, query)
+
+    # print([result.to_dict() for result in results])
 
 
 if __name__ == "__main__":

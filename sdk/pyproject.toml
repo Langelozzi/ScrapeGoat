@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scrapegoat"
-version = "0.1.0"
+version = "1.1.0"
 description = "A toolkit of functions, classes, and utilities for creating web scrapers."
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
@@ -14,14 +14,15 @@ authors = [
 requires-python = ">=3.12"
 
 dependencies = [
-  
+  "textual>=6.2.1",
+  "requests>=2.31.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/Langelozzi/ScrapeGoat"
-Documentation = "https://github.com/Langelozzi/ScrapeGoat/blob/main/sdk/README.md"
-Source = "https://github.com/Langelozzi/ScrapeGoat"
-Issues = "https://github.com/Langelozzi/ScrapeGoat/issues"
+Homepage = "https://github.com/ChinaiArman/scrapegoat"
+Documentation = "https://github.com/ChinaiArman/scrapegoat/blob/main/README.md"
+Source = "https://github.com/ChinaiArman/scrapegoat"
+Issues = "https://github.com/ChinaiArman/scrapegoat/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

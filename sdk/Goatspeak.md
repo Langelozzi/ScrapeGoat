@@ -25,9 +25,6 @@ KEYWORDS:
 - POSITION
   - Only available within IN conditionals. Specifies that the element must be the nth occurrence of that tag within the context.
   - Example: `SCRAPE 1 li IN POSITION=5;` returns the fifth `<li>` element within the current context.
-- ALL
-  - Used to select all matching elements.
-  - Example: `SCRAPE ALL div;` returns all `<div>` elements within the current context.
 - NOT
   - Negates a conditional.
   - Example: `SCRAPE 1 div NOT IF class="header";` returns the first `<div>` element that does not have a class attribute of "header".
@@ -35,7 +32,7 @@ KEYWORDS:
 NESTING:
 
 - Commands can be nested to create more complex queries.
-- Example: `SELECT 1 div IF class="content"\nSCRAPE ALL p;` selects the first `<div>` with class "content", sets it as the new context for all subequent queries, then scrapes all `<p>` elements within that `<div>`.
+- Example: `SELECT 1 div IF class="content"\nSCRAPE p;` selects the first `<div>` with class "content", sets it as the new context for all subequent queries, then scrapes all `<p>` elements within that `<div>`.
 
 RULES:
 
@@ -46,7 +43,7 @@ RULES:
   - Complex queries must be separated by a newline character (`\n`).
   - Commands are executed in the order they are written, from top to bottom.
   - The NOT keyword must come before a conditional to apply to it.
-  - A number must be specified for SCRAPE and SELECT commands, or the ALL keyword must be used.
+  - If no number is specified after the command, it defaults to all matching elements.
   - Commands are case sensitive.
 
 KNOWN BUGS:

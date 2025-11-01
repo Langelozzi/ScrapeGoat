@@ -28,11 +28,11 @@ class Condition(ABC):
 class IfCondition(Condition):
     """
     """
-    def __init__(self, html_attribute: str, value: str, negated: bool = False, query_tag: str = None):
+    def __init__(self, key: str, value: str, negated: bool = False, query_tag: str = None):
         """
         """
         super().__init__(negated)
-        self.html_attribute = html_attribute
+        self.key = key
         self.value = value
         self.query_tag = query_tag
 
@@ -41,12 +41,15 @@ class IfCondition(Condition):
         """
         if self.query_tag is None:
             raise ValueError("query_tag is required for IF condition")
-        return node.has_html_attribute(self.html_attribute, self.value) and node.tag_type == self.query_tag
+        if self.key[0] == "@":
+            return node.has_html_attribute(self.key, self.value) and node.tag_type == self.query_tag
+        else:
+            return node.has_attribute(self.key, self.value) and node.tag_type == self.query_tag
 
     def __str__(self):
         """
         """
-        return f"IfCondition(html_attribute={self.html_attribute}, value={self.value}, negated={self.negated}, query_tag={self.query_tag})"
+        return f"IfCondition(key={self.key}, value={self.value}, negated={self.negated}, query_tag={self.query_tag})"
     
 
 class InCondition(Condition):

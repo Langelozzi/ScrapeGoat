@@ -1,18 +1,13 @@
-from typing import Any
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, field_serializer
+from scrapegoat import HTMLNode
 
 
-class HtmlNode(BaseModel):
-    id: int
-    raw: str
-    tag_type: str
-    hasData: bool
-    htmlAttributes: dict[str, Any]
-    body: str
-    children: list["HtmlNode"]
-    retrieval_instructions: list[dict[str, Any]]
-
-
-class ScrapeGoatDOMTree(BaseModel):
+class DOMTree(BaseModel):
     url: HttpUrl
-    root: HtmlNode
+    root: HTMLNode
+
+    model_config = {"arbitrary_types_allowed": True}
+
+    @field_serializer("root")
+    def serialize_root(self, value: HTMLNode):
+        return value.to_dict()

@@ -1,9 +1,11 @@
 """
 """
 
-from .html_gardener import HTMLGardener
+from .gardener import Gardener
 from .goat import Goat
-from .thistle_interpreter import ThistleInterpreter
+from .interpreter import Interpeter
+from .milkmaid import Milkmaid
+from .milkman import Milkman
 
 
 class Shepherd:
@@ -12,19 +14,48 @@ class Shepherd:
     def __init__(self):
         """
         """
-        self.gardener = HTMLGardener()
-        self.interpreter = ThistleInterpreter()
+        self.gardener = Gardener()
+        self.interpreter = Interpeter()
         self.goat = Goat()
+        self.milkmaid = Milkmaid()
+        self.milkman = Milkman()
 
-    def sow(self, raw_html: str):
+    def pasture(self, raw_html: str):
         """
         """
         self.gardener.grow_tree(raw_html)
         return self.gardener.get_root()
-    
-    def lead_goat(self, root, query: str) -> set:
+
+    def _validate_commands(self, commands: list) -> None:
         """
         """
-        thistles = self.interpreter.interpret(query)
-        results = self.goat.feast(root, thistles)
+        pass
+
+    def herd(self, root, query: str) -> set:
+        """
+        """
+        commands = self.interpreter.interpret(query)
+
+        select_scrape_commands = [cmd for cmd in commands if cmd.action in ("scrape", "select")]
+        extract_commands = [cmd for cmd in commands if cmd.action == "extract"]
+        deliver_commands = [cmd for cmd in commands if cmd.action == "output"]
+
+        results = self.goat.feast(root, select_scrape_commands)
+
+        if extract_commands:
+            self.milkmaid.churn(results, extract_commands[0])
+
+        if deliver_commands:
+            self.milkman.deliver(results, deliver_commands[0])
+
         return set(results)
+
+
+def main():
+    """
+    """
+    pass
+
+
+if __name__ == "__main__":
+    main()
