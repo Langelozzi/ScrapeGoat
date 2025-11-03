@@ -91,7 +91,6 @@ function ConfigSelection({
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
-              px: 2,
               boxSizing: 'border-box',
               overflow: 'hidden',
             }}
@@ -108,7 +107,7 @@ function ConfigSelection({
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
-              p: 2,
+              py: 2,
               boxSizing: 'border-box',
             }}
           >
