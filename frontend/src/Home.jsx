@@ -81,7 +81,7 @@ function Home() {
       );
       const json = await res.json();
       console.log(json);
-      navigate('/results');
+      navigate('/results', { state: { scrapeData: json } });
     } catch (err) {
       console.error('scrapeHandler error:', err);
     }
