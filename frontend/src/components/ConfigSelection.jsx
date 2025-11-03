@@ -94,6 +94,7 @@ function ConfigSelection({
               flexDirection: 'column',
               px: 2,
               boxSizing: 'border-box',
+              overflow: 'hidden',
             }}
           >
             <DomTree

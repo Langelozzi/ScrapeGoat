@@ -10,6 +10,7 @@ function DomTree({ tree, placeholderRoot, addToInstructions }) {
         flexDirection: 'column',
         height: '100%',
         bgcolor: 'background.paper',
+        overflow: 'hidden',
       }}
     >
       <Box
@@ -25,7 +26,7 @@ function DomTree({ tree, placeholderRoot, addToInstructions }) {
         </Typography>
       </Box>
 
-      <Box sx={{ flex: 1, overflow: 'auto', p: 3, pt: 2 }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', p: 3, pt: 2, minWidth: 0 }}>
         <TreeNode
           node={tree || placeholderRoot}
           addToInstructions={addToInstructions}

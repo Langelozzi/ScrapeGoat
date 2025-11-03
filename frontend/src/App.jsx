@@ -30,7 +30,7 @@ function Layout({ children, userName, isAuthenticated, onAuthClick }) {
           onAuthClick={onAuthClick}
         />
       )}
-      <Box component="main" sx={{ flexGrow: 1, p: hideSidebar ? 0 : 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: hideSidebar ? 0 : 3, minWidth: 0, overflowX: 'hidden' }}>
         {children}
       </Box>
     </Box>
