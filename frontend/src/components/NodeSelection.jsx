@@ -6,7 +6,7 @@ import { useRetrievalInstructions } from "../context/RetrievalInstructionsContex
 
 export default function NodeSelection() {
   const theme = useTheme();
-  const { retrievalInstructions, setKey, setLocation, deleteInstruction } =
+  const { retrievalInstructions, setKey, deleteInstruction } =
     useRetrievalInstructions();
 
   if (!retrievalInstructions?.length) {
@@ -40,7 +40,6 @@ export default function NodeSelection() {
   }
 
   const handleKeyChange = (idx, val) => setKey(idx, val);
-  const handleLocationChange = (idx, val) => setLocation(idx, val);
 
   return (
     <div
@@ -52,13 +51,6 @@ export default function NodeSelection() {
         const leftPad = Math.min(5, pv.level ?? 0);
         const currentKey = inst?.output?.key ?? "";
         const currentLocation = inst?.output?.location ?? "body";
-        const attrObj = pv.attributes || pv.attrs || {};
-        const attrNames = Object.keys(attrObj);
-        const options = ["body", ...attrNames];
-
-        if (currentLocation && !options.includes(currentLocation)) {
-          options.push(currentLocation);
-        }
 
         return (
           <div
@@ -89,8 +81,8 @@ export default function NodeSelection() {
           >
             {/* Row container with wrapping and vertical centering */}
             <div className="flex flex-wrap items-center gap-5">
-              {/* Index badge + tag name (perfectly centered vertically) */}
-              <div className="flex items-center gap-3">
+              {/* Index badge + tag name + static location */}
+              <div className="flex items-center gap-3 min-w-0">
                 <div
                   className="w-7 h-7 rounded-full text-black text-xs font-bold flex items-center justify-center shadow-md"
                   style={{ backgroundColor: theme.palette.primary.main }}
@@ -98,12 +90,26 @@ export default function NodeSelection() {
                   {idx + 1}
                 </div>
 
-                <span
-                  className="font-mono text-lg leading-none"
-                  style={{ color: theme.palette.primary.main }}
-                >
-                  &lt;{pv.tag_type || inst.output?.key || "node"}&gt;
-                </span>
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className="font-mono text-lg leading-none"
+                    style={{ color: theme.palette.primary.main }}
+                  >
+                    &lt;{pv.tag_type || inst.output?.key || "node"}&gt;
+                  </span>
+
+                  {/* Static location text */}
+                  <span
+                    className="text-sm px-2 py-0.5 rounded-md"
+                    style={{
+                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                      color: theme.palette.primary.main,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {currentLocation}
+                  </span>
+                </div>
               </div>
 
               {/* Controls row: wraps below on small widths */}
@@ -148,52 +154,6 @@ export default function NodeSelection() {
                       e.currentTarget.style.boxShadow = "none";
                     }}
                   />
-                </div>
-
-                {/* Location dropdown */}
-                <div className="flex flex-col w-[11rem] shrink-0">
-                  <label
-                    className="text-xs uppercase tracking-wide mb-1"
-                    style={{ color: alpha(theme.palette.text.secondary, 0.9) }}
-                  >
-                    Location
-                  </label>
-                  <select
-                    value={currentLocation}
-                    onChange={(e) => handleLocationChange(idx, e.target.value)}
-                    className="h-8 w-full px-2 rounded-md outline-none transition"
-                    style={{
-                      backgroundColor: alpha(
-                        theme.palette.background.default,
-                        0.9
-                      ),
-                      color: theme.palette.text.primary,
-                      border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.border = `1px solid ${alpha(
-                        theme.palette.primary.main,
-                        0.9
-                      )}`;
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${alpha(
-                        theme.palette.primary.main,
-                        0.25
-                      )}`;
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.border = `1px solid ${alpha(
-                        theme.palette.divider,
-                        0.7
-                      )}`;
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
-                  >
-                    {options.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
                 </div>
 
                 {/* Delete button */}

@@ -5,27 +5,53 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-function TreeNode({ node, addToInstructions=() => {}, level = 0 }) {
+function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
 
   if (!node) return null;
 
-  const handleAdd = (e) => {
+  // Build query string safely
+  const buildNodeQuery = () =>
+    typeof node?.retrieval_instructions === "string"
+      ? node.retrieval_instructions
+      : `SCRAPE 1 ${node.tag_type};`;
+
+  // --- Handle add for BODY content ---
+  const handleAddBody = (e) => {
     e.stopPropagation();
     addToInstructions({
-      node_query: node.retrieval_instructions || `SCRAPE 1 ${node.tag_type};`,
-      output: { 
-        location: `body`, 
-        key: node.tag_type || `k_${node.id}` 
-      },
+      node_query: buildNodeQuery(),
+      output: { location: "body", key: node.tag_type || `k_${node.id}` },
       flags: {},
       _preview: { id: node.id, tag_type: node.tag_type, raw: node.raw, level },
     });
   };
 
+  // --- Handle add for ATTRIBUTE ---
+  const handleAddAttr = (e, attrKey) => {
+    e.stopPropagation();
+    addToInstructions({
+      node_query: buildNodeQuery(),
+      output: { location: attrKey, key: node.tag_type },
+      flags: {},
+      _preview: {
+        id: node.id,
+        tag_type: node.tag_type,
+        raw: node.raw,
+        level,
+        attribute: attrKey,
+      },
+    });
+  };
+
+  const attrs =
+    node?.html_attributes && typeof node.html_attributes === "object"
+      ? Object.entries(node.html_attributes)
+      : [];
+
   return (
-    <div style={{ minWidth: 0, overflow: 'hidden', marginTop: level > 0 ? '8px' : '0' }}>
+    <div style={{ minWidth: 0, overflow: "hidden", marginTop: level > 0 ? "8px" : "0" }}>
       <div
         className="flex flex-col px-6 py-4 rounded-lg shadow-md cursor-pointer transition-colors"
         style={{
@@ -34,19 +60,20 @@ function TreeNode({ node, addToInstructions=() => {}, level = 0 }) {
           backgroundColor: theme.palette.background.default,
           color: theme.palette.text.primary,
           minWidth: 0,
-          overflow: 'hidden',
-          boxSizing: 'border-box',
+          overflow: "hidden",
+          boxSizing: "border-box",
         }}
         onClick={() => setExpanded(!expanded)}
       >
-        <div className="flex items-center w-full min-w-0" style={{ overflow: 'hidden' }}>
+        {/* --- Header row --- */}
+        <div className="flex items-center w-full min-w-0" style={{ overflow: "hidden" }}>
           <span
             style={{
               fontFamily: "monospace",
               color: theme.palette.primary.main,
               fontSize: "1.05rem",
               flexShrink: 0,
-              whiteSpace: 'nowrap',
+              whiteSpace: "nowrap",
             }}
           >
             &lt;{node.tag_type}&gt;
@@ -56,33 +83,34 @@ function TreeNode({ node, addToInstructions=() => {}, level = 0 }) {
             className="ml-4 text-base"
             style={{
               color: theme.palette.text.secondary,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
               minWidth: 0,
-              flex: '1 1 0%',
+              flex: "1 1 0%",
             }}
           >
             {node.raw}
           </span>
 
-          <div className="flex items-center space-x-2" style={{ flexShrink: 0, marginLeft: 'auto' }}>
+          {/* --- Buttons --- */}
+          <div className="flex items-center space-x-2" style={{ flexShrink: 0, marginLeft: "auto" }}>
+            {/* BIG + → adds body */}
             <IconButton
               size="small"
-              onClick={handleAdd}
+              title="Add body"
+              onClick={handleAddBody}
               onMouseDown={(e) => e.stopPropagation()}
               sx={{
                 color: theme.palette.success.main,
-                "&:hover": {
-                  color: theme.palette.success.light,
-                  transform: "scale(1.1)",
-                },
+                "&:hover": { color: theme.palette.success.light, transform: "scale(1.1)" },
                 transition: "all 0.15s ease",
               }}
             >
               <AddCircleOutlineIcon />
             </IconButton>
 
+            {/* Expand/collapse */}
             <IconButton
               size="small"
               onClick={(e) => {
@@ -91,10 +119,7 @@ function TreeNode({ node, addToInstructions=() => {}, level = 0 }) {
               }}
               sx={{
                 color: theme.palette.primary.main,
-                "&:hover": {
-                  color: theme.palette.primary.light,
-                  transform: "scale(1.1)",
-                },
+                "&:hover": { color: theme.palette.primary.light, transform: "scale(1.1)" },
                 transition: "all 0.15s ease",
               }}
             >
@@ -103,49 +128,49 @@ function TreeNode({ node, addToInstructions=() => {}, level = 0 }) {
           </div>
         </div>
 
-
+        {/* --- Expanded section --- */}
         {expanded && (
-          <div className="mt-3 pl-2 text-sm space-y-2" style={{ wordBreak: 'break-word' }}>
-            {node.hasData && node.body && (
-              <div style={{ wordBreak: 'break-word' }}>
-                <span style={{ fontWeight: 600, color: theme.palette.primary.light }}>
-                  Body:
-                </span>{" "}
-                <span style={{ color: theme.palette.text.secondary }}>{node.body}</span>
-              </div>
-            )}
-
-            {Object.keys(node.htmlAttributes || {}).length > 0 && (
-              <div style={{ wordBreak: 'break-word' }}>
-                <span style={{ fontWeight: 600, color: theme.palette.primary.light }}>
-                  Attributes:
-                </span>
+          <div className="mt-3 pl-2 text-sm space-y-3" style={{ wordBreak: "break-word" }}>
+            {/* Attributes list */}
+            <div>
+              <span style={{ fontWeight: 600, color: theme.palette.primary.light }}>
+                Attributes:
+              </span>
+              {attrs.length === 0 ? (
+                <div className="ml-4" style={{ color: theme.palette.text.secondary }}>
+                  (no attributes)
+                </div>
+              ) : (
                 <ul className="list-disc list-inside ml-4">
-                  {Object.entries(node.htmlAttributes).map(([k, v]) => (
-                    <li key={k} style={{ wordBreak: 'break-word' }}>
-                      <span style={{ color: theme.palette.primary.main }}>{k}</span>: <span>{v}</span>
+                  {attrs.map(([k, v]) => (
+                    <li key={k} className="flex items-start gap-2">
+                      <div className="flex-1">
+                        <span style={{ color: theme.palette.primary.main }}>{k}</span>:{" "}
+                        <span>{String(v)}</span>
+                      </div>
+                      <IconButton
+                        size="small"
+                        title={`Add ${k}`}
+                        onClick={(e) => handleAddAttr(e, k)}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        sx={{
+                          color: theme.palette.success.main,
+                          "&:hover": { color: theme.palette.success.light, transform: "scale(1.1)" },
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        <AddCircleOutlineIcon fontSize="small" />
+                      </IconButton>
                     </li>
                   ))}
                 </ul>
-              </div>
-            )}
-
-            {node.retrieval_instructions?.length > 0 && (
-              <div>
-                <span style={{ fontWeight: 600, color: theme.palette.primary.light }}>
-                  Retrieval:
-                </span>
-                <ul className="list-disc list-inside ml-4">
-                  {node.retrieval_instructions.map((inst, i) => (
-                    <li key={i}>{inst.action}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </div>
 
+      {/* --- Recursively render children --- */}
       {node.children?.length > 0 && (
         <div>
           {node.children.map((child) => (
