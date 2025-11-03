@@ -4,10 +4,11 @@ from app.shared.models.html import DOMTree
 from app.shared.models.scrape import NodeOutput, RetrievalInstruction, ScrapeConfig
 from app.shared.models.scrape import ScrapedDataset
 
-from scrapegoat import HTMLNode, Sheepdog, Shepherd
+from scrapegoat import HTMLNode, Sheepdog, Shepherd, Gardener
 
 sheepdog = Sheepdog()
 shepherd = Shepherd()
+gardener = Gardener()
 
 
 def build_dom_tree(url: HttpUrl) -> DOMTree:
@@ -31,15 +32,15 @@ def __scrape_single(
     tree_root: HTMLNode, instruction: RetrievalInstruction
 ) -> list[dict]:
     query = __build_goatspeek_query(instruction)
-    scraped_nodes = shepherd.herd(tree_root, query)
+    scraped_nodes = shepherd.herd_from_node(query=query, root=tree_root)
     raw_results = [node.to_dict() for node in scraped_nodes]
     mapped_results = __remap_dict_keys(raw_results, instruction.output)
     return mapped_results
 
 
 def __get_tree_root(url: str) -> HTMLNode:
-    seed = sheepdog.fetch(str(url))
-    return shepherd.pasture(seed)
+    seed = sheepdog.fetch(fetch_command=str(url))
+    return gardener.grow_tree(raw_html=seed)
 
 
 def __build_goatspeek_query(instruction: RetrievalInstruction) -> str:
