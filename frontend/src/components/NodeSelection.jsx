@@ -48,7 +48,6 @@ export default function NodeSelection() {
     >
       {retrievalInstructions.map((inst, idx) => {
         const pv = inst._preview || {};
-        const leftPad = Math.min(5, pv.level ?? 0);
         const currentKey = inst?.output?.key ?? "";
         const currentLocation = inst?.output?.location ?? "body";
 
@@ -57,7 +56,6 @@ export default function NodeSelection() {
             key={idx}
             className="relative px-6 py-5 rounded-xl border transition-all duration-200"
             style={{
-              marginLeft: `${leftPad * 12}px`,
               borderColor: alpha(theme.palette.divider, 0.6),
               boxShadow: `0 6px 18px ${alpha(theme.palette.common.black, 0.25)}`,
             }}
@@ -79,9 +77,8 @@ export default function NodeSelection() {
               )}`;
             }}
           >
-            {/* Row container with wrapping and vertical centering */}
             <div className="flex flex-wrap items-center gap-5">
-              {/* Index badge + tag name + static location */}
+              {/* Left row: number + tag + static location */}
               <div className="flex items-center gap-3 min-w-0">
                 <div
                   className="w-7 h-7 rounded-full text-black text-xs font-bold flex items-center justify-center shadow-md"
