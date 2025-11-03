@@ -13,10 +13,6 @@ function ConfigSelection({
   onFlowChange,
   tree,
   placeholderTree,
-  instructions = [],
-  onAddInstruction = ()=>{},
-  onDeleteInstruction = ()=>{},
-  onSetKey = ()=>{},
 }) {
   const [importedFile, setImportedFile] = React.useState(null);
 
@@ -100,7 +96,6 @@ function ConfigSelection({
             <DomTree
               tree={tree}
               placeholderRoot={effectivePlaceholder}
-              addToInstructions={onAddInstruction}
             />
           </Box>
 
@@ -137,11 +132,7 @@ function ConfigSelection({
               </Box>
 
               <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
-                <NodeSelection
-                  instructions={instructions}
-                  onSetKey={onSetKey}
-                  onDeleteInstruction={onDeleteInstruction}
-                />
+                <NodeSelection />
               </Box>
             </Paper>
           </Box>

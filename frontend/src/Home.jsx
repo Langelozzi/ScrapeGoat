@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfigSelection from './components/ConfigSelection.jsx';
 import { Box, Paper, Stack, Typography, TextField, Button } from '@mui/material';
+import { useRetrievalInstructions } from './context/RetrievalInstructionsContext.jsx';
 
 function Home() {
   const [url, setUrl] = useState('');
   const [flow, setFlow] = useState('new');
   const [tree, setTree] = useState(null);
-  const [retrieval_instructions, setInstructions] = useState([]);
+  const { retrievalInstructions } = useRetrievalInstructions();
   const lastBuiltUrlRef = useRef('');
   const navigate = useNavigate();
 
@@ -42,29 +43,12 @@ function Home() {
     }
   }
 
-  const addInstruction = (instruction) => {
-    setInstructions((prev) => [...prev, instruction]);
-  }
-
-  const deleteInstruction = (index) => {
-    setInstructions((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  const handleSetKey = (index, value) => {
-    setInstructions((prev) =>
-      prev.map((inst, i) =>
-        i === index ? { ...inst, output: { ...(inst.output || {}), key: value } } : inst
-      )
-    );
-  }
-
   const handleFlowChange = (_, val) => {
     if (val) setFlow(val);
   }
 
   const scrapeHandler = async () => {
-      console.log(retrieval_instructions);
-      try {
+    try {
       const res = await fetch(
         import.meta.env.VITE_API_URL + '/api/v1/scraper/scrape',
         {
@@ -75,7 +59,7 @@ function Home() {
           },
           body: JSON.stringify({ 
             url: url,
-            retrieval_instructions: retrieval_instructions,
+            retrieval_instructions: retrievalInstructions,
           }),
         }
       );
@@ -127,10 +111,6 @@ function Home() {
         onFlowChange={handleFlowChange}
         tree={tree}
         placeholderTree={placeholderRoot}
-        instructions={retrieval_instructions}
-        onAddInstruction={addInstruction}
-        onDeleteInstruction={deleteInstruction}
-        onSetKey={handleSetKey}
       />
 
       <Box

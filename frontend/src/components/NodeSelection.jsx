@@ -2,11 +2,13 @@ import { useTheme, alpha } from "@mui/material/styles";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
+import { useRetrievalInstructions } from '../context/RetrievalInstructionsContext.jsx';
 
-export default function NodeSelection({ instructions=[], onSetKey, onDeleteInstruction }) {
+export default function NodeSelection() {
   const theme = useTheme();
+  const { retrievalInstructions, setKey, deleteInstruction } = useRetrievalInstructions();
 
-  if (!instructions?.length) {
+  if (!retrievalInstructions?.length) {
     return (
       <div
         className="w-full max-w-[1400px] mx-auto mt-6"
@@ -38,14 +40,14 @@ export default function NodeSelection({ instructions=[], onSetKey, onDeleteInstr
     );
   }
 
-  const handleKeyChange = (idx, val) => onSetKey?.(idx, val);
+  const handleKeyChange = (idx, val) => setKey(idx, val);
 
   return (
     <div
       className="w-full max-w-[1400px] mx-auto mt-6 space-y-4"
       style={{ paddingInline: theme.spacing(3) }}
     >
-      {instructions.map((inst, idx) => {
+      {retrievalInstructions.map((inst, idx) => {
         const pv = inst._preview || {};
         const leftPad = Math.min(5, pv.level ?? 0);
         const currentKey = inst?.output?.key ?? "";
@@ -157,7 +159,7 @@ export default function NodeSelection({ instructions=[], onSetKey, onDeleteInstr
             </div>
 
             {/* Delete button */}
-            <IconButton onClick={() => onDeleteInstruction?.(idx)} color="error" sx={{ ml: 'auto' }}>
+            <IconButton onClick={() => deleteInstruction(idx)} color="error" sx={{ ml: 'auto' }}>
               <DeleteIcon />
             </IconButton>
           </div>
