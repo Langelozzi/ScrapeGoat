@@ -1,51 +1,27 @@
 """
 """
 
-from scrapegoat import Goat, HTMLGardener, ThistleInterpreter
+from scrapegoat import Shepherd, Sheepdog
 
 
 def main():
     """
     """
-    html = """<html>
-  <body>
-    <section id="main">
-      <div class="container">
-        <article>
-          <p id="first">Hello</p>
-          <p id="second">World</p>
-        </article>
-        <article>
-          <p id="third">Foo</p>
-          <p id="fourth">Bar</p>
-        </article>
-      </div>
-    </section>
-    <section id="sidebar">
-      <div class="container">
-        <article>
-          <p id="fifth">Ignore Me</p>
-        </article>
-      </div>
-    </section>
-  </body>
-</html>"""
+    sheepdog = Sheepdog()
 
-    gardener = HTMLGardener()
-    gardener.grow_tree(html)
-    root = gardener.get_root()
+    html = sheepdog.fetch("https://en.wikipedia.org/wiki/Web_scraping")
+    
+    shepherd = Shepherd()
+    root = shepherd.pasture(html)
 
-    query = """SCRAPE ALL p IN POSITION=5;"""
-    interpreter = ThistleInterpreter()
-    thistles = interpreter.interpret(query)
-    for thistle in thistles:
-        print(thistle)
+    query = """
+    SCRAPE p;
+    EXTRACT id, body;
+    OUTPUT csv --filename "test" --filepath "./outputs";
+    """
+    results = shepherd.herd(root, query)
 
-    goat = Goat()
-    results = goat.feast(root, thistles)
-
-    for result in results:
-        print(result)
+    # print([result.to_dict() for result in results])
 
 
 if __name__ == "__main__":

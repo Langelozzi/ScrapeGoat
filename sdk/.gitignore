@@ -6,3 +6,10 @@ dist
 
 # GIT
 .git
+
+# SDK
+*.egg-info
+
+# OUTPUT FILES
+*.csv
+*.json

@@ -1,5 +1,3 @@
-from datetime import datetime
-from typing import Any
 from pydantic import BaseModel, HttpUrl
 
 
@@ -22,5 +20,4 @@ class ScrapeConfig(BaseModel):
 
 class ScrapedDataset(BaseModel):
     url: HttpUrl
-    data: list[dict[str, Any]]
-    createdAt: datetime
+    data: list[dict]

@@ -1,0 +1,25 @@
+ControlPanel {
+	height: 40%;
+	padding: 1;
+}
+
+ControlPanel > HorizontalGroup {
+	padding: 0 1 1 1;
+}
+
+#node-info {
+	dock: left;
+	align-vertical: middle;
+}
+
+#node-buttons {
+	
+}
+
+#node-add {
+	align-vertical: middle;
+}
+
+#node-remove {
+	align-vertical: middle;
+}
