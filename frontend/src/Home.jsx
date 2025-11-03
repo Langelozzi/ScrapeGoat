@@ -62,6 +62,31 @@ function Home() {
     if (val) setFlow(val);
   }
 
+  const scrapeHandler = async () => {
+      console.log(retrieval_instructions);
+      try {
+      const res = await fetch(
+        import.meta.env.VITE_API_URL + '/api/v1/scraper/scrape',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            url: url,
+            retrieval_instructions: retrieval_instructions,
+          }),
+        }
+      );
+      const json = await res.json();
+      console.log(json);
+      navigate('/results');
+    } catch (err) {
+      console.error('scrapeHandler error:', err);
+    }
+  }
+
   useEffect(() => {
     if (url === lastBuiltUrlRef.current) return;
     const t = setTimeout(() => buildTree(url), 700);
@@ -118,7 +143,7 @@ function Home() {
       >
         <Button
           variant="contained"
-          onClick={() => {navigate('/results')}}
+          onClick={scrapeHandler}
           sx={{
             px: 3,
             py: 1.2,

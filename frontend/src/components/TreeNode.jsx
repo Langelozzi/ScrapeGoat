@@ -14,8 +14,11 @@ function TreeNode({ node, addToInstructions=() => {}, level = 0 }) {
   const handleAdd = (e) => {
     e.stopPropagation();
     addToInstructions({
-      node_query: `nq_${node.id}`,
-      output: { location: `l${level}`, key: node.tag_type || `k_${node.id}` },
+      node_query: node.retrieval_instructions || `SCRAPE 1 ${node.tag_type};`,
+      output: { 
+        location: `body`, 
+        key: node.tag_type || `k_${node.id}` 
+      },
       flags: {},
       _preview: { id: node.id, tag_type: node.tag_type, raw: node.raw, level },
     });
