@@ -2,11 +2,12 @@ import { useTheme, alpha } from "@mui/material/styles";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
-import { useRetrievalInstructions } from '../context/RetrievalInstructionsContext.jsx';
+import { useRetrievalInstructions } from "../context/RetrievalInstructionsContext.jsx";
 
 export default function NodeSelection() {
   const theme = useTheme();
-  const { retrievalInstructions, setKey, deleteInstruction } = useRetrievalInstructions();
+  const { retrievalInstructions, setKey, setLocation, deleteInstruction } =
+    useRetrievalInstructions();
 
   if (!retrievalInstructions?.length) {
     return (
@@ -31,9 +32,7 @@ export default function NodeSelection() {
             className="text-sm"
             style={{ color: theme.palette.text.secondary, opacity: 0.9 }}
           >
-            Click the{" "}
-            <AddCircleOutlineIcon />{" "}
-            icon on any node to add it here.
+            Click the <AddCircleOutlineIcon /> icon on any node to add it here.
           </p>
         </div>
       </div>
@@ -41,6 +40,7 @@ export default function NodeSelection() {
   }
 
   const handleKeyChange = (idx, val) => setKey(idx, val);
+  const handleLocationChange = (idx, val) => setLocation(idx, val);
 
   return (
     <div
@@ -51,11 +51,19 @@ export default function NodeSelection() {
         const pv = inst._preview || {};
         const leftPad = Math.min(5, pv.level ?? 0);
         const currentKey = inst?.output?.key ?? "";
+        const currentLocation = inst?.output?.location ?? "body";
+        const attrObj = pv.attributes || pv.attrs || {};
+        const attrNames = Object.keys(attrObj);
+        const options = ["body", ...attrNames];
+
+        if (currentLocation && !options.includes(currentLocation)) {
+          options.push(currentLocation);
+        }
 
         return (
           <div
             key={idx}
-            className="relative flex items-center gap-5 px-6 py-5 rounded-xl border transition-all duration-200"
+            className="relative px-6 py-5 rounded-xl border transition-all duration-200"
             style={{
               marginLeft: `${leftPad * 12}px`,
               borderColor: alpha(theme.palette.divider, 0.6),
@@ -79,89 +87,125 @@ export default function NodeSelection() {
               )}`;
             }}
           >
-            {/* Index badge */}
-            <div
-              className="absolute -left-4 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full text-black text-xs font-bold flex items-center justify-center shadow-md"
-              style={{ backgroundColor: theme.palette.primary.main }}
-            >
-              {idx + 1}
-            </div>
+            {/* Row container with wrapping and vertical centering */}
+            <div className="flex flex-wrap items-center gap-5">
+              {/* Index badge + tag name (perfectly centered vertically) */}
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-7 h-7 rounded-full text-black text-xs font-bold flex items-center justify-center shadow-md"
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                >
+                  {idx + 1}
+                </div>
 
-            {/* Key input */}
-            <div className="flex flex-col w-44 shrink-0">
-              <label
-                className="text-xs uppercase tracking-wide mb-1"
-                style={{
-                  color: alpha(theme.palette.text.secondary, 0.9),
-                }}
-              >
-                Key
-              </label>
-              <input
-                type="text"
-                value={currentKey}
-                onChange={(e) => handleKeyChange(idx, e.target.value)}
-                placeholder="enter key..."
-                className="h-8 w-full px-2 rounded-md outline-none transition"
-                style={{
-                  backgroundColor: alpha(theme.palette.background.default, 0.9),
-                  color: theme.palette.text.primary,
-                  border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.border = `1px solid ${alpha(
-                    theme.palette.primary.main,
-                    0.9
-                  )}`;
-                  e.currentTarget.style.boxShadow = `0 0 0 3px ${alpha(
-                    theme.palette.primary.main,
-                    0.25
-                  )}`;
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.border = `1px solid ${alpha(
-                    theme.palette.divider,
-                    0.7
-                  )}`;
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              />
-            </div>
-
-            {/* Node info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-baseline gap-2">
                 <span
-                  className="font-mono text-lg"
+                  className="font-mono text-lg leading-none"
                   style={{ color: theme.palette.primary.main }}
                 >
                   &lt;{pv.tag_type || inst.output?.key || "node"}&gt;
                 </span>
-                <span
-                  className="text-sm truncate"
-                  style={{ color: theme.palette.text.secondary }}
-                >
-                  {pv.raw || "(no preview available)"}
-                </span>
               </div>
 
-              <div
-                className="text-xs mt-1 space-x-3"
-                style={{
-                  color: alpha(theme.palette.text.secondary, 0.8),
-                }}
-              >
-                {inst.node_query && <span>query: {inst.node_query}</span>}
-                {inst.output?.location && (
-                  <span>location: {inst.output.location}</span>
-                )}
+              {/* Controls row: wraps below on small widths */}
+              <div className="flex flex-wrap items-end gap-4 w-full md:w-auto md:ml-auto">
+                {/* Key input */}
+                <div className="flex flex-col w-[11rem] shrink-0">
+                  <label
+                    className="text-xs uppercase tracking-wide mb-1"
+                    style={{ color: alpha(theme.palette.text.secondary, 0.9) }}
+                  >
+                    Key
+                  </label>
+                  <input
+                    type="text"
+                    value={currentKey}
+                    onChange={(e) => handleKeyChange(idx, e.target.value)}
+                    placeholder="enter key..."
+                    className="h-8 w-full px-2 rounded-md outline-none transition"
+                    style={{
+                      backgroundColor: alpha(
+                        theme.palette.background.default,
+                        0.9
+                      ),
+                      color: theme.palette.text.primary,
+                      border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.border = `1px solid ${alpha(
+                        theme.palette.primary.main,
+                        0.9
+                      )}`;
+                      e.currentTarget.style.boxShadow = `0 0 0 3px ${alpha(
+                        theme.palette.primary.main,
+                        0.25
+                      )}`;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.border = `1px solid ${alpha(
+                        theme.palette.divider,
+                        0.7
+                      )}`;
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+
+                {/* Location dropdown */}
+                <div className="flex flex-col w-[11rem] shrink-0">
+                  <label
+                    className="text-xs uppercase tracking-wide mb-1"
+                    style={{ color: alpha(theme.palette.text.secondary, 0.9) }}
+                  >
+                    Location
+                  </label>
+                  <select
+                    value={currentLocation}
+                    onChange={(e) => handleLocationChange(idx, e.target.value)}
+                    className="h-8 w-full px-2 rounded-md outline-none transition"
+                    style={{
+                      backgroundColor: alpha(
+                        theme.palette.background.default,
+                        0.9
+                      ),
+                      color: theme.palette.text.primary,
+                      border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.border = `1px solid ${alpha(
+                        theme.palette.primary.main,
+                        0.9
+                      )}`;
+                      e.currentTarget.style.boxShadow = `0 0 0 3px ${alpha(
+                        theme.palette.primary.main,
+                        0.25
+                      )}`;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.border = `1px solid ${alpha(
+                        theme.palette.divider,
+                        0.7
+                      )}`;
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    {options.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Delete button */}
+                <IconButton
+                  onClick={() => deleteInstruction(idx)}
+                  color="error"
+                  className="ml-auto"
+                >
+                  <DeleteIcon />
+                </IconButton>
               </div>
             </div>
-
-            {/* Delete button */}
-            <IconButton onClick={() => deleteInstruction(idx)} color="error" sx={{ ml: 'auto' }}>
-              <DeleteIcon />
-            </IconButton>
           </div>
         );
       })}
