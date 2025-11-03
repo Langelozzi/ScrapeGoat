@@ -1,13 +1,34 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 
 const UserContext = createContext(null)
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
   const API_URL = import.meta.env.VITE_API_URL
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/v1/auth/status`, {
+          method: "GET",
+          credentials: "include",
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setUser(data?.user)
+        }
+      } catch (err) {
+        console.error("Session check failed:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkSession()
+  }, [API_URL])
 
   const login = async (email, password) => {
     setError("")
@@ -68,6 +89,8 @@ export const UserProvider = ({ children }) => {
       setLoading(false)
     }
   }
+
+  if (loading) return <div>Loading...</div>
 
   return (
     <UserContext.Provider value={{ user, error, loading, login, register, logout }}>

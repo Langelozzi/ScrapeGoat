@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, useMatch } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useMatch } from "react-router-dom";
 import { ThemeProvider, createTheme, CssBaseline, Box, GlobalStyles } from "@mui/material";
-import { useState } from "react";
+import { useUser } from "./context/UserContext.jsx"
 import Sidebar from "./components/Sidebar";
 import Login from "./Login";
 import Configs from "./Configs";
@@ -18,18 +18,12 @@ const theme = createTheme({
 });
 
 
-function Layout({ children, userName, isAuthenticated, onAuthClick }) {
+function Layout({ children }) {
   const hideSidebar = useMatch("/login/*"); // Hide sidebar on login page
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
-      {!hideSidebar && (
-        <Sidebar
-          userName={userName}
-          isAuthenticated={isAuthenticated}
-          onAuthClick={onAuthClick}
-        />
-      )}
+      {!hideSidebar && <Sidebar />}
       <Box component="main" sx={{ flexGrow: 1, p: hideSidebar ? 0 : 3, minWidth: 0, overflowX: 'hidden' }}>
         {children}
       </Box>
@@ -38,10 +32,9 @@ function Layout({ children, userName, isAuthenticated, onAuthClick }) {
 }
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userName, setUserName] = useState("Guest");
+  const { user, loading, logout } = useUser();
 
-  const handleAuthClick = () => setIsAuthenticated(p => !p);
+  if (loading) return <div>Loading...</div>
 
   return (
     <ThemeProvider theme={theme}>
@@ -56,7 +49,7 @@ function App() {
       <CssBaseline />
 
       <Router>
-        <Layout userName={userName} isAuthenticated={isAuthenticated} onAuthClick={handleAuthClick}>
+        <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
