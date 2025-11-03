@@ -1,15 +1,20 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfigSelection from './components/ConfigSelection.jsx';
 import { Box, Paper, Stack, Typography, TextField, Button } from '@mui/material';
-import { useRetrievalInstructions } from './context/RetrievalInstructionsContext.jsx';
+import { useScrapeConfig } from './context/RetrievalInstructionsContext.jsx';
 
 function Home() {
-  const [url, setUrl] = useState('');
-  const [flow, setFlow] = useState('new');
-  const [tree, setTree] = useState(null);
-  const { retrievalInstructions } = useRetrievalInstructions();
-  const lastBuiltUrlRef = useRef('');
+  const { 
+    url, 
+    setUrl, 
+    tree, 
+    setTree, 
+    flow, 
+    setFlow, 
+    retrievalInstructions,
+    lastBuiltUrlRef
+  } = useScrapeConfig();
   const navigate = useNavigate();
 
   const placeholderRoot = {
@@ -107,9 +112,6 @@ function Home() {
       </Paper>
 
       <ConfigSelection
-        flow={flow}
-        onFlowChange={handleFlowChange}
-        tree={tree}
         placeholderTree={placeholderRoot}
       />
 

@@ -1,9 +1,10 @@
 import { Paper, Typography, Box } from '@mui/material';
 import TreeNode from './TreeNode.jsx';
-import { useRetrievalInstructions } from '../context/RetrievalInstructionsContext.jsx';
+import { useRetrievalInstructions, useScrapeConfig } from '../context/RetrievalInstructionsContext.jsx';
 
-function DomTree({ tree, placeholderRoot }) {
+function DomTree({ placeholderRoot }) {
   const { addInstruction } = useRetrievalInstructions();
+  const { tree } = useScrapeConfig();
   return (
     <Paper
       sx={{

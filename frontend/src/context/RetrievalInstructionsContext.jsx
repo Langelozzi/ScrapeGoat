@@ -1,9 +1,13 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useRef } from "react"
 
-const RetrievalInstructionsContext = createContext(null)
+const ScrapeConfigContext = createContext(null)
 
-export const RetrievalInstructionsProvider = ({ children }) => {
+export const ScrapeConfigProvider = ({ children }) => {
+  const [url, setUrl] = useState('')
+  const [tree, setTree] = useState(null)
+  const [flow, setFlow] = useState('new')
   const [retrievalInstructions, setRetrievalInstructions] = useState([])
+  const lastBuiltUrlRef = useRef('')
 
   const addInstruction = (instruction) => {
     setRetrievalInstructions((prev) => [...prev, instruction])
@@ -26,23 +30,41 @@ export const RetrievalInstructionsProvider = ({ children }) => {
   }
 
   return (
-    <RetrievalInstructionsContext.Provider value={{ 
+    <ScrapeConfigContext.Provider value={{ 
+      url,
+      setUrl,
+      tree,
+      setTree,
+      flow,
+      setFlow,
       retrievalInstructions, 
       addInstruction, 
       deleteInstruction, 
       setKey,
-      clearInstructions
+      clearInstructions,
+      lastBuiltUrlRef
     }}>
       {children}
-    </RetrievalInstructionsContext.Provider>
+    </ScrapeConfigContext.Provider>
   )
 }
 
-export const useRetrievalInstructions = () => {
-  const context = useContext(RetrievalInstructionsContext)
+export const useScrapeConfig = () => {
+  const context = useContext(ScrapeConfigContext)
   if (!context) {
-    throw new Error("useRetrievalInstructions must be used within a RetrievalInstructionsProvider")
+    throw new Error("useScrapeConfig must be used within a ScrapeConfigProvider")
   }
   return context
+}
+
+export const useRetrievalInstructions = () => {
+  const context = useScrapeConfig()
+  return {
+    retrievalInstructions: context.retrievalInstructions,
+    addInstruction: context.addInstruction,
+    deleteInstruction: context.deleteInstruction,
+    setKey: context.setKey,
+    clearInstructions: context.clearInstructions
+  }
 }
 

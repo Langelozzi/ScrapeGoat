@@ -7,13 +7,16 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DomTree from './DomTree.jsx';
 import NodeSelection from './NodeSelection.jsx';
 import ImportConfig from './ImportConfig.jsx';
+import { useScrapeConfig } from '../context/RetrievalInstructionsContext.jsx';
 
 function ConfigSelection({
-  flow,
-  onFlowChange,
-  tree,
   placeholderTree,
 }) {
+  const { flow, setFlow } = useScrapeConfig();
+  
+  const handleFlowChange = (_, val) => {
+    if (val) setFlow(val);
+  }
   const [importedFile, setImportedFile] = React.useState(null);
 
   const localPlaceholderRoot = React.useMemo(
@@ -44,7 +47,7 @@ function ConfigSelection({
           </Stack>
 
           <Stack direction="row" justifyContent="center">
-            <ToggleButtonGroup value={flow} exclusive onChange={onFlowChange} size="small">
+            <ToggleButtonGroup value={flow} exclusive onChange={handleFlowChange} size="small">
               <ToggleButton value="new">
                 <AddCircleIcon sx={{ mr: 1 }} />
                 New Config
@@ -94,7 +97,6 @@ function ConfigSelection({
             }}
           >
             <DomTree
-              tree={tree}
               placeholderRoot={effectivePlaceholder}
             />
           </Box>
