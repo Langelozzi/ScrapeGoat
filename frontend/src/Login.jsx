@@ -7,35 +7,19 @@ function Login() {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const { login } = useUser();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const navigate = useNavigate();
 
-  const ENDPOINT = `/api/v1/auth/${mode}`;
+  const { login, register, error, loading } = useUser();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");
-    setLoading(true);
 
-    try {
-      const res = await fetch(import.meta.env.VITE_API_URL + ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    if (mode === "login") await login(email, password)
+    else await register(email, password, firstName, lastName)
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Authentication failed");
-      login(data.user);
-
-      navigate("/");
-    } catch (err) {
-      setError(err.message || "Error connecting to server");
-    } finally {
-      setLoading(false);
-    }
+    navigate("/")
   }
 
   return (
@@ -59,6 +43,7 @@ function Login() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          bgcolor: "background.light",
           gap: 3,
         }}
       >
@@ -82,8 +67,8 @@ function Login() {
               },
             }}
           >
-            <Tab label="Login" value="login" sx={{ flex: 1, fontSize: 16 }} />
-            <Tab label="Sign Up" value="signup" sx={{ flex: 1, fontSize: 16 }} />
+            <Tab label="Log In" value="login" sx={{ flex: 1, fontSize: 16 }} />
+            <Tab label="Register" value="register" sx={{ flex: 1, fontSize: 16 }} />
           </Tabs>
           <Divider sx={{ mt: 1 }} />
         </Box>
@@ -92,8 +77,43 @@ function Login() {
         <Box
           component="form"
           onSubmit={handleSubmit}
-          sx={{ width: "100%", mt: 2, display: "flex", flexDirection: "column", gap: 2.5 }}
+          sx={{
+            width: "100%",
+            mt: 2,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2.5,
+          }}
         >
+          {/* Only show name fields during sign up */}
+          {mode === "register" && (
+            <>
+              <TextField
+                label="First Name"
+                required
+                fullWidth
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                slotProps={{
+                  input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
+                  inputLabel: {sx: { color: "DimGray" }}
+                }}
+              />
+
+              <TextField
+                label="Last Name"
+                required
+                fullWidth
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                slotProps={{
+                  input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
+                  inputLabel: {sx: { color: "DimGray" }}
+                }}
+              />
+            </>
+          )}
+
           <TextField
             label="Email Address"
             type="email"
@@ -102,17 +122,8 @@ function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             slotProps={{
-              input: {
-                sx: {
-                  fontSize: 16,
-                  bgcolor: "white",
-                  color: "black",
-                  py: 1,
-                }
-              },
-              inputLabel: {
-                sx: { color: "DimGray" },
-              }
+              input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
+              inputLabel: {sx: { color: "DimGray" }}
             }}
           />
 
@@ -124,17 +135,8 @@ function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             slotProps={{
-              input: {
-                sx: {
-                  fontSize: 16,
-                  bgcolor: "white",
-                  color: "black",
-                  py: 1,
-                }
-              },
-              inputLabel: {
-                sx: { color: "DimGray" },
-              }
+              input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
+              inputLabel: {sx: { color: "DimGray" }}
             }}
           />
 
@@ -158,7 +160,11 @@ function Login() {
               fontWeight: 600,
             }}
           >
-            {loading ? "Please wait..." : mode === "login" ? "Login" : "Sign Up"}
+            {loading
+              ? "Please wait..."
+              : mode === "login"
+              ? "Log In"
+              : "Register"}
           </Button>
         </Box>
       </Paper>
