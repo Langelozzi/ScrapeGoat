@@ -131,6 +131,19 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
         {/* --- Expanded section --- */}
         {expanded && (
           <div className="mt-3 pl-2 text-sm space-y-3" style={{ wordBreak: "break-word" }}>
+            {/* Body */}
+            <div>
+              <div style={{ fontWeight: 600, color: theme.palette.primary.light }}>
+                Body:
+              </div>
+              {node.body.length === 0 ? (
+                <div className="ml-4" style={{ color: theme.palette.text.secondary }}>
+                  (no body)
+                </div>
+              ) : (
+                node.body
+              )}
+            </div>
             {/* Attributes list */}
             <div>
               <span style={{ fontWeight: 600, color: theme.palette.primary.light }}>
