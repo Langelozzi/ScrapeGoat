@@ -38,7 +38,6 @@ function Home() {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        credentials: true,
         body: JSON.stringify({ url: targetUrl })
       }
       );
