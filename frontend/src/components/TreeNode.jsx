@@ -115,6 +115,13 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
                   marginBottom: 4,
                 }}
               >
+              <div
+                style={{
+                  fontWeight: 600,
+                  color: theme.palette.primary.light,
+                  marginBottom: 4,
+                }}
+              >
                 Body:
               </div>
 
