@@ -139,7 +139,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
                     flex: "1 1 auto",
                     minWidth: 0,
                     color:
-                      node.body.length === 0
+                      node.body?.length === 0
                         ? theme.palette.text.secondary
                         : theme.palette.text.primary,
                     whiteSpace: "pre-wrap",
