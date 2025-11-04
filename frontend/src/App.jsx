@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useMatch } from "react-router-dom";
 import { ThemeProvider, createTheme, CssBaseline, Box, GlobalStyles } from "@mui/material";
 import { useUser } from "./context/UserContext.jsx"
-import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar.jsx";
 import Login from "./Login";
 import Configs from "./Configs";
 import Home from "./Home";
@@ -19,12 +19,12 @@ const theme = createTheme({
 
 
 function Layout({ children }) {
-  const hideSidebar = useMatch("/login/*"); // Hide sidebar on login page
+  const hideNavbar = useMatch("/login/*"); // Hide sidebar on login page
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
-      {!hideSidebar && <Sidebar />}
-      <Box component="main" sx={{ flexGrow: 1, p: hideSidebar ? 0 : 3, minWidth: 0, overflowX: 'hidden' }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
+      {!hideNavbar && <Navbar />}
+      <Box component="main" sx={{ flexGrow: 1, p: 3, minWidth: 0 }}>
         {children}
       </Box>
     </Box>
