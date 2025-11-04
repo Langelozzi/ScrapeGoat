@@ -146,7 +146,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
               <div
                 style={{
                   display: "flex",
-                  alignItems: "center", // ✅ centers vertically with single-line text
+                  alignItems: "center",
                   justifyContent: "space-between",
                   gap: "8px",
                   wordBreak: "break-word",
@@ -160,7 +160,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
                       node.body.length === 0
                         ? theme.palette.text.secondary
                         : theme.palette.text.primary,
-                    whiteSpace: "pre-wrap", // ✅ preserves wrapping for long bodies
+                    whiteSpace: "pre-wrap",
                     overflowWrap: "anywhere",
                   }}
                 >
@@ -172,7 +172,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
                   onClick={(e) => handleAddAttr(e, "body")}
                   onMouseDown={(e) => e.stopPropagation()}
                   sx={{
-                    alignSelf: "center", // ✅ stays centered even in flexible containers
+                    alignSelf: "center",
                     color: theme.palette.success.main,
                     "&:hover": {
                       color: theme.palette.success.light,
