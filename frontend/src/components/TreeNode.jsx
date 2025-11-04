@@ -133,17 +133,59 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
           <div className="mt-3 pl-2 text-sm space-y-3" style={{ wordBreak: "break-word" }}>
             {/* Body */}
             <div>
-              <div style={{ fontWeight: 600, color: theme.palette.primary.light }}>
+              <div
+                style={{
+                  fontWeight: 600,
+                  color: theme.palette.primary.light,
+                  marginBottom: 4,
+                }}
+              >
                 Body:
               </div>
-              {node.body.length === 0 ? (
-                <div className="ml-4" style={{ color: theme.palette.text.secondary }}>
-                  (no body)
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center", // ✅ centers vertically with single-line text
+                  justifyContent: "space-between",
+                  gap: "8px",
+                  wordBreak: "break-word",
+                }}
+              >
+                <div
+                  style={{
+                    flex: "1 1 auto",
+                    minWidth: 0,
+                    color:
+                      node.body.length === 0
+                        ? theme.palette.text.secondary
+                        : theme.palette.text.primary,
+                    whiteSpace: "pre-wrap", // ✅ preserves wrapping for long bodies
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {node.body.length === 0 ? "(no body)" : node.body}
                 </div>
-              ) : (
-                node.body
-              )}
+
+                <IconButton
+                  size="small"
+                  onClick={(e) => handleAddAttr(e, "body")}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  sx={{
+                    alignSelf: "center", // ✅ stays centered even in flexible containers
+                    color: theme.palette.success.main,
+                    "&:hover": {
+                      color: theme.palette.success.light,
+                      transform: "scale(1.1)",
+                    },
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  <AddCircleOutlineIcon fontSize="small" />
+                </IconButton>
+              </div>
             </div>
+
             {/* Attributes list */}
             <div>
               <span style={{ fontWeight: 600, color: theme.palette.primary.light }}>
