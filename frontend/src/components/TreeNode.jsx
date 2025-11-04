@@ -17,17 +17,6 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
       ? node.retrieval_instructions
       : `SCRAPE 1 ${node.tag_type};`;
 
-  // --- Handle add for BODY content ---
-  const handleAddBody = (e) => {
-    e.stopPropagation();
-    addToInstructions({
-      node_query: buildNodeQuery(),
-      output: { location: "body", key: node.tag_type || `k_${node.id}` },
-      flags: {},
-      _preview: { id: node.id, tag_type: node.tag_type, raw: node.raw, level },
-    });
-  };
-
   // --- Handle add for ATTRIBUTE ---
   const handleAddAttr = (e, attrKey) => {
     e.stopPropagation();
@@ -95,20 +84,6 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
 
           {/* --- Buttons --- */}
           <div className="flex items-center space-x-2" style={{ flexShrink: 0, marginLeft: "auto" }}>
-            {/* BIG + → adds body */}
-            <IconButton
-              size="small"
-              title="Add body"
-              onClick={handleAddBody}
-              onMouseDown={(e) => e.stopPropagation()}
-              sx={{
-                color: theme.palette.success.main,
-                "&:hover": { color: theme.palette.success.light, transform: "scale(1.1)" },
-                transition: "all 0.15s ease",
-              }}
-            >
-              <AddCircleOutlineIcon />
-            </IconButton>
 
             {/* Expand/collapse */}
             <IconButton
