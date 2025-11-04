@@ -1,15 +1,4 @@
-import {
-  Drawer,
-  Box,
-  Typography,
-  Paper,
-  Stack,
-  Avatar,
-  Button,
-  List,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material';
+import { Drawer, Box, Typography, Paper, Stack, Avatar, Button, List, ListItemButton, ListItemText } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
@@ -19,7 +8,7 @@ function Sidebar() {
   const { user, logout } = useUser();
 
   const isAuthenticated = Boolean(user);
-  const userName = user?.name || user?.username || user?.email || 'Guest';
+  const userName = user?.first_name || user?.email || 'Guest';
 
   const handleAuthClick = async () => {
     if (isAuthenticated) {

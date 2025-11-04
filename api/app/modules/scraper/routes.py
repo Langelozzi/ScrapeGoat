@@ -7,7 +7,7 @@ from app.shared.models.html import DOMTree
 from app.shared.models.scrape import ScrapeConfig, ScrapedDataset
 from .service import build_dom_tree, scrape
 from app.shared.models.auth_user import AuthUser
-from app.modules.auth.dependencies import require_auth
+from app.modules.auth.dependencies import get_current_user_dependency, require_auth
 
 router = APIRouter()
 
@@ -19,14 +19,15 @@ def get_health_check():
 
 @router.post("/dom-tree/build")
 def post_build_dom_tree(
-    req: BuildDomTreeRequest, _: AuthUser = Depends(require_auth)
+    req: BuildDomTreeRequest,
+    _: AuthUser = Depends(get_current_user_dependency),
 ) -> DOMTree:
     return build_dom_tree(req.url)
 
 
 @router.post("/scrape")
 def post_scrape(
-    config: ScrapeConfig, _: AuthUser = Depends(require_auth)
+    config: ScrapeConfig, _: AuthUser = Depends(get_current_user_dependency)
 ) -> ScrapedDataset:
     return scrape(config)
 
@@ -37,7 +38,7 @@ def export_json(
         "data.json", description="Filename for the downloaded JSON file."
     ),
     data: list[dict] = Body(..., description="JSON data to include in the file"),
-    _: AuthUser = Depends(require_auth),
+    _: AuthUser = Depends(get_current_user_dependency),
 ):
     if not filename.lower().endswith(".json"):
         filename += ".json"
@@ -57,7 +58,7 @@ def export_csv(
         "data.csv", description="Filename for the downloaded CSV file."
     ),
     data: list[dict] = Body(..., description="Data to include in the file"),
-    _: AuthUser = Depends(require_auth),
+    _: AuthUser = Depends(get_current_user_dependency),
 ):
     if not filename.lower().endswith(".csv"):
         filename += ".csv"

@@ -1,7 +1,10 @@
 import { Paper, Typography, Box } from '@mui/material';
 import TreeNode from './TreeNode.jsx';
+import { useRetrievalInstructions, useScrapeConfig } from '../context/RetrievalInstructionsContext.jsx';
 
-function DomTree({ tree, placeholderRoot, addToInstructions }) {
+function DomTree({ placeholderRoot }) {
+  const { addInstruction } = useRetrievalInstructions();
+  const { tree } = useScrapeConfig();
   return (
     <Paper
       sx={{
@@ -10,6 +13,7 @@ function DomTree({ tree, placeholderRoot, addToInstructions }) {
         flexDirection: 'column',
         height: '100%',
         bgcolor: 'background.paper',
+        overflow: 'hidden',
       }}
     >
       <Box
@@ -25,10 +29,10 @@ function DomTree({ tree, placeholderRoot, addToInstructions }) {
         </Typography>
       </Box>
 
-      <Box sx={{ flex: 1, overflow: 'auto', p: 3, pt: 2 }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', p: 3, pt: 2, minWidth: 0 }}>
         <TreeNode
           node={tree || placeholderRoot}
-          addToInstructions={addToInstructions}
+          addToInstructions={addInstruction}
         />
       </Box>
     </Paper>

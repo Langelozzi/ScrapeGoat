@@ -1,14 +1,20 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfigSelection from './components/ConfigSelection.jsx';
 import { Box, Paper, Stack, Typography, TextField, Button } from '@mui/material';
+import { useScrapeConfig } from './context/RetrievalInstructionsContext.jsx';
 
 function Home() {
-  const [url, setUrl] = useState('');
-  const [flow, setFlow] = useState('new');
-  const [tree, setTree] = useState(null);
-  const [retrieval_instructions, setInstructions] = useState([]);
-  const lastBuiltUrlRef = useRef('');
+  const { 
+    url, 
+    setUrl, 
+    tree, 
+    setTree, 
+    flow, 
+    setFlow, 
+    retrievalInstructions,
+    lastBuiltUrlRef
+  } = useScrapeConfig();
   const navigate = useNavigate();
 
   const placeholderRoot = {
@@ -18,7 +24,7 @@ function Home() {
       { id: 2, tag_type: 'h1', body: 'No Data Currently Displayed', hasData: true },
       { id: 3, tag_type: 'p', body: 'Please enter a URL', hasData: true },
     ],
-  };
+  }
 
   const buildTree = async (givenUrl) => {
     const targetUrl = givenUrl ?? url;
@@ -40,23 +46,35 @@ function Home() {
     } catch (err) {
       console.error('buildTree error:', err);
     }
-  };
-
-  const addToInstructions = (instruction) => {
-    setInstructions((prev) => [...prev, instruction]);
-  };
-
-  const handleSetKey = (index, value) => {
-    setInstructions((prev) =>
-      prev.map((inst, i) =>
-        i === index ? { ...inst, output: { ...(inst.output || {}), key: value } } : inst
-      )
-    );
-  };
+  }
 
   const handleFlowChange = (_, val) => {
     if (val) setFlow(val);
-  };
+  }
+
+  const scrapeHandler = async () => {
+    try {
+      const res = await fetch(
+        import.meta.env.VITE_API_URL + '/api/v1/scraper/scrape',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            url: url,
+            retrieval_instructions: retrievalInstructions,
+          }),
+        }
+      );
+      const json = await res.json();
+      console.log(json);
+      navigate('/results', { state: { scrapeData: json } });
+    } catch (err) {
+      console.error('scrapeHandler error:', err);
+    }
+  }
 
   useEffect(() => {
     if (url === lastBuiltUrlRef.current) return;
@@ -79,12 +97,14 @@ function Home() {
               placeholder="https://example.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              InputProps={{
-                sx: {
-                  fontSize: 16,
-                  height: 52,
-                  '& .MuiInputBase-input': { py: 1, lineHeight: 1.5 },
-                },
+              slotProps={{
+                input: {
+                  sx: {
+                    fontSize: 16,
+                    height: 52,
+                    '& .MuiInputBase-input': { py: 1, lineHeight: 1.5 },
+                  }
+                }
               }}
             />
           </Box>
@@ -92,13 +112,7 @@ function Home() {
       </Paper>
 
       <ConfigSelection
-        flow={flow}
-        onFlowChange={handleFlowChange}
-        tree={tree}
         placeholderTree={placeholderRoot}
-        instructions={retrieval_instructions}
-        onAddInstruction={addToInstructions}
-        onSetKey={handleSetKey}
       />
 
       <Box
@@ -111,7 +125,7 @@ function Home() {
       >
         <Button
           variant="contained"
-          onClick={() => {navigate('/results')}}
+          onClick={scrapeHandler}
           sx={{
             px: 3,
             py: 1.2,

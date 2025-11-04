@@ -14,7 +14,7 @@ from app.shared.config import settings
 COOKIE_NAME = "access_token"
 COOKIE_MAX_AGE = 24 * 60 * 60  # 24 hours in seconds
 COOKIE_HTTP_ONLY = True
-COOKIE_SECURE = True  # Set to True in production with HTTPS
+COOKIE_SECURE = False  # Set to True in production with HTTPS
 COOKIE_SAME_SITE = "lax"
 
 JWT_ALGORITHM = "HS256"

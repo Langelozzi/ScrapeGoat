@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Paper, Stack, Typography, ToggleButtonGroup, ToggleButton, Box
-} from '@mui/material';
+import { Paper, Stack, Typography, ToggleButtonGroup, ToggleButton, Box } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -9,16 +7,16 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DomTree from './DomTree.jsx';
 import NodeSelection from './NodeSelection.jsx';
 import ImportConfig from './ImportConfig.jsx';
+import { useScrapeConfig } from '../context/RetrievalInstructionsContext.jsx';
 
 function ConfigSelection({
-  flow,
-  onFlowChange,
-  tree,
   placeholderTree,
-  instructions = [],
-  onAddInstruction = () => {},
-  onSetKey = () => {},
 }) {
+  const { flow, setFlow } = useScrapeConfig();
+  
+  const handleFlowChange = (_, val) => {
+    if (val) setFlow(val);
+  }
   const [importedFile, setImportedFile] = React.useState(null);
 
   const localPlaceholderRoot = React.useMemo(
@@ -49,7 +47,7 @@ function ConfigSelection({
           </Stack>
 
           <Stack direction="row" justifyContent="center">
-            <ToggleButtonGroup value={flow} exclusive onChange={onFlowChange} size="small">
+            <ToggleButtonGroup value={flow} exclusive onChange={handleFlowChange} size="small">
               <ToggleButton value="new">
                 <AddCircleIcon sx={{ mr: 1 }} />
                 New Config
@@ -93,14 +91,12 @@ function ConfigSelection({
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
-              px: 2,
               boxSizing: 'border-box',
+              overflow: 'hidden',
             }}
           >
             <DomTree
-              tree={tree}
               placeholderRoot={effectivePlaceholder}
-              addToInstructions={onAddInstruction}
             />
           </Box>
 
@@ -111,7 +107,7 @@ function ConfigSelection({
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
-              p: 2,
+              py: 2,
               boxSizing: 'border-box',
             }}
           >
@@ -137,10 +133,7 @@ function ConfigSelection({
               </Box>
 
               <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
-                <NodeSelection
-                  instructions={instructions}
-                  onSetKey={onSetKey}
-                />
+                <NodeSelection />
               </Box>
             </Paper>
           </Box>
