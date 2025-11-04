@@ -7,7 +7,7 @@ from app.shared.models.html import DOMTree
 from app.shared.models.scrape import ScrapeConfig, ScrapedDataset
 from .service import build_dom_tree, scrape
 from app.shared.models.auth_user import AuthUser
-from app.modules.auth.dependencies import get_current_user_dependency, require_auth
+from app.modules.auth.dependencies import get_current_user_dependency
 
 router = APIRouter()
 

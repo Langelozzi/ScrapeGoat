@@ -5,6 +5,8 @@ from contextlib import asynccontextmanager
 from app.modules.auth.routes import router as auth_router
 from app.modules.scraper.routes import router as scraper_router
 from app.modules.users.routes import router as users_router
+from app.modules.folders.routes import router as folders_router
+
 from app.shared.config import settings
 from app.shared.db.session import init_db
 
@@ -39,3 +41,6 @@ app.include_router(
     scraper_router, prefix=f"{OPEN_API_PREFIX}/scraper", tags=["Scraper"]
 )
 app.include_router(users_router, prefix=f"{OPEN_API_PREFIX}/users", tags=["Users"])
+app.include_router(
+    folders_router, prefix=f"{OPEN_API_PREFIX}/folders", tags=["Folders"]
+)
