@@ -3,6 +3,7 @@ venv:
 
 install:
 	pip install -r requirements.txt
+	pip install -r sdk-requirements.txt
 
 run-dev:
 	uvicorn app.main:app --reload
