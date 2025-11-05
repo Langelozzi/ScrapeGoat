@@ -18,7 +18,7 @@ class ScraperConfig(Base, UUIDPkMixin, TimestampMixin):
 
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=True)
-    retrieval_json: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    retrieval_json: Mapped[list[dict]] = mapped_column(JSONB, nullable=False)
 
     # Foreign Keys
     folder_id: Mapped[uuid.UUID] = mapped_column(
@@ -31,7 +31,7 @@ class ScraperConfig(Base, UUIDPkMixin, TimestampMixin):
     # Relationships
     folder: Mapped["Folder"] = relationship("Folder", back_populates="scraper_configs")
     website: Mapped["Website"] = relationship(
-        "Website", back_populates="scraper_configs"
+        "Website", back_populates="scraper_configs", lazy="joined"
     )
     scrape_results: Mapped[list["ScrapeResult"]] = relationship(
         "ScrapeResult", back_populates="config", cascade="all, delete-orphan"

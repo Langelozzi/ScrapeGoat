@@ -1,4 +1,6 @@
 from pydantic import HttpUrl
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.modules.configs.service import get_config
 from app.shared.helpers.dict_helpers import rename_key
 from app.shared.models.html import DOMTree
 from app.shared.models.scrape import NodeOutput, RetrievalInstruction, ScrapeConfig
@@ -25,6 +27,14 @@ def scrape(config: ScrapeConfig) -> ScrapedDataset:
         results.extend(data)
 
     return ScrapedDataset(url=config.url, data=results)
+
+
+async def scrape_existing(db: AsyncSession, config_id: str) -> ScrapedDataset:
+    config = await get_config(db, config_id)
+    if not config:
+        raise Exception(f"No config found with id '{config_id}'")
+    scrape_config = ScrapeConfig.from_db_model(config)
+    return scrape(scrape_config)
 
 
 ### Private helper function ###
