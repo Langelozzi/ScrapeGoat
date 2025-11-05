@@ -4,7 +4,6 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.shared.db.base import Base
 from app.shared.db.mixins import UUIDPkMixin, TimestampMixin
-from app.shared.db.models.folder import Folder
 
 if TYPE_CHECKING:
     from .scraper_config import ScraperConfig
