@@ -44,3 +44,8 @@ class ConfigResponse(BaseModel):
             folder_id=config.folder_id,
             website_id=config.website_id,
         )
+
+
+class ConfigDeleteResponse(BaseModel):
+    deleted: bool
+    message: str

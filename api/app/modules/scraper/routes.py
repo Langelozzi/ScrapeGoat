@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Body, Depends, Query
 from fastapi.responses import StreamingResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.scraper.models import BuildDomTreeRequest
+from app.shared.db.session import get_db
 from app.shared.helpers.io_helpers import to_csv_stream, to_json_stream
 from app.shared.models.html import DOMTree
 from app.shared.models.scrape import ScrapeConfig, ScrapedDataset
-from .service import build_dom_tree, scrape
+from .service import build_dom_tree, scrape, scrape_existing
 from app.shared.models.auth_user import AuthUser
-from app.modules.auth.dependencies import get_current_user_dependency
+from app.modules.auth.dependencies import get_current_user_dependency, require_auth
 
 router = APIRouter()
 
@@ -30,6 +32,15 @@ def post_scrape(
     config: ScrapeConfig, _: AuthUser = Depends(get_current_user_dependency)
 ) -> ScrapedDataset:
     return scrape(config)
+
+
+@router.post("/scrape/{id}")
+async def post_scrape_existing_config(
+    id: str,
+    db: AsyncSession = Depends(get_db),
+    _: AuthUser = Depends(require_auth),
+) -> ScrapedDataset:
+    return await scrape_existing(db, id)
 
 
 @router.post("/export/json")

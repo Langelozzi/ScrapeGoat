@@ -41,9 +41,11 @@ async def dao_update_config(
     if not existing_config:
         return None
 
-    # Merge the passed config object fields into the existing one
+    # Only update scalar columns, not relationships
     for attr, value in vars(config).items():
         if attr.startswith("_"):
+            continue
+        if attr in {"website", "folder", "scrape_results"}:
             continue
         setattr(existing_config, attr, value)
 
