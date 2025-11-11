@@ -5,7 +5,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
+function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized = false }) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
 
@@ -208,7 +208,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
       </div>
 
       {/* --- Recursively render children --- */}
-      {node.children?.length > 0 && (
+      {!virtualized && node.children?.length > 0 && (
         <div>
           {node.children.map((child) => (
             <TreeNode

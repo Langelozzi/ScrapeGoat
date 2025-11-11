@@ -181,62 +181,6 @@ function Home() {
         </Button>
       </Box>
     </Box>
-
-    // <Box sx={{ p: 1 }}>
-    //   <Paper sx={{ p: { xs: 2.5, md: 3 }, mb: 2.5 }}>
-    //     <Stack spacing={1} alignItems="center" textAlign="center">
-    //       <Typography variant="overline" sx={{ letterSpacing: 1.2, opacity: 0.7, lineHeight: 1.2 }}>
-    //         Step 1
-    //       </Typography>
-    //       <Typography variant="h6">Enter Website URL</Typography>
-    //       <Box sx={{ width: '100%', maxWidth: 760, mx: 'auto' }}>
-    //         <TextField
-    //           fullWidth
-    //           label="Website URL"
-    //           placeholder="https://example.com"
-    //           value={url}
-    //           onChange={(e) => setUrl(e.target.value)}
-    //           slotProps={{
-    //             input: {
-    //               sx: {
-    //                 fontSize: 16,
-    //                 height: 52,
-    //                 '& .MuiInputBase-input': { py: 1, lineHeight: 1.5 },
-    //               }
-    //             }
-    //           }}
-    //         />
-    //       </Box>
-    //     </Stack>
-    //   </Paper>
-
-    //   <ConfigSelection
-    //     placeholderTree={placeholderRoot}
-    //   />
-
-    //   <Box
-    //     sx={(theme) => ({
-    //       position: 'fixed',
-    //       right: `max(24px, env(safe-area-inset-right))`,
-    //       bottom: `max(24px, env(safe-area-inset-bottom))`,
-    //       zIndex: theme.zIndex.tooltip + 1,
-    //     })}
-    //   >
-    //     <Button
-    //       variant="contained"
-    //       onClick={scrapeHandler}
-    //       sx={{
-    //         px: 3,
-    //         py: 1.2,
-    //         borderRadius: 9999,
-    //         fontSize: '1rem',
-    //         boxShadow: 6,
-    //       }}
-    //     >
-    //       Scrape ➔
-    //     </Button>
-    //   </Box>
-    // </Box>
   );
 }
 
