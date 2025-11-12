@@ -115,13 +115,6 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
                   marginBottom: 4,
                 }}
               >
-              <div
-                style={{
-                  fontWeight: 600,
-                  color: theme.palette.primary.light,
-                  marginBottom: 4,
-                }}
-              >
                 Body:
               </div>
 
@@ -146,7 +139,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
                     overflowWrap: "anywhere",
                   }}
                 >
-                  {node.body.length === 0 ? "(no body)" : node.body}
+                  {node.body?.length === 0 ? "(no body)" : node.body}
                 </div>
 
                 <IconButton
