@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Box, Paper, TextField, Typography, Button, Tabs, Tab, Divider, Alert } from "@mui/material";
+import { Box, Paper, TextField, Typography, Button, Tabs, Tab, Divider, Alert, Stack } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
+import { ArrowBack } from "@mui/icons-material";
 import { useUser } from "./context/UserContext.jsx";
 
 function Login() {
@@ -29,7 +30,8 @@ function Login() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: "background.default",
+        background: "linear-gradient(135deg, #0a0f0a 0%, #112a17 100%)",
+        color: "white",
         p: 3,
       }}
     >
@@ -39,7 +41,6 @@ function Login() {
           p: { xs: 4, sm: 6 },
           width: "100%",
           maxWidth: 600,
-          borderRadius: 3,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -79,69 +80,104 @@ function Login() {
           onSubmit={handleSubmit}
           sx={{
             width: "100%",
-            mt: 2,
+            mt: 1,
             display: "flex",
             flexDirection: "column",
             gap: 2.5,
           }}
         >
-          {/* Only show name fields during sign up */}
           {mode === "register" && (
-            <>
+            <Stack spacing={2}>
               <TextField
                 label="First Name"
-                required
-                fullWidth
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                slotProps={{
-                  input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
-                  inputLabel: {sx: { color: "DimGray" }}
-                }}
-              />
-
-              <TextField
-                label="Last Name"
                 required
                 fullWidth
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                variant="outlined"
                 slotProps={{
-                  input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
-                  inputLabel: {sx: { color: "DimGray" }}
+                  input: {
+                    sx: {
+                      bgcolor: "#f0fff5",  // pale mint background
+                      color: "#001a00",    // near-black text
+                    },
+                  },
+                  inputLabel: {
+                    sx: { color: "#2e7d32" }, // medium green label
+                  },
                 }}
               />
-            </>
+              <TextField
+                label="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                fullWidth
+                slotProps={{
+                  input: {
+                    sx: {
+                      bgcolor: "#f0fff5",  // pale mint background
+                      color: "#001a00",    // near-black text
+                    },
+                  },
+                  inputLabel: {
+                    sx: { color: "#2e7d32" }, // medium green label
+                  },
+                }}
+              />
+            </Stack>
           )}
 
           <TextField
             label="Email Address"
             type="email"
-            required
-            fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
+            fullWidth
             slotProps={{
-              input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
-              inputLabel: {sx: { color: "DimGray" }}
+              input: {
+                sx: {
+                  bgcolor: "#f0fff5",  // pale mint background
+                  color: "#001a00",    // near-black text
+                },
+              },
+              inputLabel: {
+                sx: { color: "#2e7d32" }, // medium green label
+              },
             }}
           />
 
           <TextField
             label="Password"
             type="password"
-            required
-            fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+            fullWidth
             slotProps={{
-              input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
-              inputLabel: {sx: { color: "DimGray" }}
+              input: {
+                sx: {
+                  bgcolor: "#f0fff5",  // pale mint background
+                  color: "#001a00",    // near-black text
+                },
+              },
+              inputLabel: {
+                sx: { color: "#2e7d32" }, // medium green label
+              },
             }}
           />
 
           {error && (
-            <Alert severity="error" sx={{ fontSize: 14 }}>
+            <Alert
+              severity="error"
+              sx={{
+                bgcolor: "rgba(255,0,0,0.1)",
+                color: "#ff6b6b",
+                border: "1px solid rgba(255,0,0,0.2)",
+                fontSize: 14,
+              }}
+            >
               {error}
             </Alert>
           )}
@@ -153,18 +189,41 @@ function Login() {
             fullWidth
             sx={{
               mt: 1,
-              py: 1.4,
+              py: 1.3,
               fontSize: "1rem",
               borderRadius: 3,
               textTransform: "none",
-              fontWeight: 600,
+              fontWeight: 700,
+              background: "linear-gradient(90deg, #00c853, #33ff99)",
+              color: "#000",
+              "&:hover": {
+                background: "linear-gradient(90deg, #00e676, #66ffb2)",
+              },
             }}
           >
-            {loading
-              ? "Please wait..."
-              : mode === "login"
-              ? "Log In"
-              : "Register"}
+            {loading ? "Please wait..." : mode === "login" ? "Log In" : "Register"}
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBack />}
+            onClick={() => navigate("/")}
+            sx={{
+              mt: 1,
+              py: 1.2,
+              fontSize: "0.95rem",
+              borderRadius: 3,
+              textTransform: "none",
+              fontWeight: 600,
+              color: "#66ffb2",
+              borderColor: "rgba(102,255,178,0.4)",
+              "&:hover": {
+                borderColor: "#66ffb2",
+                backgroundColor: "rgba(102,255,178,0.05)",
+              },
+            }}
+          >
+            Back to Home
           </Button>
         </Box>
       </Paper>

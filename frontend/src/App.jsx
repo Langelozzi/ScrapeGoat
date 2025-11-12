@@ -10,9 +10,36 @@ import Results from "./Results";
 const theme = createTheme({
   palette: {
     mode: "dark",
-    background: { default: "#0D0709", paper: "#21332d", light: "#02632F" },
-    primary: { main: "#91FFFB" },
-    secondary: { main: "#448A9C" },
+    background: {
+      default: "#0E1116",
+      paper: "#3c4d49",
+    },
+    primary: {
+      main: "#4FC3F7",
+      light: "#81D4FA",
+      dark: "#0288D1",
+      contrastText: "#ffffff",
+    },
+    secondary: {
+      main: "#CE93D8",
+      light: "#E1BEE7",
+      dark: "#8E24AA",
+      contrastText: "#fff",
+    },
+    success: {
+      main: "#66BB6A",
+    },
+    error: {
+      main: "#EF5350",
+    },
+    warning: {
+      main: "#FFA726",
+    },
+    text: {
+      primary: "#F5F5F5",
+      secondary: "#d3d8de",
+    },
+    divider: "rgba(255,255,255,0.08)",
   },
   shape: { borderRadius: 14 },
 });
