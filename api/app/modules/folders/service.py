@@ -31,7 +31,7 @@ async def get_user_root_folder(db: AsyncSession, user_id: str) -> Optional[Folde
 
 async def create_folder(db: AsyncSession, folder: Folder, user_id: str) -> Folder:
     folder.user_id = uuid.UUID(user_id)
-    if folder.parent_id is None:
+    if folder.parent_id is None and folder.name is not "_root":
         root_folder = await get_user_root_folder(db, user_id)
         if root_folder is None:
             raise Exception("No root folder exists for user")
