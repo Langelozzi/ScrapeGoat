@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from pydantic import BaseModel, ValidationError, Field
+from pydantic import BaseModel, ValidationError, Field, ConfigDict
 
 # Load .env variables into environment
 load_dotenv()
@@ -11,9 +11,8 @@ class AppSettings(BaseModel):
     frontend_url: str = Field(..., alias="FRONTEND_URL")
     jwt_secret_key: str = Field(..., alias="JWT_SECRET_KEY")
 
-    class Config:
-        # Allow reading env vars directly
-        populate_by_name = True
+    # Use pydantic v2 style configuration
+    model_config = ConfigDict(populate_by_name=True)
 
 
 try:
