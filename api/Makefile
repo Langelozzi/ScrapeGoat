@@ -3,7 +3,20 @@ venv:
 
 install:
 	pip install -r requirements.txt
+	pip install -r sdk-requirements.txt
 
 run-dev:
 	uvicorn app.main:app --reload
 
+seed-data:
+	python scripts/seed_data.py
+
+migrate:
+	alembic upgrade head
+
+migrate-create:
+	@read -p "Enter migration message: " msg; \
+	alembic revision --autogenerate -m "$$msg"
+
+test:
+	pytest -q tests/unit

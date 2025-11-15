@@ -1,22 +1,39 @@
-from datetime import datetime
-from typing import Any
 from pydantic import BaseModel, HttpUrl
-from app.shared.models.html import HtmlNode
+
+from app.shared.db.models.scraper_config import ScraperConfig
 
 
-# TODO: This is not the finalized model but for now it'll work
+class NodeOutput(BaseModel):
+    location: str
+    key: str
+
+
 class RetrievalInstruction(BaseModel):
-    property_name: str
-    source_node: HtmlNode
-    action: str
+    node_query: str
+    output: NodeOutput
+    flags: dict
+
+    @staticmethod
+    def from_dict(d: dict):
+        node_output = NodeOutput(
+            location=d["output"]["location"], key=d["output"]["key"]
+        )
+        return RetrievalInstruction(
+            node_query=d["node_query"], output=node_output, flags=d["flags"]
+        )
 
 
 class ScrapeConfig(BaseModel):
     url: HttpUrl
-    retrieval_instructions: list
+    retrieval_instructions: list[RetrievalInstruction]
+
+    @staticmethod
+    def from_db_model(config: ScraperConfig):
+        url = config.website.url
+        instr = list(map(RetrievalInstruction.from_dict, config.retrieval_json))
+        return ScrapeConfig(url=HttpUrl(url), retrieval_instructions=instr)
 
 
 class ScrapedDataset(BaseModel):
     url: HttpUrl
-    data: list[dict[str, Any]]
-    createdAt: datetime
+    data: list[dict]

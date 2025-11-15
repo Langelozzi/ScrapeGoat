@@ -1,0 +1,42 @@
+import { Paper, Typography, Box } from '@mui/material';
+import TreeNode from './TreeNode.jsx';
+import { useRetrievalInstructions, useScrapeConfig } from '../context/RetrievalInstructionsContext.jsx';
+
+function DomTree({ placeholderRoot }) {
+  const { addInstruction } = useRetrievalInstructions();
+  const { tree } = useScrapeConfig();
+  return (
+    <Paper
+      sx={{
+        p: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        bgcolor: 'background.paper',
+        overflow: 'hidden',
+      }}
+    >
+      <Box
+        sx={{
+          px: 3,
+          py: 2,
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          flexShrink: 0,
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          DOM Tree
+        </Typography>
+      </Box>
+
+      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', p: 3, pt: 2, minWidth: 0 }}>
+        <TreeNode
+          node={tree || placeholderRoot}
+          addToInstructions={addInstruction}
+        />
+      </Box>
+    </Paper>
+  );
+}
+
+export default DomTree;
