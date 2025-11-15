@@ -39,7 +39,7 @@ jobs:
       - name: Run tests
         working-directory: api
         env:
-          DB_CONNECTION_STRING: "sqlite+aiosqlite:///./test.db"
+          DB_CONNECTION_STRING: "postgresql+asyncpg:///./test.db"
           FRONTEND_URL: "http://localhost"
           JWT_SECRET_KEY: "dummy-secret"
         run: make test
