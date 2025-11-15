@@ -1,4 +1,4 @@
-name: CI - Pytest
+name: API - CI - Pytest
 
 on:
   pull_request:
@@ -6,16 +6,15 @@ on:
       - main
       - development
 
-# Cancel any currently running workflow in the same group to prevent duplicates
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR branch
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -27,15 +26,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('api/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install dependencies (Makefile)
+      - name: Install dependencies
+        working-directory: api
         run: |
           python -m pip install --upgrade pip
           make install
 
-      - name: Run tests (Makefile)
-        run: |
-          make test
+      - name: Run tests
+        working-directory: api
+        run: make test
