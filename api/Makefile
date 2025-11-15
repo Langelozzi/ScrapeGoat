@@ -18,3 +18,5 @@ migrate-create:
 	@read -p "Enter migration message: " msg; \
 	alembic revision --autogenerate -m "$$msg"
 
+test:
+	pytest -q tests/unit

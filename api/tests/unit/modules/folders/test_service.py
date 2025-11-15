@@ -48,7 +48,7 @@ async def test_get_folder_and_get_user_root_folder_delegates(monkeypatch):
 @pytest.mark.asyncio
 async def test_create_folder_sets_user_id_and_parent_when_parent_none(monkeypatch):
     # prepare a folder-like object
-    folder = SimpleNamespace(parent_id=None, user_id=None)
+    folder = SimpleNamespace(parent_id=None, user_id=None, name=None)
     user_id = "11111111-1111-1111-1111-111111111111"
 
     root = SimpleNamespace(id="root-uuid")
