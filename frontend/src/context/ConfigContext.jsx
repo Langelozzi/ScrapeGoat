@@ -3,29 +3,29 @@ import { createContext, useContext, useState, useEffect } from "react";
 const ConfigContext = createContext();
 
 export const ConfigProvider = ({ children }) => {
-  const [health, setHealth] = useState("loading...");
+  const [configs, setConfigs] = useState("Loading...");
 
-  const API_URL = import.meta.env.VITE_API_URL
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const fetchHealth = async () => {
+    const fetchConfigs = async () => {
       try {
         const res = await fetch(`${API_URL}/api/v1/configs/`, {
           credentials: "include",
         });
         const data = await res.json();
-        setHealth(data?.status || JSON.stringify(data));
+        setConfigs(JSON.stringify(data));
       } catch (err) {
-        setHealth("error");
-        console.error("Health fetch failed:", err);
+        console.error("Config fetch failed:", err);
+        setConfigs(null);
       }
     };
 
-    fetchHealth();
+    fetchConfigs();
   }, []);
 
   return (
-    <ConfigContext.Provider value={{ health }}>
+    <ConfigContext.Provider value={{ configs }}>
       {children}
     </ConfigContext.Provider>
   );

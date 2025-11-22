@@ -1,11 +1,11 @@
 import { useConfigs } from "./context/ConfigContext";
 
 function Configs() {
-  const { health } = useConfigs();
+  const { configs } = useConfigs();
 
   return (
     <div style={{ padding: "20px" }}>
-      <p>{health}</p>
+      <p>{configs}</p>
     </div>
   );
 }
