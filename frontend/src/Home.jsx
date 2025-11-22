@@ -158,8 +158,8 @@ function Home() {
         </Box>
       )}
 
-      {/* Step 3: Always Show Scrape Button */}
-      <Paper sx={{ p: { xs: 2.5, md: 3 }, mt: 2 }}>
+      {/* Step 3 */}
+      <Paper sx={{ p: { xs: 2.5, md: 3 }, mt: 3 }}>
         <Stack spacing={1.5} alignItems="center" textAlign="center">
           <Typography
             variant="overline"
