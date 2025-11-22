@@ -4,10 +4,10 @@ import UploadIcon from '@mui/icons-material/Upload';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ImportConfig from './ImportConfig.jsx';
-import { useScrapeConfig } from '../context/RetrievalInstructionsContext.jsx';
+import { useRetrievalInstructions } from '../context/RetrievalInstructionContext.jsx';
 
 function ConfigSelection({ placeholderTree }) {
-  const { flow, setFlow } = useScrapeConfig();
+  const { flow, setFlow } = useRetrievalInstructions();
   const [importedFile, setImportedFile] = React.useState(null);
 
   const handleFlowChange = (_, val) => {

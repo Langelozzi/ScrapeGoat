@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Paper, Typography, Box, TextField } from '@mui/material';
 import TreeNode from './TreeNode.jsx';
 import { Virtuoso } from 'react-virtuoso';
-import { useRetrievalInstructions, useScrapeConfig } from '../context/RetrievalInstructionsContext.jsx';
+import { useRetrievalInstructions } from '../context/RetrievalInstructionContext.jsx';
 
 
 function flattenTree(node, level = 0) {
@@ -19,7 +19,7 @@ function flattenTree(node, level = 0) {
 
 function DomTree({ placeholderRoot }) {
   const { addInstruction } = useRetrievalInstructions();
-  const { tree } = useScrapeConfig();
+  const { tree } = useRetrievalInstructions();
   const [filter, setFilter] = useState('');
 
   // Flatten the tree once

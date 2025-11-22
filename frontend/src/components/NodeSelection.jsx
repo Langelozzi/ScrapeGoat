@@ -2,7 +2,7 @@ import { useTheme, alpha } from "@mui/material/styles";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
-import { useRetrievalInstructions } from "../context/RetrievalInstructionsContext.jsx";
+import { useRetrievalInstructions } from "../context/RetrievalInstructionContext.jsx";
 
 export default function NodeSelection() {
   const theme = useTheme();

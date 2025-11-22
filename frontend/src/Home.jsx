@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfigSelection from './components/ConfigSelection.jsx';
 import { Box, Paper, Stack, Typography, TextField, Button } from '@mui/material';
-import { useScrapeConfig } from './context/RetrievalInstructionsContext.jsx';
+import { useRetrievalInstructions } from './context/RetrievalInstructionContext.jsx';
 import DomTree from './components/DomTree.jsx';
 import NodeSelection from './components/NodeSelection.jsx';
 
@@ -16,7 +16,7 @@ function Home() {
     setFlow,
     retrievalInstructions,
     lastBuiltUrlRef
-  } = useScrapeConfig();
+  } = useRetrievalInstructions();
   const navigate = useNavigate();
 
   const placeholderRoot = {
