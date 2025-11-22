@@ -5,7 +5,7 @@ Helper functions for authentication (cookie management, token extraction, etc.)
 from typing import Optional
 from fastapi import Request, Response
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.shared.config import settings
 
@@ -52,11 +52,12 @@ def clear_auth_cookie(response: Response) -> None:
 
 def create_access_token(user_id: str, email: str) -> str:
     """Create a JWT access token"""
+    now = datetime.now(tz=timezone.utc)
     payload = {
         "sub": str(user_id),
         "email": email,
-        "exp": datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS),
-        "iat": datetime.utcnow(),
+        "exp": now + timedelta(hours=JWT_EXPIRATION_HOURS),
+        "iat": now,
     }
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=JWT_ALGORITHM)
 

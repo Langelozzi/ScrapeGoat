@@ -10,3 +10,5 @@ pydantic[email]
 alembic
 pyjwt # JWT token handling
 bcrypt # Password hashing
+pytest
+pytest-asyncio
