@@ -120,6 +120,7 @@ function Home() {
             flexDirection: 'row',
             gap: 2,
             height: 'calc(100vh - 250px)',
+            mb: 2.5,
           }}
         >
           {/* DOM Tree - 2/3 width */}
@@ -157,29 +158,33 @@ function Home() {
         </Box>
       )}
 
-      {/* Floating scrape button */}
-      <Box
-        sx={(theme) => ({
-          position: 'fixed',
-          right: `max(24px, env(safe-area-inset-right))`,
-          bottom: `max(24px, env(safe-area-inset-bottom))`,
-          zIndex: theme.zIndex.tooltip + 1,
-        })}
-      >
-        <Button
-          variant="contained"
-          onClick={scrapeHandler}
-          sx={{
-            px: 3,
-            py: 1.2,
-            borderRadius: 9999,
-            fontSize: '1rem',
-            boxShadow: 6,
-          }}
-        >
-          Scrape ➔
-        </Button>
-      </Box>
+      {/* Step 3: Always Show Scrape Button */}
+      <Paper sx={{ p: { xs: 2.5, md: 3 }, mt: 2 }}>
+        <Stack spacing={1.5} alignItems="center" textAlign="center">
+          <Typography
+            variant="overline"
+            sx={{ letterSpacing: 1.2, opacity: 0.7, lineHeight: 1.2 }}
+          >
+            Step 3
+          </Typography>
+          <Typography variant="h6">Run Scrape</Typography>
+
+          <Button
+            variant="contained"
+            onClick={scrapeHandler}
+            sx={{
+              mt: 1,
+              px: 3,
+              py: 1.2,
+              borderRadius: 9999,
+              fontSize: '1rem',
+              boxShadow: 6,
+            }}
+          >
+            Scrape ➔
+          </Button>
+        </Stack>
+      </Paper>
     </Box>
   );
 }
