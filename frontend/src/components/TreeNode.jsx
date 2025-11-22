@@ -148,9 +148,9 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
                   onMouseDown={(e) => e.stopPropagation()}
                   sx={{
                     alignSelf: "center",
-                    color: theme.palette.success.main,
+                    color: theme.palette.primary.main,
                     "&:hover": {
-                      color: theme.palette.success.light,
+                      color: theme.palette.primary.light,
                       transform: "scale(1.1)",
                     },
                     transition: "all 0.15s ease",
@@ -184,8 +184,8 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
                         onClick={(e) => handleAddAttr(e, k)}
                         onMouseDown={(e) => e.stopPropagation()}
                         sx={{
-                          color: theme.palette.success.main,
-                          "&:hover": { color: theme.palette.success.light, transform: "scale(1.1)" },
+                          color: theme.palette.primary.main,
+                          "&:hover": { color: theme.palette.primary.light, transform: "scale(1.1)" },
                           transition: "all 0.15s ease",
                         }}
                       >
