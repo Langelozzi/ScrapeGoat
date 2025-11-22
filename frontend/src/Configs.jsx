@@ -5,7 +5,7 @@ function Configs() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <p>Health: {health}</p>
+      <p>{health}</p>
     </div>
   );
 }
