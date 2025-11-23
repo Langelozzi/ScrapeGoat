@@ -1,29 +1,40 @@
 import { useState } from "react";
 import { useTheme, alpha } from "@mui/material/styles";
+import Button from "@mui/material/Button";
 import { useConfigs } from "./context/ConfigContext";
+import ConfigListItem from "./components/configs/ConfigListItem";
+
+function normalizeConfigs(configs) {
+  if (!configs) return [];
+
+  if (Array.isArray(configs)) return configs;
+
+  if (typeof configs === "string") {
+    try {
+      const data = JSON.parse(configs);
+      return Array.isArray(data) ? data : [data];
+    } catch {
+      return [];
+    }
+  }
+
+  return [configs];
+}
 
 function Configs() {
   const theme = useTheme();
   const { configs } = useConfigs();
   const [openMap, setOpenMap] = useState({});
 
-  let parsedConfigs = [];
-
-  if (Array.isArray(configs)) {
-    parsedConfigs = configs;
-  } else if (typeof configs === "string") {
-    try {
-      const data = JSON.parse(configs);
-      parsedConfigs = Array.isArray(data) ? data : [data];
-    } catch {
-      parsedConfigs = [];
-    }
-  } else if (configs && typeof configs === "object") {
-    parsedConfigs = Array.isArray(configs) ? configs : [configs];
-  }
+  const parsedConfigs = normalizeConfigs(configs);
 
   const toggleOpen = (key) => {
     setOpenMap((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleNewConfig = () => {
+    console.log("New Config clicked");
+    // hook this up to your create-config flow later
   };
 
   return (
@@ -31,6 +42,29 @@ function Configs() {
       className="w-full max-w-[1400px] mx-auto mt-6 space-y-4"
       style={{ paddingInline: theme.spacing(3), fontFamily: "monospace" }}
     >
+      {/* Top bar with title and New Config button */}
+      <div className="flex justify-between items-center mb-4">
+        <h2
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 600,
+            color: theme.palette.text.primary,
+            margin: 0,
+          }}
+        >
+          Your Configs
+        </h2>
+
+        <Button
+          variant="contained"
+          size="medium"
+          onClick={handleNewConfig}
+          sx={{ borderRadius: 999, textTransform: "none" }}
+        >
+          New Config
+        </Button>
+      </div>
+
       {parsedConfigs.length === 0 && (
         <div
           className="px-6 py-5 rounded-xl border"
@@ -47,164 +81,14 @@ function Configs() {
         const key = cfg.id ?? index;
         const isOpen = !!openMap[key];
 
-        const name = cfg?.name || "<untitled>";
-        const url = cfg?.url || "";
-        const description = cfg?.description || "";
-        const retrievalInstructions = cfg?.retrieval_instructions || [];
-
         return (
-          <div
+          <ConfigListItem
             key={key}
-            className="px-6 py-5 rounded-xl border transition-all duration-200"
-            style={{
-              borderColor: alpha(theme.palette.divider, 0.6),
-              boxShadow: `0 8px 22px ${alpha(theme.palette.common.black, 0.18)}`,
-              fontSize: 14,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = theme.palette.primary.main;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = alpha(
-                theme.palette.divider,
-                0.6
-              );
-            }}
-          >
-            <div
-              className="flex items-center gap-4 cursor-pointer"
-              onClick={() => toggleOpen(key)}
-            >
-              <span
-                style={{
-                  display: "inline-block",
-                  transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
-                  transition: "transform 0.15s ease",
-                  fontSize: 18,
-                  color: theme.palette.primary.main,
-                }}
-              >
-                ▸
-              </span>
-
-              <div className="flex items-baseline gap-3 min-w-0">
-                <span
-                  className="font-mono text-lg leading-none truncate"
-                  style={{ color: theme.palette.primary.main }}
-                >
-                  {name}
-                </span>
-
-                {url && (
-                  <span
-                    className="text-sm truncate"
-                    style={{ color: theme.palette.text.secondary }}
-                  >
-                    {url}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {isOpen && (
-              <div className="mt-4 space-y-4">
-                {description && (
-                  <p
-                    style={{
-                      color: theme.palette.text.primary,
-                      fontSize: 14,
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {description}
-                  </p>
-                )}
-
-
-                {retrievalInstructions?.length > 0 && (
-                  <div className="space-y-3">
-                    {retrievalInstructions.map((inst, idx) => {
-                      const pv = inst._preview || inst.preview || {};
-                      const currentKey = inst?.output?.key ?? "";
-                      const currentLocation =
-                        inst?.output?.location ?? "body";
-
-                      return (
-                        <div
-                          key={idx}
-                          className="px-4 py-3 rounded-lg border flex flex-wrap items-center gap-4"
-                          style={{
-                            borderColor: alpha(theme.palette.divider, 0.7),
-                            backgroundColor: alpha(
-                              theme.palette.background.default,
-                              0.7
-                            ),
-                          }}
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div
-                              className="w-7 h-7 rounded-full text-black text-xs font-bold flex items-center justify-center"
-                              style={{
-                                backgroundColor: theme.palette.primary.main,
-                              }}
-                            >
-                              {idx + 1}
-                            </div>
-
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span
-                                className="font-mono text-base leading-none"
-                                style={{ color: theme.palette.primary.main }}
-                              >
-                                &lt;
-                                {pv.tag_type || inst.output?.key || "node"}
-                                &gt;
-                              </span>
-
-                              <span
-                                className="text-xs px-2 py-0.5 rounded-md"
-                                style={{
-                                  backgroundColor: alpha(
-                                    theme.palette.primary.main,
-                                    0.1
-                                  ),
-                                  color: theme.palette.primary.main,
-                                  fontWeight: 500,
-                                }}
-                              >
-                                {currentLocation}
-                              </span>
-                            </div>
-                          </div>
-
-                          {currentKey && (
-                            <div className="flex-1 min-w-[8rem]">
-                              <span
-                                className="text-xs"
-                                style={{
-                                  color: theme.palette.text.secondary,
-                                }}
-                              >
-                                key:{" "}
-                                <span
-                                  className="font-mono"
-                                  style={{
-                                    color: theme.palette.text.primary,
-                                  }}
-                                >
-                                  {currentKey}
-                                </span>
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+            cfg={cfg}
+            index={index}
+            isOpen={isOpen}
+            onToggle={() => toggleOpen(key)}
+          />
         );
       })}
     </div>
