@@ -5,6 +5,7 @@ import { Box, Paper, Stack, Typography, TextField, Button } from '@mui/material'
 import { useRetrievalInstructions } from './context/RetrievalInstructionContext.jsx';
 import DomTree from './components/DomTree.jsx';
 import NodeSelection from './components/NodeSelection.jsx';
+import { useConfigs } from "./context/ConfigContext.jsx"
 
 function Home() {
   const {
@@ -72,6 +73,12 @@ function Home() {
       console.error('scrapeHandler error:', err);
     }
   }
+
+  const { postConfig } = useConfigs()
+
+  const saveConfigHandler = async () => {
+    await postConfig("My first config")
+  };
 
   useEffect(() => {
     if (url === lastBuiltUrlRef.current) return;
@@ -150,9 +157,24 @@ function Home() {
                   Your Selection
                 </Typography>
               </Box>
+
+              {/* scrollable content */}
               <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
                 <NodeSelection />
               </Box>
+
+              {/* save config button */}
+              <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={saveConfigHandler}
+                  sx={{ borderRadius: 2, px: 4, py: 1 }}
+                >
+                  Save Config
+                </Button>
+              </Box>
+
             </Paper>
           </Box>
         </Box>

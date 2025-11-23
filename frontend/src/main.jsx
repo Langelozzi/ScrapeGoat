@@ -9,11 +9,11 @@ import '../index.css';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <UserProvider>
-      <ConfigProvider>
-        <RetrievalInstructionProvider>
+      <RetrievalInstructionProvider>
+        <ConfigProvider>
           <App/>
-        </RetrievalInstructionProvider>
-      </ConfigProvider>
+        </ConfigProvider>
+      </RetrievalInstructionProvider>
     </UserProvider>
   </StrictMode>
 )
