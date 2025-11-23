@@ -5,13 +5,24 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ImportConfig from './ImportConfig.jsx';
 import { useRetrievalInstructions } from '../context/RetrievalInstructionContext.jsx';
+import { useNavigate } from 'react-router-dom';
 
 function ConfigSelection({ placeholderTree }) {
   const { flow, setFlow } = useRetrievalInstructions();
   const [importedFile, setImportedFile] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleFlowChange = (_, val) => {
-    if (val) setFlow(val);
+    if (!val) return;
+
+    setFlow(val);
+
+    // 🔹 Auto-redirect when user selects "New Config"
+    if (val === "new") {
+      navigate('/configs/new', {
+        state: { placeholderRoot: placeholderTree }
+      });
+    }
   };
 
   return (
@@ -27,7 +38,12 @@ function ConfigSelection({ placeholderTree }) {
         </Stack>
 
         <Stack direction="row" justifyContent="center">
-          <ToggleButtonGroup value={flow} exclusive onChange={handleFlowChange} size="small">
+          <ToggleButtonGroup
+            value={flow}
+            exclusive
+            onChange={handleFlowChange}
+            size="small"
+          >
             <ToggleButton value="new">
               <AddCircleIcon sx={{ mr: 1 }} />
               New Config
@@ -46,7 +62,13 @@ function ConfigSelection({ placeholderTree }) {
         {flow === 'saved' && (
           <Typography
             variant="body2"
-            sx={{ opacity: 0.7, fontSize: '0.85rem', width: '100%', mx: 'auto', textAlign: 'center' }}
+            sx={{
+              opacity: 0.7,
+              fontSize: '0.85rem',
+              width: '100%',
+              mx: 'auto',
+              textAlign: 'center'
+            }}
           >
             Log in to see your saved configurations!
           </Typography>

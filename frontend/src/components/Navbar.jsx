@@ -1,4 +1,5 @@
-import { AppBar, Toolbar, Typography, Button, Box, Stack, Avatar, IconButton } from "@mui/material";
+import { useState } from "react";
+import { AppBar, Toolbar, Typography, Button, Box, Stack, Avatar } from "@mui/material";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
@@ -10,6 +11,10 @@ function Navbar() {
   const isAuthenticated = Boolean(user);
   const userName = user?.first_name || user?.email || 'Guest';
 
+  const [activeTab, setActiveTab] = useState(
+    location.pathname.startsWith("/configs") ? "configs" : "home"
+  );
+
   const handleAuthClick = async () => {
     if (isAuthenticated) {
       await Promise.resolve(logout?.());
@@ -19,7 +24,10 @@ function Navbar() {
     }
   };
 
-  const go = (path) => () => navigate(path);
+  const go = (path, tab) => () => {
+    if (tab) setActiveTab(tab);
+    navigate(path);
+  };
 
   return (
     <AppBar
@@ -32,7 +40,6 @@ function Navbar() {
       }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        {/* Left: Logo / Brand */}
         <Typography
           variant="h6"
           sx={{
@@ -40,28 +47,27 @@ function Navbar() {
             cursor: "pointer",
             letterSpacing: 0.5,
           }}
-          onClick={go("/")}
+          onClick={go("/", "home")}
         >
           ScrapeGoat
         </Typography>
 
-        {/* Center: Navigation links */}
         <Stack direction="row" spacing={3}>
           <Button
-            color={location.pathname === "/" ? "primary" : "inherit"}
-            onClick={go("/")}
+            color={activeTab === "home" ? "primary" : "inherit"}
+            onClick={go("/", "home")}
           >
             Home
           </Button>
+
           <Button
-            color={location.pathname.startsWith("/configs") ? "primary" : "inherit"}
-            onClick={go("/configs")}
+            color={activeTab === "configs" ? "primary" : "inherit"}
+            onClick={go("/configs", "configs")}
           >
             My Configs
           </Button>
         </Stack>
 
-        {/* Right: User info */}
         <Stack direction="row" spacing={2} alignItems="center">
           <Avatar sx={{ width: 32, height: 32 }} />
           <Typography variant="body2" noWrap>
@@ -77,70 +83,6 @@ function Navbar() {
         </Stack>
       </Toolbar>
     </AppBar>
-
-
-    // <Drawer
-    //   variant="permanent"
-    //   sx={{
-    //     width: 240,
-    //     '& .MuiDrawer-paper': {
-    //       width: 240,
-    //       boxSizing: 'border-box',
-    //       bgcolor: 'background.paper',
-    //       borderRight: '1px solid rgba(255,255,255,0.06)',
-    //     },
-    //   }}
-    // >
-    //   <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-    //     <Typography
-    //       variant="h6"
-    //       sx={{
-    //         fontWeight: 700,
-    //         textAlign: 'center',
-    //         display: 'block',
-    //         mx: -2,
-    //         px: 2,
-    //         letterSpacing: 0.5,
-    //       }}
-    //     >
-    //       ScrapeGoat
-    //     </Typography>
-
-    //     <Paper variant="outlined" sx={{ p: 1.5 }}>
-    //       <Stack direction="row" spacing={1.5} alignItems="center">
-    //         <Avatar sx={{ width: 36, height: 36 }} />
-    //         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-    //           <Typography variant="body2" noWrap>
-    //             {userName}
-    //           </Typography>
-    //         </Box>
-    //         <Button
-    //           size="small"
-    //           variant={isAuthenticated ? 'outlined' : 'contained'}
-    //           onClick={handleAuthClick}
-    //         >
-    //           {isAuthenticated ? 'Logout' : 'Login'}
-    //         </Button>
-    //       </Stack>
-    //     </Paper>
-
-    //     <List dense sx={{ mt: 0.5 }}>
-    //       <ListItemButton
-    //         selected={location.pathname === '/'}
-    //         onClick={go('/')}
-    //       >
-    //         <ListItemText primary="Home" />
-    //       </ListItemButton>
-
-    //       <ListItemButton
-    //         selected={location.pathname.startsWith('/configs')}
-    //         onClick={go('/configs')}
-    //       >
-    //         <ListItemText primary="My Configs" />
-    //       </ListItemButton>
-    //     </List>
-    //   </Box>
-    // </Drawer>
   );
 }
 

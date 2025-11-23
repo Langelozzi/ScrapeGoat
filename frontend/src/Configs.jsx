@@ -3,6 +3,7 @@ import { useTheme, alpha } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import { useConfigs } from "./context/ConfigContext";
 import ConfigListItem from "./components/configs/ConfigListItem";
+import { useNavigate } from "react-router-dom";
 
 function normalizeConfigs(configs) {
   if (!configs) return [];
@@ -32,9 +33,10 @@ function Configs() {
     setOpenMap((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const navigate = useNavigate();
+
   const handleNewConfig = () => {
-    console.log("New Config clicked");
-    // hook this up to your create-config flow later
+    navigate("/configs/new");
   };
 
   return (
@@ -52,7 +54,7 @@ function Configs() {
             margin: 0,
           }}
         >
-          Your Configs
+          My Configs
         </h2>
 
         <Button

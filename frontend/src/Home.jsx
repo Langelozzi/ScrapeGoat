@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ConfigSelection from './components/ConfigSelection.jsx';
 import { Box, Paper, Stack, Typography, TextField, Button } from '@mui/material';
 import { useRetrievalInstructions } from './context/RetrievalInstructionContext.jsx';
-import DomTree from './components/DomTree.jsx';
-import NodeSelection from './components/NodeSelection.jsx';
-import { useConfigs } from "./context/ConfigContext.jsx"
+import { useConfigs } from "./context/ConfigContext.jsx";
 
 function Home() {
   const {
@@ -18,7 +16,9 @@ function Home() {
     retrievalInstructions,
     lastBuiltUrlRef
   } = useRetrievalInstructions();
+
   const navigate = useNavigate();
+  const { postConfig } = useConfigs();
 
   const placeholderRoot = {
     id: 1,
@@ -27,28 +27,30 @@ function Home() {
       { id: 2, tag_type: 'h1', body: 'No Data Currently Displayed', hasData: true },
       { id: 3, tag_type: 'p', body: 'Please enter a URL', hasData: true },
     ],
-  }
+  };
 
   const buildTree = async (givenUrl) => {
     const targetUrl = givenUrl ?? url;
     try {
       const res = await fetch(
-        import.meta.env.VITE_API_URL + '/api/v1/scraper/dom-tree/build', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: targetUrl })
-      }
+        import.meta.env.VITE_API_URL + '/api/v1/scraper/dom-tree/build',
+        {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url: targetUrl })
+        }
       );
+
       const json = await res.json();
       setTree(json.root);
       lastBuiltUrlRef.current = targetUrl;
     } catch (err) {
       console.error('buildTree error:', err);
     }
-  }
+  };
 
   const scrapeHandler = async () => {
     try {
@@ -66,18 +68,17 @@ function Home() {
           }),
         }
       );
+
       const json = await res.json();
       console.log(json);
       navigate('/results', { state: { scrapeData: json } });
     } catch (err) {
       console.error('scrapeHandler error:', err);
     }
-  }
-
-  const { postConfig } = useConfigs()
+  };
 
   const saveConfigHandler = async () => {
-    await postConfig("My first config")
+    await postConfig("My first config");
   };
 
   useEffect(() => {
@@ -86,15 +87,21 @@ function Home() {
     return () => clearTimeout(t);
   }, [url]);
 
+  useEffect(() => {
+    if (flow === "new") {
+      setFlow("saved");
+    }
+  }, []); 
+
   return (
     <Box sx={{ p: 1 }}>
-      {/* Step 1: URL Input */}
       <Paper sx={{ p: { xs: 2.5, md: 3 }, mb: 2.5 }}>
         <Stack spacing={1} alignItems="center" textAlign="center">
           <Typography variant="overline" sx={{ letterSpacing: 1.2, opacity: 0.7, lineHeight: 1.2 }}>
             Step 1
           </Typography>
           <Typography variant="h6">Enter Website URL</Typography>
+
           <Box sx={{ width: '100%', maxWidth: 760, mx: 'auto' }}>
             <TextField
               fullWidth
@@ -116,71 +123,8 @@ function Home() {
         </Stack>
       </Paper>
 
-      {/* Step 2: Config Selection */}
       <ConfigSelection placeholderTree={placeholderRoot} />
 
-      {/* Step 3: DOM Tree + Node Selection (side by side) */}
-      {flow === 'new' && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 2,
-            height: 'calc(100vh - 250px)',
-            mb: 2.5,
-          }}
-        >
-          {/* DOM Tree - 2/3 width */}
-          <Box sx={{ flex: 2, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <DomTree placeholderRoot={placeholderRoot} />
-          </Box>
-
-          {/* Node Selection - 1/3 width */}
-          <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <Paper
-              sx={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-              }}
-            >
-              <Box
-                sx={{
-                  px: 3,
-                  py: 2,
-                  borderBottom: '1px solid rgba(255,255,255,0.08)',
-                  flexShrink: 0,
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Your Selection
-                </Typography>
-              </Box>
-
-              {/* scrollable content */}
-              <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
-                <NodeSelection />
-              </Box>
-
-              {/* save config button */}
-              <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  onClick={saveConfigHandler}
-                  sx={{ borderRadius: 2, px: 4, py: 1 }}
-                >
-                  Save Config
-                </Button>
-              </Box>
-
-            </Paper>
-          </Box>
-        </Box>
-      )}
-
-      {/* Step 3 */}
       <Paper sx={{ p: { xs: 2.5, md: 3 }, mt: 3 }}>
         <Stack spacing={1.5} alignItems="center" textAlign="center">
           <Typography
@@ -189,6 +133,7 @@ function Home() {
           >
             Step 3
           </Typography>
+
           <Typography variant="h6">Run Scrape</Typography>
 
           <Button

@@ -5,7 +5,7 @@ const RetrievalInstructionContext = createContext(null)
 export const RetrievalInstructionProvider = ({ children }) => {
   const [url, setUrl] = useState("")
   const [tree, setTree] = useState(null)
-  const [flow, setFlow] = useState("new")
+  const [flow, setFlow] = useState("saved")
   const [retrievalInstructions, setRetrievalInstructions] = useState([])
   const lastBuiltUrlRef = useRef("")
 
