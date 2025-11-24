@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { useTheme, alpha } from "@mui/material/styles"
+import { useState } from "react";
+import { useTheme, alpha } from "@mui/material/styles";
 import {
   IconButton,
   Button,
@@ -8,35 +8,52 @@ import {
   DialogContent,
   DialogActions,
   Typography,
-} from "@mui/material"
-import EditIcon from "@mui/icons-material/Edit"
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
-import { useNavigate } from "react-router-dom"
-import { useConfigs } from "../context/ConfigContext"
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { useNavigate } from "react-router-dom";
+import { useConfigs } from "../context/ConfigContext";
+import { useRetrievalInstructions } from "../context/RetrievalInstructionContext.jsx";
 
-function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
-  const theme = useTheme()
-  const navigate = useNavigate()
-  const { deleteConfig } = useConfigs()
-  const [confirmOpen, setConfirmOpen] = useState(false)
+function ConfigListItem({
+  cfg,
+  index,
+  isOpen,
+  onToggle,
+  onEdit,
+  // Home passes this as true so deletes there redirect to /configs/new.
+  redirectOnDeleteToNewConfig = false,
+}) {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const { deleteConfig } = useConfigs();
+  const { resetConfig } = useRetrievalInstructions();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const name = cfg?.name || "<untitled>"
-  const url = cfg?.url || ""
-  const description = cfg?.description || ""
-  const retrievalInstructions = cfg?.retrieval_instructions || []
-  const isSaved = cfg?.saved !== false // treat undefined as saved
+  const name = cfg?.name || "<untitled>";
+  const url = cfg?.url || "";
+  const description = cfg?.description || "";
+  const retrievalInstructions = cfg?.retrieval_instructions || [];
+  const isSaved = cfg?.saved !== false; // treat undefined as saved
 
   const handleDeleteConfirm = async () => {
-    if (!cfg?.id) {
-      setConfirmOpen(false)
-      return
+    // If this item represents an actual saved config with an id,
+    // delete it from the backend.
+    if (cfg?.id && isSaved) {
+      await deleteConfig(cfg.id);
     }
-    await deleteConfig(cfg.id)
-    setConfirmOpen(false)
-  }
+
+    // For any "saved" config (including the Home pseudo-config),
+    // clear retrieval context and optionally redirect.
+    if (isSaved) {
+      resetConfig();
+    }
+
+    setConfirmOpen(false);
+  };
 
   const handleEditClick = () => {
-    if (onEdit) onEdit(cfg)
+    if (onEdit) onEdit(cfg);
 
     if (!isSaved) {
       // UNSAVED CONFIG:
@@ -44,15 +61,14 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
       // so ConfigEditor can show "Continue without saving"
       navigate("/configs/new", {
         state: {
-          from: "/",         // what ConfigEditor already expects
-          // placeholderRoot could also be passed here if needed later
+          from: "/",
         },
-      })
+      });
     } else {
       // SAVED CONFIG: normal edit flow
-      navigate("/configs/edit")
+      navigate("/configs/edit");
     }
-  }
+  };
 
   return (
     <>
@@ -64,13 +80,13 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
           fontSize: 14,
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = theme.palette.primary.main
+          e.currentTarget.style.borderColor = theme.palette.primary.main;
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.borderColor = alpha(
             theme.palette.divider,
             0.6
-          )
+          );
         }}
       >
         <div
@@ -160,9 +176,9 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
             {retrievalInstructions.length > 0 && (
               <div className="space-y-3">
                 {retrievalInstructions.map((inst, idx) => {
-                  const preview = inst._preview || inst.preview || {}
-                  const currentKey = inst?.output?.key ?? ""
-                  const currentLocation = inst?.output?.location ?? "body"
+                  const preview = inst._preview || inst.preview || {};
+                  const currentKey = inst?.output?.key ?? "";
+                  const currentLocation = inst?.output?.location ?? "body";
 
                   return (
                     <div
@@ -186,30 +202,30 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
                           {idx + 1}
                         </div>
 
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span
-                              className="font-mono text-base leading-none"
-                              style={{ color: theme.palette.primary.main }}
-                            >
-                              &lt;
-                              {preview.tag_type || inst.output?.key || "node"}
-                              &gt;
-                            </span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span
+                            className="font-mono text-base leading-none"
+                            style={{ color: theme.palette.primary.main }}
+                          >
+                            &lt;
+                            {preview.tag_type || inst.output?.key || "node"}
+                            &gt;
+                          </span>
 
-                            <span
-                              className="text-xs px-2 py-0.5 rounded-md"
-                              style={{
-                                backgroundColor: alpha(
-                                  theme.palette.primary.main,
-                                  0.1
-                                ),
-                                color: theme.palette.primary.main,
-                                fontWeight: 500,
-                              }}
-                            >
-                              {currentLocation}
-                            </span>
-                          </div>
+                          <span
+                            className="text-xs px-2 py-0.5 rounded-md"
+                            style={{
+                              backgroundColor: alpha(
+                                theme.palette.primary.main,
+                                0.1
+                              ),
+                              color: theme.palette.primary.main,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {currentLocation}
+                          </span>
+                        </div>
                       </div>
 
                       {currentKey && (
@@ -229,7 +245,7 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
                         </div>
                       )}
                     </div>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -241,7 +257,8 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
         <DialogTitle>Delete config?</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
-            Are you sure you want to delete "{name}"? This action cannot be undone.
+            Are you sure you want to delete "{name}"? This action cannot be
+            undone.
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -250,7 +267,7 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
         </DialogActions>
       </Dialog>
     </>
-  )
+  );
 }
 
-export default ConfigListItem
+export default ConfigListItem;

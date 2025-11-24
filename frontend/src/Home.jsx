@@ -22,14 +22,8 @@ function Home() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const {
-    url,
-    name,
-    description,
-    flow,
-    setFlow,
-    retrievalInstructions,
-  } = useRetrievalInstructions();
+  const { url, name, description, flow, setFlow, retrievalInstructions } =
+    useRetrievalInstructions();
 
   const { postConfig } = useConfigs();
   const [importedFile, setImportedFile] = useState(null);
@@ -85,22 +79,21 @@ function Home() {
 
   const handleFlowChange = (_, val) => {
     if (!val) return;
-
     setFlow(val);
-
-    if (val === "new") {
-      navigate("/configs/new", {
-        state: { placeholderRoot, from: "/" },
-      });
-    }
   };
 
-  useEffect(() => {
-    if (location.state?.fromConfigNew) {
+  const handleNewConfigClick = () => {
+    // keep flow in sync
+    if (flow !== "new") {
       setFlow("new");
-      navigate(".", { replace: true, state: {} });
     }
-  }, [location.state, navigate, setFlow]);
+
+    // always allow clicking New Config to open the editor,
+    // even if it's already the active flow
+    navigate("/configs/new", {
+      state: { placeholderRoot, from: "/" },
+    });
+  };
 
   // Build a pseudo-config from context for displaying on Home
   const hasCurrentConfig =
@@ -116,6 +109,30 @@ function Home() {
     retrieval_instructions: retrievalInstructions,
     saved: location.state?.fromConfigNew,
   };
+
+  // --- EFFECTS ---
+
+  // When coming back from /configs/new after saving/working on a config,
+  // ensure "New Config" is selected.
+  useEffect(() => {
+    if (location.state?.fromConfigNew) {
+      setFlow("new");
+      navigate(".", { replace: true, state: {} });
+    }
+  }, [location.state, navigate, setFlow]);
+
+  // On initial/plain page load with no config, don't pre-select any flow.
+  useEffect(() => {
+    if (!location.state && !hasCurrentConfig && flow !== null) {
+      setFlow(null);
+    }
+  }, [location.state, hasCurrentConfig, flow, setFlow]);
+
+  // Effective value for the toggle group:
+  // - If there is no current config and flow === "new", show *nothing* selected.
+  // - Otherwise, just use whatever flow is in context (may be "new" or "saved").
+  const effectiveFlow =
+    !hasCurrentConfig && flow === "new" ? null : flow ?? null;
 
   return (
     <Box
@@ -164,12 +181,12 @@ function Home() {
           {/* Toggle buttons */}
           <Stack direction="row" justifyContent="center">
             <ToggleButtonGroup
-              value={flow}
+              value={effectiveFlow}
               exclusive
               onChange={handleFlowChange}
               size="small"
             >
-              <ToggleButton value="new">
+              <ToggleButton value="new" onClick={handleNewConfigClick}>
                 <AddCircleIcon sx={{ mr: 1 }} />
                 New Config
               </ToggleButton>
@@ -182,18 +199,20 @@ function Home() {
           </Stack>
 
           {/* Recently created config (from in-progress state) */}
-          {flow === "new" && hasCurrentConfig && (
+          {effectiveFlow === "new" && hasCurrentConfig && (
             <Box sx={{ mt: 1 }}>
               <ConfigListItem
                 cfg={currentCfg}
                 index={0}
                 isOpen={homeItemOpen}
                 onToggle={() => setHomeItemOpen((prev) => !prev)}
+                // 🔥 tell the item that deletes from Home should open /configs/new
+                redirectOnDeleteToNewConfig
               />
             </Box>
           )}
 
-          {flow === "saved" && (
+          {effectiveFlow === "saved" && (
             <Typography
               variant="body2"
               sx={{

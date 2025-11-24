@@ -5,7 +5,7 @@ const RetrievalInstructionContext = createContext(null);
 export const RetrievalInstructionProvider = ({ children }) => {
   const [url, setUrl] = useState("");
   const [tree, setTree] = useState(null);
-  const [flow, setFlow] = useState("saved");
+  const [flow, setFlow] = useState(null);
   const [name, setName] = useState(null);
   const [description, setDescription] = useState(null);
   const [retrievalInstructions, setRetrievalInstructions] = useState([]);
@@ -33,6 +33,17 @@ export const RetrievalInstructionProvider = ({ children }) => {
     setRetrievalInstructions([]);
   };
 
+  // Reset everything about the "current config"
+  const resetConfig = () => {
+    setUrl("");
+    setTree(null);
+    setFlow("new");
+    setName(null);
+    setDescription(null);
+    setRetrievalInstructions([]);
+    lastBuiltUrlRef.current = "";
+  };
+
   const value = {
     url,
     setUrl,
@@ -50,6 +61,7 @@ export const RetrievalInstructionProvider = ({ children }) => {
     deleteInstruction,
     setKey,
     clearInstructions,
+    resetConfig,
     lastBuiltUrlRef,
   };
 
