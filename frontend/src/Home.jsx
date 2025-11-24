@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
@@ -80,6 +80,11 @@ function Home() {
   const handleFlowChange = (_, val) => {
     if (!val) return;
     setFlow(val);
+
+    if (val === "saved") {
+      // When user chooses "Saved Config", go to selection screen
+      navigate("/configs/select");
+    }
   };
 
   const handleNewConfigClick = () => {
@@ -107,7 +112,9 @@ function Home() {
     url,
     description,
     retrieval_instructions: retrievalInstructions,
-    saved: location.state?.fromConfigNew,
+    // treat selected configs from /configs/select as "saved",
+    // and in-progress "new" configs as unsaved
+    saved: flow === "saved",
   };
 
   // --- EFFECTS ---
@@ -122,7 +129,12 @@ function Home() {
   }, [location.state, navigate, setFlow]);
 
   // On initial/plain page load with no config, don't pre-select any flow.
+  // Run this only once, on first mount.
+  const didRunInitialFlowReset = useRef(false);
   useEffect(() => {
+    if (didRunInitialFlowReset.current) return;
+    didRunInitialFlowReset.current = true;
+
     if (!location.state && !hasCurrentConfig && flow !== null) {
       setFlow(null);
     }
@@ -198,21 +210,20 @@ function Home() {
             </ToggleButtonGroup>
           </Stack>
 
-          {/* Recently created config (from in-progress state) */}
-          {effectiveFlow === "new" && hasCurrentConfig && (
+          {/* Current config (either in-progress "new" OR selected "saved") */}
+          {hasCurrentConfig && (
             <Box sx={{ mt: 1 }}>
               <ConfigListItem
                 cfg={currentCfg}
                 index={0}
                 isOpen={homeItemOpen}
                 onToggle={() => setHomeItemOpen((prev) => !prev)}
-                // 🔥 tell the item that deletes from Home should open /configs/new
-                redirectOnDeleteToNewConfig
               />
             </Box>
           )}
 
-          {effectiveFlow === "saved" && (
+          {/* Saved flow but nothing selected yet */}
+          {effectiveFlow === "saved" && !hasCurrentConfig && (
             <Typography
               variant="body2"
               sx={{

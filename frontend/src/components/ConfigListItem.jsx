@@ -23,11 +23,21 @@ function ConfigListItem({
   onEdit,
   // Home passes this as true so deletes there redirect to /configs/new.
   redirectOnDeleteToNewConfig = false,
+  // /configs/select passes this as true to show "Select" instead of Edit/Delete
+  isSelectMode = false,
 }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const { deleteConfig } = useConfigs();
-  const { resetConfig } = useRetrievalInstructions();
+  const {
+    resetConfig,
+    setUrl,
+    setName,
+    setDescription,
+    setRetrievalInstructions,
+    setFlow,
+    setTree,
+  } = useRetrievalInstructions();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const name = cfg?.name || "<untitled>";
@@ -73,6 +83,24 @@ function ConfigListItem({
         },
       });
     }
+  };
+
+  const handleSelectClick = () => {
+    // Load this config into retrieval instructions context
+    resetConfig();
+
+    setUrl(cfg?.url || "");
+    setName(cfg?.name || null);
+    setDescription(cfg?.description || null);
+    setRetrievalInstructions(cfg?.retrieval_instructions || []);
+    setFlow("saved");
+
+    if (cfg?.tree) {
+      setTree(cfg.tree);
+    }
+
+    // Go back to Home
+    navigate("/", { replace: true });
   };
 
   return (
@@ -137,29 +165,49 @@ function ConfigListItem({
             className="flex items-center gap-2"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Red "not saved" label for unsaved configs */}
-            {!isSaved && (
-              <span
-                style={{
-                  color: theme.palette.error.main,
-                  fontSize: 12,
-                  fontWeight: 600,
+            {isSelectMode ? (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleSelectClick}
+                sx={{
+                  borderRadius: 999,
+                  textTransform: "none",
+                  paddingInline: 2,
                 }}
               >
-                not saved
-              </span>
-            )}
+                Select <span style={{ marginLeft: 4 }}>→</span>
+              </Button>
+            ) : (
+              <>
+                {/* Red "not saved" label for unsaved configs */}
+                {!isSaved && (
+                  <span
+                    style={{
+                      color: theme.palette.error.main,
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}
+                  >
+                    not saved
+                  </span>
+                )}
 
-            {/* Edit button always visible */}
-            <IconButton size="small" onClick={handleEditClick}>
-              <EditIcon fontSize="small" />
-            </IconButton>
+                {/* Edit button always visible */}
+                <IconButton size="small" onClick={handleEditClick}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
 
-            {/* Delete button only if saved */}
-            {isSaved && (
-              <IconButton size="small" onClick={() => setConfirmOpen(true)}>
-                <DeleteOutlineIcon fontSize="small" />
-              </IconButton>
+                {/* Delete button only if saved */}
+                {isSaved && (
+                  <IconButton
+                    size="small"
+                    onClick={() => setConfirmOpen(true)}
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </IconButton>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -189,13 +237,15 @@ function ConfigListItem({
                     <div
                       key={idx}
                       className="px-4 py-3 rounded-lg border flex flex-wrap items-center gap-4"
-                      style={{
-                        borderColor: alpha(theme.palette.divider, 0.7),
-                        backgroundColor: alpha(
-                          theme.palette.background.default,
-                          0.7
-                        ),
-                      }}
+                      style={
+                        {
+                          borderColor: alpha(theme.palette.divider, 0.7),
+                          backgroundColor: alpha(
+                            theme.palette.background.default,
+                            0.7
+                          ),
+                        }
+                      }
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div

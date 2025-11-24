@@ -82,6 +82,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/configs" element={<Configs />} />
+            <Route path="/configs/select" element={<Configs />} />
             <Route path="/configs/new" element={<ConfigEditor />} />
             <Route path="/configs/edit" element={<ConfigEditor />} />
             <Route path="/results" element={<Results />} />
