@@ -53,8 +53,48 @@ export const ConfigProvider = ({ children }) => {
     }
   }
 
+  const updateConfig = async (id, payload) => {
+    try {
+      const res = await fetch(`${API_URL}/api/v1/configs/${id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) throw new Error(`Failed to update config: ${res.status}`)
+
+      const updated = await res.json()
+      await fetchConfigs()
+      return updated
+    } catch (err) {
+      console.error("Config PUT failed:", err)
+      throw err
+    }
+  }
+
+  const deleteConfig = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/api/v1/configs/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+
+      if (!res.ok) throw new Error(`Failed to delete config: ${res.status}`)
+
+      const result = await res.json()
+      await fetchConfigs()
+      return result
+    } catch (err) {
+      console.error("Config DELETE failed:", err)
+      throw err
+    }
+  }
+
   return (
-    <ConfigContext.Provider value={{ configs, postConfig }}>
+    <ConfigContext.Provider value={{ configs, postConfig, updateConfig, deleteConfig }}>
       {children}
     </ConfigContext.Provider>
   )
