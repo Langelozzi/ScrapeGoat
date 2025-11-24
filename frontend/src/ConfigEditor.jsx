@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Paper,
@@ -9,6 +9,7 @@ import {
   Stack,
   Divider,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DomTree from "./components/DomTree.jsx";
 import NodeSelection from "./components/NodeSelection.jsx";
 import { useConfigs } from "./context/ConfigContext.jsx";
@@ -17,6 +18,7 @@ import { useTheme } from "@mui/material/styles";
 
 function ConfigEditor({ placeholderRoot }) {
   const theme = useTheme();
+  const navigate = useNavigate();
   const location = useLocation();
   const { postConfig } = useConfigs();
 
@@ -103,8 +105,7 @@ function ConfigEditor({ placeholderRoot }) {
     await postConfig(name ?? "", description ?? "", retrievalInstructions);
   };
 
-  const continueWithoutSaving = () => {
-  };
+  const continueWithoutSaving = () => {};
 
   return (
     <Box
@@ -116,16 +117,38 @@ function ConfigEditor({ placeholderRoot }) {
         p: 2,
       }}
     >
-      <h2
-        style={{
-          fontSize: "1.5rem",
-          fontWeight: 600,
-          color: theme.palette.text.primary,
-          margin: 0,
+      {/* Title row with back button */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+          mb: 0.5,
         }}
       >
-        New Config
-      </h2>
+        <Button
+          variant="text"
+          onClick={() => navigate(-1)}
+          sx={{
+            minWidth: 0,
+            p: 0.5,
+            color: theme.palette.text.primary,
+          }}
+        >
+          <ArrowBackIcon />
+        </Button>
+
+        <h2
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 600,
+            color: theme.palette.text.primary,
+            margin: 0,
+          }}
+        >
+          New Config
+        </h2>
+      </Box>
 
       <Paper sx={{ p: { xs: 2.5, md: 3 }, mb: 2 }}>
         <Stack spacing={1} alignItems="center" textAlign="center">
