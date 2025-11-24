@@ -15,12 +15,14 @@ import NodeSelection from "./components/NodeSelection.jsx";
 import { useConfigs } from "./context/ConfigContext.jsx";
 import { useRetrievalInstructions } from "./context/RetrievalInstructionContext.jsx";
 import { useTheme } from "@mui/material/styles";
+import { useUser } from "./context/UserContext.jsx"; // ✅ added
 
 function ConfigEditor() {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const { postConfig, updateConfig } = useConfigs();
+  const { user } = useUser(); // ✅ added
 
   const {
     url,
@@ -176,7 +178,15 @@ function ConfigEditor() {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 3, pt: 1.5, pb: 1, borderBottom: '1px solid rgba(255,255,255,0.08)', mb: 2 }}>
+        <Box
+          sx={{
+            px: 3,
+            pt: 1.5,
+            pb: 1,
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            mb: 2,
+          }}
+        >
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Website URL
           </Typography>
@@ -251,7 +261,8 @@ function ConfigEditor() {
             display: "flex",
             gap: 3,
             alignItems: "stretch",
-            minHeight: 160,
+            minHeight: user ? 160 : "auto",
+            py: user ? 0 : 1.5,
           }}
         >
           {/* Left side */}
@@ -265,47 +276,78 @@ function ConfigEditor() {
               pr: cameFromHome ? 2 : 0,
             }}
           >
-            {/* Centered fields */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                width: "100%",
-              }}
-            >
-              <Stack spacing={2} sx={{ maxWidth: 500, width: "100%" }}>
-                <TextField
-                  label="Config Name"
-                  size="small"
-                  fullWidth
-                  value={name ?? ""}
-                  onChange={(e) => setName(e.target.value)}
-                />
+            {user ? (
+              <>
+                {/* Centered fields */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Stack spacing={2} sx={{ maxWidth: 500, width: "100%" }}>
+                    <TextField
+                      label="Config Name"
+                      size="small"
+                      fullWidth
+                      value={name ?? ""}
+                      onChange={(e) => setName(e.target.value)}
+                    />
 
-                <TextField
-                  label="Description"
-                  size="small"
-                  fullWidth
-                  multiline
-                  minRows={2}
-                  value={description ?? ""}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </Stack>
-            </Box>
+                    <TextField
+                      label="Description"
+                      size="small"
+                      fullWidth
+                      multiline
+                      minRows={2}
+                      value={description ?? ""}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </Stack>
+                </Box>
 
-            {/* Save button centered */}
-            <Box
-              sx={{ display: "flex", justifyContent: "center", width: "100%" }}
-            >
-              <Button
-                variant="contained"
-                onClick={saveAndContinue}
-                sx={{ width: "fit-content" }}
+                {/* Save button centered */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    onClick={saveAndContinue}
+                    sx={{ width: "fit-content" }}
+                  >
+                    Save and Continue
+                  </Button>
+                </Box>
+              </>
+            ) : (
+              // When not logged in: show login CTA instead of fields + save
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  flex: 1,
+                }}
               >
-                Save and Continue
-              </Button>
-            </Box>
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    navigate("/login", {
+                      state: { from: location.pathname },
+                    })
+                  }
+                  sx={{ px: 4 }}
+                >
+                  Log in to save your progress
+                </Button>
+              </Box>
+            )}
           </Box>
 
           {/* Right side (only if from "/") */}

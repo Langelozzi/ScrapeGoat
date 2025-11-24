@@ -1,7 +1,19 @@
-import { useState } from 'react';
-import { Box, Paper, TextField, Typography, Button, Tabs, Tab, Divider, Alert, Stack } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import {
+  Box,
+  Paper,
+  TextField,
+  Typography,
+  Button,
+  Tabs,
+  Tab,
+  Divider,
+  Alert,
+  Stack,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
+import { useTheme, alpha } from "@mui/material/styles";
 import { useUser } from "./context/UserContext.jsx";
 
 function Login() {
@@ -11,32 +23,32 @@ function Login() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const { login, register, error, loading } = useUser();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (mode === "login") await login(email, password)
-    else await register(email, password, firstName, lastName)
+    if (mode === "login") await login(email, password);
+    else await register(email, password, firstName, lastName);
 
-    navigate("/")
-  }
+    navigate("/");
+  };
 
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        height: "90vh",
+        overflow: "hidden",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #0a0f0a 0%, #112a17 100%)",
-        color: "white",
-        p: 3,
+        color: "text.primary",
+        bgcolor: "background.default",
       }}
     >
       <Paper
-        elevation={10}
         sx={{
           p: { xs: 4, sm: 6 },
           width: "100%",
@@ -44,7 +56,7 @@ function Login() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          bgcolor: "background.light",
+          bgcolor: "background.paper",
           gap: 3,
         }}
       >
@@ -68,10 +80,18 @@ function Login() {
               },
             }}
           >
-            <Tab label="Log In" value="login" sx={{ flex: 1, fontSize: 16 }} />
-            <Tab label="Register" value="register" sx={{ flex: 1, fontSize: 16 }} />
+            <Tab
+              label="Log In"
+              value="login"
+              sx={{ flex: 1, fontSize: 16, color: "text.secondary" }}
+            />
+            <Tab
+              label="Register"
+              value="register"
+              sx={{ flex: 1, fontSize: 16, color: "text.secondary" }}
+            />
           </Tabs>
-          <Divider sx={{ mt: 1 }} />
+          <Divider sx={{ mt: 1, borderColor: "divider" }} />
         </Box>
 
         {/* Form */}
@@ -97,13 +117,15 @@ function Login() {
                 variant="outlined"
                 slotProps={{
                   input: {
-                    sx: {
-                      bgcolor: "#f0fff5",  // pale mint background
-                      color: "#001a00",    // near-black text
-                    },
+                    sx: (theme) => ({
+                      bgcolor: theme.palette.background.default,
+                      color: theme.palette.text.primary,
+                    }),
                   },
                   inputLabel: {
-                    sx: { color: "#2e7d32" }, // medium green label
+                    sx: (theme) => ({
+                      color: theme.palette.text.secondary,
+                    }),
                   },
                 }}
               />
@@ -115,13 +137,15 @@ function Login() {
                 fullWidth
                 slotProps={{
                   input: {
-                    sx: {
-                      bgcolor: "#f0fff5",  // pale mint background
-                      color: "#001a00",    // near-black text
-                    },
+                    sx: (theme) => ({
+                      bgcolor: theme.palette.background.default,
+                      color: theme.palette.text.primary,
+                    }),
                   },
                   inputLabel: {
-                    sx: { color: "#2e7d32" }, // medium green label
+                    sx: (theme) => ({
+                      color: theme.palette.text.secondary,
+                    }),
                   },
                 }}
               />
@@ -137,13 +161,15 @@ function Login() {
             fullWidth
             slotProps={{
               input: {
-                sx: {
-                  bgcolor: "#f0fff5",  // pale mint background
-                  color: "#001a00",    // near-black text
-                },
+                sx: (theme) => ({
+                  bgcolor: theme.palette.background.default,
+                  color: theme.palette.text.primary,
+                }),
               },
               inputLabel: {
-                sx: { color: "#2e7d32" }, // medium green label
+                sx: (theme) => ({
+                  color: theme.palette.text.secondary,
+                }),
               },
             }}
           />
@@ -157,13 +183,15 @@ function Login() {
             fullWidth
             slotProps={{
               input: {
-                sx: {
-                  bgcolor: "#f0fff5",  // pale mint background
-                  color: "#001a00",    // near-black text
-                },
+                sx: (theme) => ({
+                  bgcolor: theme.palette.background.default,
+                  color: theme.palette.text.primary,
+                }),
               },
               inputLabel: {
-                sx: { color: "#2e7d32" }, // medium green label
+                sx: (theme) => ({
+                  color: theme.palette.text.secondary,
+                }),
               },
             }}
           />
@@ -171,12 +199,12 @@ function Login() {
           {error && (
             <Alert
               severity="error"
-              sx={{
-                bgcolor: "rgba(255,0,0,0.1)",
-                color: "#ff6b6b",
-                border: "1px solid rgba(255,0,0,0.2)",
+              sx={(theme) => ({
+                bgcolor: alpha(theme.palette.error.main, 0.12),
+                color: theme.palette.error.main,
+                border: `1px solid ${alpha(theme.palette.error.main, 0.3)}`,
                 fontSize: 14,
-              }}
+              })}
             >
               {error}
             </Alert>
@@ -187,19 +215,19 @@ function Login() {
             variant="contained"
             disabled={loading}
             fullWidth
-            sx={{
+            sx={(theme) => ({
               mt: 1,
               py: 1.3,
               fontSize: "1rem",
               borderRadius: 3,
               textTransform: "none",
               fontWeight: 700,
-              background: "linear-gradient(90deg, #00c853, #33ff99)",
-              color: "#000",
+              background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+              color: theme.palette.primary.contrastText,
               "&:hover": {
-                background: "linear-gradient(90deg, #00e676, #66ffb2)",
+                background: `linear-gradient(90deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
               },
-            }}
+            })}
           >
             {loading ? "Please wait..." : mode === "login" ? "Log In" : "Register"}
           </Button>
@@ -208,20 +236,20 @@ function Login() {
             variant="outlined"
             startIcon={<ArrowBack />}
             onClick={() => navigate("/")}
-            sx={{
+            sx={(theme) => ({
               mt: 1,
               py: 1.2,
               fontSize: "0.95rem",
               borderRadius: 3,
               textTransform: "none",
               fontWeight: 600,
-              color: "#66ffb2",
-              borderColor: "rgba(102,255,178,0.4)",
+              color: theme.palette.primary.main,
+              borderColor: alpha(theme.palette.primary.main, 0.5),
               "&:hover": {
-                borderColor: "#66ffb2",
-                backgroundColor: "rgba(102,255,178,0.05)",
+                borderColor: theme.palette.primary.main,
+                backgroundColor: alpha(theme.palette.primary.main, 0.08),
               },
-            }}
+            })}
           >
             Back to Home
           </Button>

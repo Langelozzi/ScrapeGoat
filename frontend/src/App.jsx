@@ -16,9 +16,8 @@ const theme = createTheme({
       paper: "#3c4d49",
     },
     primary: {
-      main: "#dbfffc",
-      light: "#8BC782",
-      dark: "#4E7B44",
+      main: "#c7fffa",
+      dark: "#b7d7d3",
       contrastText: "#000000ff",
     },
     secondary: {

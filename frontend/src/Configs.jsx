@@ -7,6 +7,7 @@ import { useConfigs } from "./context/ConfigContext";
 import ConfigListItem from "./components/ConfigListItem";
 import { useNavigate, useLocation } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useUser } from "./context/UserContext";
 
 function normalizeConfigs(configs) {
   if (!configs) return [];
@@ -28,6 +29,7 @@ function normalizeConfigs(configs) {
 function Configs() {
   const theme = useTheme();
   const { configs } = useConfigs();
+  const { user } = useUser();
   const [openMap, setOpenMap] = useState({});
 
   const parsedConfigs = normalizeConfigs(configs);
@@ -43,6 +45,77 @@ function Configs() {
   const handleNewConfig = () =>
     navigate("/configs/new", { state: { from: "/configs" } });
 
+  // -------------------------------
+  // NOT LOGGED IN VIEW
+  // -------------------------------
+  if (!user) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          p: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: "1400px",
+            mx: "auto",
+          }}
+        >
+          {/* Title */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: 600,
+                color: theme.palette.text.primary,
+                margin: 0,
+              }}
+            >
+              My Configs
+            </h2>
+          </Box>
+
+          {/* Container that auto-sizes vertically */}
+          <Paper
+            elevation={0}
+            sx={{
+              width: "100%",
+              px: 4,
+              py: 3,
+              borderRadius: 2,
+              backgroundColor: theme.palette.background.paper,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="contained"
+              onClick={() => navigate("/login")}
+              sx={{ borderRadius: 999, textTransform: "none" }}
+            >
+              Login to view your configs
+            </Button>
+          </Paper>
+        </Box>
+      </Box>
+    );
+  }
+
+  // -------------------------------
+  // LOGGED IN VIEW
+  // -------------------------------
   return (
     <Box
       sx={{
@@ -52,7 +125,7 @@ function Configs() {
         p: 2,
       }}
     >
-      {/* Centered content wrapper to match ConfigEditor feel */}
+      {/* Center layout wrapper */}
       <Box
         sx={{
           width: "100%",
@@ -60,7 +133,7 @@ function Configs() {
           mx: "auto",
         }}
       >
-        {/* Top bar (outside the colored Paper) */}
+        {/* Header */}
         <Box
           sx={{
             display: "flex",
@@ -108,7 +181,7 @@ function Configs() {
           )}
         </Box>
 
-        {/* Colored card area (list only) */}
+        {/* Paper auto-sizes vertically */}
         <Paper
           elevation={0}
           sx={{
