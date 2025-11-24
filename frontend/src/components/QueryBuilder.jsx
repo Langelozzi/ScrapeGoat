@@ -12,11 +12,14 @@ import {
   Select,
   FormControl,
   InputLabel,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
   Box
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export default function QueryBuilder({ open, onClose, onSubmit, initialTag }) {
+export default function QueryBuilder({ open, onClose, onSubmit, initialTag, outputType, setOutputType }) {
   const [action, setAction] = useState("SCRAPE");
   const [amount, setAmount] = useState("1");
   const [tag, setTag] = useState(initialTag || "");
@@ -245,6 +248,23 @@ export default function QueryBuilder({ open, onClose, onSubmit, initialTag }) {
         <Button variant="outlined" onClick={addFlag}>
           + Add Flag
         </Button>
+
+        <Box sx={{ mt: 3 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Output Type
+          </Typography>
+
+          <FormControl>
+            <RadioGroup
+              row
+              value={outputType}
+              onChange={(e) => setOutputType(e.target.value)}
+            >
+              <FormControlLabel value="body" control={<Radio />} label="Body" />
+              <FormControlLabel value="raw" control={<Radio />} label="Raw" />
+            </RadioGroup>
+          </FormControl>
+        </Box>
       </DialogContent>
 
       <DialogActions>

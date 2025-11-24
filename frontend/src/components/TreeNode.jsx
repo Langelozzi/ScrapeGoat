@@ -15,6 +15,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
   const [expanded, setExpanded] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [openBuilder, setOpenBuilder] = useState(false);
+  const [outputType, setOutputType] = useState("body");
 
   if (!node) return null;
 
@@ -184,6 +185,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
         onClose={() => setMenuAnchor(null)}
         node={node}
         onStartCustomQuery={() => setOpenBuilder(true)}
+        onSelectOutputType={setOutputType}
 
         onAddAttribute={(attr) => {
           const value = node.html_attributes?.[attr];
@@ -200,7 +202,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
 
           addToInstructions({
             node_query: query,
-            output: { location: cleanAttr, key: node.tag_type },
+            output: { location: outputType, key: node.tag_type },
             flags: {},
             _preview: { id: node.id, attribute: cleanAttr, value }
           });
@@ -208,8 +210,6 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
 
         onQuickQuery={(type) => {
           let query = "";
-          let location = "";
-
           if (type === "SCRAPE_THIS_NODE") {
             query = buildQuery({
               action: "SCRAPE",
@@ -219,17 +219,15 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
                 { type: "POSITION", value: node.position }
               ]
             });
-            location = node.tag_type;
           }
 
           if (type === "SCRAPE_ALL_OF_TAG") {
             query = buildQuery({ action: "SCRAPE", amount: "", tag: node.tag_type });
-            location = "bulk";
           }
 
           addToInstructions({
             node_query: query,
-            output: { location: location, key: node.tag_type },
+            output: { location: outputType, key: node.tag_type },
             flags: {}
           });
         }}
@@ -239,15 +237,17 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
         open={openBuilder}
         onClose={() => setOpenBuilder(false)}
         initialTag={node.tag_type}
-        onSubmit={(queryObj) => {
-          const q = buildQuery(queryObj);
-          addToInstructions({
-            node_query: q,
-            output: { location: "bulk", key: node.tag_type },
-            flags: {},
-            _preview: { type: "custom", query: q, nodeId: node.id }
-          });
+        outputType={outputType}
+        setOutputType={setOutputType}
+        onSubmit={(queryObj) => {const q = buildQuery(queryObj);
+
+        addToInstructions({
+          node_query: q,
+          output: { location: outputType, key: node.tag_type },
+          flags: {},
+        });
         }}
+
       />
     </div>
   );
