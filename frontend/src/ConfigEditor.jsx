@@ -37,15 +37,16 @@ function ConfigEditor() {
     clearInstructions,
   } = useRetrievalInstructions();
 
+  // did we just come from home?
+  const cameFromHome = location.state?.from === "/";
+
   // --- LOAD CONFIG (new/edit) ---
   useEffect(() => {
     const path = location.pathname;
 
     if (path === "/configs/new") {
-      setName(null);
-      setDescription(null);
-      setUrl("");
-      clearInstructions();
+      // Do NOT reset name/description/instructions here.
+      // This lets them persist if you navigate away and come back.
       return;
     }
 
@@ -64,13 +65,12 @@ function ConfigEditor() {
       } else {
         setName(null);
         setDescription(null);
-        setUrl("");
         clearInstructions();
       }
     }
   }, [location.pathname]);
 
-  // --- BUILD TREE --- (only on button click)
+  // --- BUILD TREE ---
   const buildTree = async (givenUrl) => {
     const targetUrl = givenUrl ?? url;
     if (!targetUrl) return;
@@ -100,7 +100,9 @@ function ConfigEditor() {
     await postConfig(name ?? "", description ?? "", retrievalInstructions);
   };
 
-  const continueWithoutSaving = () => {};
+  const continueWithoutSaving = () => {
+    navigate("/", { state: { fromConfigNew: true } });
+  };
 
   return (
     <Box
@@ -144,7 +146,7 @@ function ConfigEditor() {
         </h2>
       </Box>
 
-      {/* Website URL card (unchanged) */}
+      {/* Website URL card */}
       <Paper
         sx={{
           display: "flex",
@@ -187,7 +189,7 @@ function ConfigEditor() {
         </Box>
       </Paper>
 
-      {/* DOM Tree + Selection – no internal styling here now */}
+      {/* DOM Tree + Selection */}
       <Box
         sx={{
           flex: 1,
@@ -197,7 +199,6 @@ function ConfigEditor() {
           overflow: "hidden",
         }}
       >
-        {/* Left: DomTree handles its own look */}
         <Box
           sx={{
             flex: 2,
@@ -209,7 +210,6 @@ function ConfigEditor() {
           <DomTree />
         </Box>
 
-        {/* Right: NodeSelection handles its own look */}
         <Box
           sx={{
             flex: 1,
@@ -222,49 +222,94 @@ function ConfigEditor() {
         </Box>
       </Box>
 
-      {/* Bottom section (unchanged) */}
-      <Paper sx={{ p: 2 }}>
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Box sx={{ flex: 1 }}>
-            <Stack spacing={1.5}>
-              <TextField
-                label="Config Name"
-                size="small"
-                fullWidth
-                value={name ?? ""}
-                onChange={(e) => setName(e.target.value)}
-              />
-
-              <TextField
-                label="Description"
-                size="small"
-                fullWidth
-                multiline
-                minRows={2}
-                value={description ?? ""}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-
-              <Button variant="outlined" onClick={saveAndContinue}>
-                Save and Continue
-              </Button>
-            </Stack>
-          </Box>
-
-          <Divider orientation="vertical" flexItem />
-
+      {/* Bottom section */}
+      <Paper sx={{ p: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 3,
+            alignItems: "stretch",
+            minHeight: 160,
+          }}
+        >
+          {/* Left side */}
           <Box
             sx={{
               flex: 1,
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 2,
+              pr: cameFromHome ? 2 : 0,
             }}
           >
-            <Button variant="outlined" onClick={continueWithoutSaving}>
-              Continue without saving
-            </Button>
+            {/* Centered fields */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
+              <Stack spacing={2} sx={{ maxWidth: 500, width: "100%" }}>
+                <TextField
+                  label="Config Name"
+                  size="small"
+                  fullWidth
+                  value={name ?? ""}
+                  onChange={(e) => setName(e.target.value)}
+                />
+
+                <TextField
+                  label="Description"
+                  size="small"
+                  fullWidth
+                  multiline
+                  minRows={2}
+                  value={description ?? ""}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </Stack>
+            </Box>
+
+            {/* Save button centered */}
+            <Box
+              sx={{ display: "flex", justifyContent: "center", width: "100%" }}
+            >
+              <Button
+                variant="contained"
+                onClick={saveAndContinue}
+                sx={{ width: "fit-content" }}
+              >
+                Save and Continue
+              </Button>
+            </Box>
           </Box>
+
+          {/* Right side (only if from "/") */}
+          {cameFromHome && (
+            <>
+              <Divider orientation="vertical" flexItem />
+
+              <Box
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  pl: 2,
+                }}
+              >
+                <Button
+                  variant="contained"
+                  onClick={continueWithoutSaving}
+                  sx={{ px: 4 }}
+                >
+                  Continue without saving
+                </Button>
+              </Box>
+            </>
+          )}
         </Box>
       </Paper>
     </Box>

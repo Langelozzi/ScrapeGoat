@@ -24,6 +24,7 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
   const url = cfg?.url || ""
   const description = cfg?.description || ""
   const retrievalInstructions = cfg?.retrieval_instructions || []
+  const isSaved = cfg?.saved !== false // treat undefined as saved
 
   const handleDeleteConfirm = async () => {
     if (!cfg?.id) {
@@ -32,6 +33,25 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
     }
     await deleteConfig(cfg.id)
     setConfirmOpen(false)
+  }
+
+  const handleEditClick = () => {
+    if (onEdit) onEdit(cfg)
+
+    if (!isSaved) {
+      // UNSAVED CONFIG:
+      // match the same state shape Home uses for "New Config"
+      // so ConfigEditor can show "Continue without saving"
+      navigate("/configs/new", {
+        state: {
+          from: "/",         // what ConfigEditor already expects
+          // placeholderRoot could also be passed here if needed later
+        },
+      })
+    } else {
+      // SAVED CONFIG: normal edit flow
+      navigate("/configs/edit")
+    }
   }
 
   return (
@@ -82,7 +102,7 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
                 className="text-sm truncate"
                 style={{
                   color: theme.palette.text.secondary,
-                  lineHeight: "1.5rem",      // <-- THIS is the fix
+                  lineHeight: "1.5rem",
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -93,24 +113,33 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
           </div>
 
           <div
-            className="flex items-center gap-1"
+            className="flex items-center gap-2"
             onClick={(e) => e.stopPropagation()}
           >
-            <IconButton
-              size="small"
-              onClick={() => {
-                if (onEdit) onEdit(cfg)
-                navigate("/configs/edit")
-              }}
-            >
+            {/* Red "not saved" label for unsaved configs */}
+            {!isSaved && (
+              <span
+                style={{
+                  color: theme.palette.error.main,
+                  fontSize: 12,
+                  fontWeight: 600,
+                }}
+              >
+                not saved
+              </span>
+            )}
+
+            {/* Edit button always visible */}
+            <IconButton size="small" onClick={handleEditClick}>
               <EditIcon fontSize="small" />
             </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => setConfirmOpen(true)}
-            >
-              <DeleteOutlineIcon fontSize="small" />
-            </IconButton>
+
+            {/* Delete button only if saved */}
+            {isSaved && (
+              <IconButton size="small" onClick={() => setConfirmOpen(true)}>
+                <DeleteOutlineIcon fontSize="small" />
+              </IconButton>
+            )}
           </div>
         </div>
 
@@ -157,30 +186,30 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
                           {idx + 1}
                         </div>
 
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span
-                            className="font-mono text-base leading-none"
-                            style={{ color: theme.palette.primary.main }}
-                          >
-                            &lt;
-                            {preview.tag_type || inst.output?.key || "node"}
-                            &gt;
-                          </span>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span
+                              className="font-mono text-base leading-none"
+                              style={{ color: theme.palette.primary.main }}
+                            >
+                              &lt;
+                              {preview.tag_type || inst.output?.key || "node"}
+                              &gt;
+                            </span>
 
-                          <span
-                            className="text-xs px-2 py-0.5 rounded-md"
-                            style={{
-                              backgroundColor: alpha(
-                                theme.palette.primary.main,
-                                0.1
-                              ),
-                              color: theme.palette.primary.main,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {currentLocation}
-                          </span>
-                        </div>
+                            <span
+                              className="text-xs px-2 py-0.5 rounded-md"
+                              style={{
+                                backgroundColor: alpha(
+                                  theme.palette.primary.main,
+                                  0.1
+                                ),
+                                color: theme.palette.primary.main,
+                                fontWeight: 500,
+                              }}
+                            >
+                              {currentLocation}
+                            </span>
+                          </div>
                       </div>
 
                       {currentKey && (
@@ -208,10 +237,7 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
         )}
       </div>
 
-      <Dialog
-        open={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-      >
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <DialogTitle>Delete config?</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
@@ -219,12 +245,8 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteConfirm}>
-            Delete
-          </Button>
+          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteConfirm}>Delete</Button>
         </DialogActions>
       </Dialog>
     </>

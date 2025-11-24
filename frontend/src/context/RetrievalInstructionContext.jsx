@@ -1,23 +1,23 @@
-import { createContext, useContext, useState, useRef } from "react"
+import { createContext, useContext, useState, useRef } from "react";
 
-const RetrievalInstructionContext = createContext(null)
+const RetrievalInstructionContext = createContext(null);
 
 export const RetrievalInstructionProvider = ({ children }) => {
-  const [url, setUrl] = useState("")
-  const [tree, setTree] = useState(null)
-  const [flow, setFlow] = useState("saved")
-  const [name, setName] = useState(null)
-  const [description, setDescription] = useState(null)
-  const [retrievalInstructions, setRetrievalInstructions] = useState([])
-  const lastBuiltUrlRef = useRef("")
+  const [url, setUrl] = useState("");
+  const [tree, setTree] = useState(null);
+  const [flow, setFlow] = useState("saved");
+  const [name, setName] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [retrievalInstructions, setRetrievalInstructions] = useState([]);
+  const lastBuiltUrlRef = useRef("");
 
   const addInstruction = (instruction) => {
-    setRetrievalInstructions((prev) => [...prev, instruction])
-  }
+    setRetrievalInstructions((prev) => [...prev, instruction]);
+  };
 
   const deleteInstruction = (index) => {
-    setRetrievalInstructions((prev) => prev.filter((_, i) => i !== index))
-  }
+    setRetrievalInstructions((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const setKey = (index, value) => {
     setRetrievalInstructions((prev) =>
@@ -26,12 +26,12 @@ export const RetrievalInstructionProvider = ({ children }) => {
           ? { ...inst, output: { ...(inst.output || {}), key: value } }
           : inst
       )
-    )
-  }
+    );
+  };
 
   const clearInstructions = () => {
-    setRetrievalInstructions([])
-  }
+    setRetrievalInstructions([]);
+  };
 
   const value = {
     url,
@@ -51,23 +51,23 @@ export const RetrievalInstructionProvider = ({ children }) => {
     setKey,
     clearInstructions,
     lastBuiltUrlRef,
-  }
+  };
 
   return (
     <RetrievalInstructionContext.Provider value={value}>
       {children}
     </RetrievalInstructionContext.Provider>
-  )
-}
+  );
+};
 
 export const useRetrievalInstructions = () => {
-  const context = useContext(RetrievalInstructionContext)
+  const context = useContext(RetrievalInstructionContext);
   if (!context) {
     throw new Error(
       "useRetrievalInstruction must be used within a RetrievalInstructionProvider"
-    )
+    );
   }
-  return context
-}
+  return context;
+};
 
-export default RetrievalInstructionProvider
+export default RetrievalInstructionProvider;

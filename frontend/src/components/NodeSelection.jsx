@@ -40,7 +40,7 @@ export default function NodeSelection() {
         <Box
           sx={{
             px: 3,
-            py: 2,
+            py: 2.2,
             borderBottom: "1px solid rgba(255,255,255,0.08)",
             flexShrink: 0,
           }}
