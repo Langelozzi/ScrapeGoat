@@ -6,7 +6,9 @@ const ConfigContext = createContext()
 export const ConfigProvider = ({ children }) => {
   const [configs, setConfigs] = useState("Loading...")
   const API_URL = import.meta.env.VITE_API_URL
-  const { retrievalInstructions, url } = useRetrievalInstructions()
+
+  // pull description too
+  const { retrievalInstructions, url, description } = useRetrievalInstructions()
 
   const fetchConfigs = async () => {
     try {
@@ -35,7 +37,7 @@ export const ConfigProvider = ({ children }) => {
         },
         body: JSON.stringify({
           name,
-          description: null,
+          description, // <-- now settable!
           url,
           retrieval_instructions: retrievalInstructions,
           folder_id: null,
@@ -61,7 +63,7 @@ export const ConfigProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload), // supports `description` already
       })
 
       if (!res.ok) throw new Error(`Failed to update config: ${res.status}`)
@@ -94,7 +96,9 @@ export const ConfigProvider = ({ children }) => {
   }
 
   return (
-    <ConfigContext.Provider value={{ configs, postConfig, updateConfig, deleteConfig }}>
+    <ConfigContext.Provider
+      value={{ configs, postConfig, updateConfig, deleteConfig }}
+    >
       {children}
     </ConfigContext.Provider>
   )

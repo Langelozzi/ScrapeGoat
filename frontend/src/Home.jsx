@@ -9,12 +9,11 @@ import {
   ToggleButtonGroup,
   ToggleButton,
 } from "@mui/material";
-import UploadIcon from "@mui/icons-material/Upload";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useTheme } from "@mui/material/styles";
 
-import ConfigListItem from "./components/configs/ConfigListItem.jsx";
+import ConfigListItem from "./components/ConfigListItem.jsx";
 import { useRetrievalInstructions } from "./context/RetrievalInstructionContext.jsx";
 import { useConfigs } from "./context/ConfigContext.jsx";
 
@@ -115,7 +114,7 @@ function Home() {
     url,
     description,
     retrieval_instructions: retrievalInstructions,
-    saved: false, // <--- HERE IS THE ONLY CHANGE
+    saved: location.state?.fromConfigNew,
   };
 
   return (

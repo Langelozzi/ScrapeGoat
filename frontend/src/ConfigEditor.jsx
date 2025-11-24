@@ -98,6 +98,21 @@ function ConfigEditor() {
 
   const saveAndContinue = async () => {
     await postConfig(name ?? "", description ?? "", retrievalInstructions);
+
+    // If we came from "/configs", reset the context to blank
+    if (location.state?.from === "/configs") {
+      clearInstructions();
+      setUrl("");
+      setTree(null);
+      setName(null);
+      setDescription(null);
+      lastBuiltUrlRef.current = "";
+      navigate("/configs", { state: { fromConfigNew: true } });
+    }
+    else if (location.state?.from == "/")
+    {
+      navigate("/", { state: { fromConfigNew: true } });
+    }
   };
 
   const continueWithoutSaving = () => {

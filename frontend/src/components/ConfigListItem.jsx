@@ -12,7 +12,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import { useNavigate } from "react-router-dom"
-import { useConfigs } from "../../context/ConfigContext"
+import { useConfigs } from "../context/ConfigContext"
 
 function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
   const theme = useTheme()
