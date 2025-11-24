@@ -1,9 +1,11 @@
-import { useLocation } from 'react-router-dom';
-import { Button } from "@mui/material";
+import { Button, IconButton, Box } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Results() {
   const location = useLocation();
   const scrapeData = location.state?.scrapeData;
+  const navigate = useNavigate();
 
   if (!scrapeData) {
     return <div>No scrape data available. Please run a scrape first.</div>;
@@ -53,6 +55,25 @@ function Results() {
 
   return (
     <div style={{ padding: "20px" }}>
+      {/* Back Arrow */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+        <IconButton onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </IconButton>
+
+        <h2
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 600,
+            margin: 0,
+          }}
+        >
+          Back
+        </h2>
+      </Box>
+
+      <br/>
+
       <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '14px' }}>
         {JSON.stringify(dataset, null, 2)}
       </pre>
