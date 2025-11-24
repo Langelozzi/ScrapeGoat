@@ -4,35 +4,19 @@ import { IconButton } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { buildQuery } from "../utils/buildQuery.js";
+import QueryAddMenu from "./QueryAddMenu.jsx";
+import QueryBuilder from "./QueryBuilder.jsx";
+
+
 
 function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized = false }) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [openBuilder, setOpenBuilder] = useState(false);
 
   if (!node) return null;
-
-  // Build query string safely
-  const buildNodeQuery = () =>
-    typeof node?.retrieval_instructions === "string"
-      ? node.retrieval_instructions
-      : `SCRAPE 1 ${node.tag_type};`;
-
-  // --- Handle add for ATTRIBUTE ---
-  const handleAddAttr = (e, attrKey) => {
-    e.stopPropagation();
-    addToInstructions({
-      node_query: buildNodeQuery(),
-      output: { location: attrKey, key: node.tag_type },
-      flags: {},
-      _preview: {
-        id: node.id,
-        tag_type: node.tag_type,
-        raw: node.raw,
-        level,
-        attribute: attrKey,
-      },
-    });
-  };
 
   const attrs =
     node?.html_attributes && typeof node.html_attributes === "object"
@@ -144,16 +128,9 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
 
                 <IconButton
                   size="small"
-                  onClick={(e) => handleAddAttr(e, "body")}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  sx={{
-                    alignSelf: "center",
-                    color: theme.palette.primary.main,
-                    "&:hover": {
-                      color: theme.palette.primary.light,
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.15s ease",
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuAnchor(e.currentTarget);
                   }}
                 >
                   <AddCircleOutlineIcon fontSize="small" />
@@ -178,19 +155,6 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
                         <span style={{ color: theme.palette.primary.main }}>{k}</span>:{" "}
                         <span>{String(v)}</span>
                       </div>
-                      <IconButton
-                        size="small"
-                        title={`Add ${k}`}
-                        onClick={(e) => handleAddAttr(e, k)}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        sx={{
-                          color: theme.palette.primary.main,
-                          "&:hover": { color: theme.palette.primary.light, transform: "scale(1.1)" },
-                          transition: "all 0.15s ease",
-                        }}
-                      >
-                        <AddCircleOutlineIcon fontSize="small" />
-                      </IconButton>
                     </li>
                   ))}
                 </ul>
@@ -213,6 +177,78 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized =
           ))}
         </div>
       )}
+
+
+      <QueryAddMenu
+        anchorEl={menuAnchor}
+        onClose={() => setMenuAnchor(null)}
+        node={node}
+        onStartCustomQuery={() => setOpenBuilder(true)}
+
+        onAddAttribute={(attr) => {
+          const value = node.html_attributes?.[attr];
+          const cleanAttr = attr.startsWith("@") ? attr.slice(1) : attr;
+
+          const query = buildQuery({
+            action: "SCRAPE",
+            amount: "",
+            tag: node.tag_type,
+            conditionals: [
+              { type: "IF", key: cleanAttr, value }
+            ]
+          });
+
+          addToInstructions({
+            node_query: query,
+            output: { location: cleanAttr, key: node.tag_type },
+            flags: {},
+            _preview: { id: node.id, attribute: cleanAttr, value }
+          });
+        }}
+
+        onQuickQuery={(type) => {
+          let query = "";
+          let location = "";
+
+          if (type === "SCRAPE_THIS_NODE") {
+            query = buildQuery({
+              action: "SCRAPE",
+              amount: "1",
+              tag: node.tag_type,
+              conditionals: [
+                { type: "POSITION", value: node.position }
+              ]
+            });
+            location = node.tag_type;
+          }
+
+          if (type === "SCRAPE_ALL_OF_TAG") {
+            query = buildQuery({ action: "SCRAPE", amount: "", tag: node.tag_type });
+            location = "bulk";
+          }
+
+          addToInstructions({
+            node_query: query,
+            output: { location: location, key: node.tag_type },
+            flags: {}
+          });
+        }}
+      />
+
+      <QueryBuilder
+        open={openBuilder}
+        onClose={() => setOpenBuilder(false)}
+        initialTag={node.tag_type}
+        onSubmit={(queryObj) => {
+          const q = buildQuery(queryObj);
+          addToInstructions({
+            node_query: q,
+            output: { location: "bulk", key: node.tag_type },
+            flags: {},
+            _preview: { type: "custom", query: q, nodeId: node.id }
+          });
+        }}
+      />
     </div>
   );
 }

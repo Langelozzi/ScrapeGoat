@@ -5,24 +5,54 @@ import TreeNode from './TreeNode.jsx';
 import { Virtuoso } from 'react-virtuoso';
 import { useRetrievalInstructions } from '../context/RetrievalInstructionContext.jsx';
 
-function flattenTree(node, level = 0) {
-  if (!node) return [];
-  const current = [{ ...node, _level: level }];
+function annotateTree(node, level = 0, siblingTagPositions = {}) {
+  if (!node) return null;
+
+  // Initialize sibling tag positions map if not provided
+  const positions = { ...siblingTagPositions };
+
+  // Assign position relative to tag
+  const tag = node.tag_type || 'node';
+  const position = positions[tag] ?? 1;
+  positions[tag] = position + 1; // increment for next sibling of same tag
+
+  const annotated = {
+    ...node,
+    _level: level,
+    position,
+  };
+
+  // Recursively annotate children
   if (node.children?.length) {
-    return current.concat(
-      node.children.flatMap((child) => flattenTree(child, level + 1))
+    annotated.children = node.children.map((child) =>
+      annotateTree(child, level + 1, {}) // reset per level for counting siblings
     );
+  } else {
+    annotated.children = [];
   }
-  return current;
+
+  return annotated;
+}
+
+function flattenTree(node) {
+  if (!node) return [];
+  const current = [node];
+  return node.children?.length
+    ? current.concat(node.children.flatMap(flattenTree))
+    : current;
 }
 
 function DomTree({ placeholderRoot }) {
   const { addInstruction, tree } = useRetrievalInstructions();
   const [filter, setFilter] = useState('');
 
+  const positionedTree = useMemo(() => {
+    return annotateTree(tree || placeholderRoot);
+  }, [tree, placeholderRoot]);
+
   const flatNodes = useMemo(
-    () => flattenTree(tree || placeholderRoot),
-    [tree, placeholderRoot]
+    () => flattenTree(positionedTree),
+    [positionedTree]
   );
 
   const filteredNodes = useMemo(() => {

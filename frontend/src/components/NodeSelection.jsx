@@ -220,6 +220,26 @@ export default function NodeSelection() {
                           }}
                         />
                       </Stack>
+
+                      {/* Row 3 — QUERY DISPLAY */}
+                      {inst?.node_query && (
+                        <Box
+                          sx={{
+                            mt: 1,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: alpha(theme.palette.grey[900], 0.35),
+                            border: `1px solid ${alpha(theme.palette.divider, 0.3)}`,
+                            fontFamily: "monospace",
+                            fontSize: "0.85rem",
+                            whiteSpace: "pre-wrap",
+                            color: theme.palette.success.light,
+                            overflowX: "auto",
+                          }}
+                        >
+                          {inst.node_query}
+                        </Box>
+                      )}
                     </Stack>
                   </Box>
                 );
