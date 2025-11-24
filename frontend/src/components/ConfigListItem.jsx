@@ -65,8 +65,13 @@ function ConfigListItem({
         },
       });
     } else {
-      // SAVED CONFIG: normal edit flow
-      navigate("/configs/edit");
+      // SAVED CONFIG: normal edit flow, pass config + from so editor can preload
+      navigate("/configs/edit", {
+        state: {
+          from: "/configs",
+          config: cfg,
+        },
+      });
     }
   };
 

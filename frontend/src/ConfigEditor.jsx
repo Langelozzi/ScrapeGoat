@@ -20,7 +20,7 @@ function ConfigEditor() {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { postConfig } = useConfigs();
+  const { postConfig, updateConfig } = useConfigs();
 
   const {
     url,
@@ -35,6 +35,7 @@ function ConfigEditor() {
     retrievalInstructions,
     setRetrievalInstructions,
     clearInstructions,
+    resetConfig,
   } = useRetrievalInstructions();
 
   // did we just come from home?
@@ -45,8 +46,6 @@ function ConfigEditor() {
     const path = location.pathname;
 
     if (path === "/configs/new") {
-      // Do NOT reset name/description/instructions here.
-      // This lets them persist if you navigate away and come back.
       return;
     }
 
@@ -97,20 +96,28 @@ function ConfigEditor() {
   };
 
   const saveAndContinue = async () => {
-    await postConfig(name ?? "", description ?? "", retrievalInstructions);
+    const path = location.pathname;
+    const from = location.state?.from;
+    const cfg = location.state?.config;
 
-    // If we came from "/configs", reset the context to blank
-    if (location.state?.from === "/configs") {
-      clearInstructions();
-      setUrl("");
-      setTree(null);
-      setName(null);
-      setDescription(null);
-      lastBuiltUrlRef.current = "";
-      navigate("/configs", { state: { fromConfigNew: true } });
+    if (path === "/configs/edit" && cfg?.id) {
+      // UPDATE existing config
+      await updateConfig(cfg.id, {
+        name: name ?? "",
+        description: description ?? "",
+        url: url ?? "",
+        retrieval_instructions: retrievalInstructions,
+        folder_id: cfg.folder_id ?? null,
+      });
+    } else {
+      // CREATE new config
+      await postConfig(name ?? "", description ?? "", retrievalInstructions);
     }
-    else if (location.state?.from == "/")
-    {
+
+    if (from === "/configs") {
+      resetConfig();
+      navigate("/configs", { state: { fromConfigNew: true } });
+    } else if (from === "/") {
       navigate("/", { state: { fromConfigNew: true } });
     }
   };
@@ -157,7 +164,7 @@ function ConfigEditor() {
             margin: 0,
           }}
         >
-          New Config
+          {location.pathname === "/configs/new" ? "New Config" : "Edit Config"}
         </h2>
       </Box>
 
@@ -169,7 +176,7 @@ function ConfigEditor() {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ px: 3, py: 2 }}>
+        <Box sx={{ px: 3, pt: 1.5, pb: 1, borderBottom: '1px solid rgba(255,255,255,0.08)', mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Website URL
           </Typography>
@@ -178,7 +185,7 @@ function ConfigEditor() {
         <Box
           sx={{
             px: 3,
-            pb: 3,
+            pb: 2,
             maxWidth: 520,
             display: "flex",
             gap: 1.5,
