@@ -4,7 +4,7 @@ import { useUser } from "./context/UserContext.jsx"
 import Navbar from "./components/Navbar.jsx";
 import Login from "./Login";
 import Configs from "./Configs";
-import NewConfig from "./NewConfig";
+import ConfigEditor from "./ConfigEditor";
 import Home from "./Home";
 import Results from "./Results";
 
@@ -82,7 +82,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/configs" element={<Configs />} />
-            <Route path="/configs/new" element={<NewConfig />} />
+            <Route path="/configs/new" element={<ConfigEditor />} />
+            <Route path="/configs/edit" element={<ConfigEditor />} />
             <Route path="/results" element={<Results />} />
           </Routes>
         </Layout>

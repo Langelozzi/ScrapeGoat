@@ -11,10 +11,12 @@ import {
 } from "@mui/material"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
+import { useNavigate } from "react-router-dom"
 import { useConfigs } from "../../context/ConfigContext"
 
 function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
   const theme = useTheme()
+  const navigate = useNavigate()
   const { deleteConfig } = useConfigs()
   const [confirmOpen, setConfirmOpen] = useState(false)
 
@@ -91,7 +93,10 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
           >
             <IconButton
               size="small"
-              onClick={() => onEdit && onEdit(cfg)}
+              onClick={() => {
+                if (onEdit) onEdit(cfg)
+                navigate("/configs/edit")
+              }}
             >
               <EditIcon fontSize="small" />
             </IconButton>

@@ -6,6 +6,8 @@ export const RetrievalInstructionProvider = ({ children }) => {
   const [url, setUrl] = useState("")
   const [tree, setTree] = useState(null)
   const [flow, setFlow] = useState("saved")
+  const [name, setName] = useState(null)
+  const [description, setDescription] = useState(null)
   const [retrievalInstructions, setRetrievalInstructions] = useState([])
   const lastBuiltUrlRef = useRef("")
 
@@ -38,7 +40,12 @@ export const RetrievalInstructionProvider = ({ children }) => {
     setTree,
     flow,
     setFlow,
+    name,
+    setName,
+    description,
+    setDescription,
     retrievalInstructions,
+    setRetrievalInstructions,
     addInstruction,
     deleteInstruction,
     setKey,

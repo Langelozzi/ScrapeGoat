@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ConfigSelection from './components/ConfigSelection.jsx';
+import ConfigSource from './components/configs/ConfigSource.jsx';
 import { Box, Paper, Stack, Typography, TextField, Button } from '@mui/material';
 import { useRetrievalInstructions } from './context/RetrievalInstructionContext.jsx';
 import { useConfigs } from "./context/ConfigContext.jsx";
@@ -123,7 +123,7 @@ function Home() {
         </Stack>
       </Paper>
 
-      <ConfigSelection placeholderTree={placeholderRoot} />
+      <ConfigSource placeholderTree={placeholderRoot} />
 
       <Paper sx={{ p: { xs: 2.5, md: 3 }, mt: 3 }}>
         <Stack spacing={1.5} alignItems="center" textAlign="center">

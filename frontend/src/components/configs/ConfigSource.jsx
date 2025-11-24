@@ -3,11 +3,11 @@ import { Paper, Stack, Typography, ToggleButtonGroup, ToggleButton, Box } from '
 import UploadIcon from '@mui/icons-material/Upload';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import ImportConfig from './ImportConfig.jsx';
-import { useRetrievalInstructions } from '../context/RetrievalInstructionContext.jsx';
+import ImportConfig from '../ImportConfig.jsx';
+import { useRetrievalInstructions } from '../../context/RetrievalInstructionContext.jsx';
 import { useNavigate } from 'react-router-dom';
 
-function ConfigSelection({ placeholderTree }) {
+function ConfigSource({ placeholderTree }) {
   const { flow, setFlow } = useRetrievalInstructions();
   const [importedFile, setImportedFile] = React.useState(null);
   const navigate = useNavigate();
@@ -86,4 +86,4 @@ function ConfigSelection({ placeholderTree }) {
   );
 }
 
-export default ConfigSelection;
+export default ConfigSource;
