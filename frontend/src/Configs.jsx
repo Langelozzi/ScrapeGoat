@@ -45,8 +45,9 @@ function Configs() {
         maxWidth: "1400px",
         mx: "auto",
         mt: 4,
-        p: 3,
-        borderRadius: 3,
+        py: 3,
+        px: 4,
+        borderRadius: 2,
         backgroundColor: theme.palette.background.paper,
       }}
     >
