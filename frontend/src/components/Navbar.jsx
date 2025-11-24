@@ -40,36 +40,36 @@ function Navbar() {
       }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 700,
-            cursor: "pointer",
-            letterSpacing: 0.5,
-          }}
-          onClick={go("/", "home")}
-        >
-          ScrapeGoat
-        </Typography>
+        
+        {/* LEFT: Logo + Nav Buttons */}
+        <Stack direction="row" spacing={2} alignItems="center">
+          <img
+            src="/goat-logo-white.png"
+            alt="Scrapegoat Logo"
+            style={{ width: 36, height: "auto", opacity: 0.9 }}
+          />
 
-        <Stack direction="row" spacing={3}>
-          <Button
-            color={activeTab === "home" ? "primary" : "inherit"}
-            onClick={go("/", "home")}
-          >
-            Home
-          </Button>
+          {/* Buttons closer together */}
+          <Stack direction="row" spacing={1}>
+            <Button
+              color={activeTab === "home" ? "primary" : "inherit"}
+              onClick={go("/", "home")}
+            >
+              Home
+            </Button>
 
-          <Button
-            color={activeTab === "configs" ? "primary" : "inherit"}
-            onClick={go("/configs", "configs")}
-          >
-            My Configs
-          </Button>
+            <Button
+              color={activeTab === "configs" ? "primary" : "inherit"}
+              onClick={go("/configs", "configs")}
+            >
+              My Configs
+            </Button>
+          </Stack>
         </Stack>
 
+        {/* RIGHT: User panel */}
         <Stack direction="row" spacing={2} alignItems="center">
-          <Avatar sx={{ width: 32, height: 32 }} />
+          <Avatar sx={{ width: 36, height: 36 }} />
           <Typography variant="body2" noWrap>
             {userName}
           </Typography>
@@ -81,6 +81,7 @@ function Navbar() {
             {isAuthenticated ? "Logout" : "Login"}
           </Button>
         </Stack>
+
       </Toolbar>
     </AppBar>
   );
