@@ -77,37 +77,26 @@ function Home() {
     await postConfig("My first config");
   };
 
-  // Only responsible for updating flow based on toggle value
   const handleFlowChange = (_, val) => {
-    if (!val) return; // ignore attempts to unselect
+    if (!val) return;
     setFlow(val);
   };
 
   const handleNewConfigClick = () => {
-    // keep flow in sync
     if (flow !== "new") {
       setFlow("new");
     }
 
-    // always allow clicking New Config to open the editor,
-    // even if it's already the active flow
     navigate("/configs/new", {
       state: { placeholderRoot, from: "/" },
     });
   };
 
   const handleSavedConfigClick = () => {
-    // keep flow in sync
-    if (flow !== "saved") {
-      setFlow("saved");
-    }
-
-    // always allow clicking Saved Config to open selection,
-    // even if it's already the active flow
+    setFlow(null);
     navigate("/configs/select");
   };
 
-  // Build a pseudo-config from context for displaying on Home
   const hasCurrentConfig =
     Boolean(name?.trim()) ||
     Boolean(url?.trim()) ||
@@ -119,15 +108,9 @@ function Home() {
     url,
     description,
     retrieval_instructions: retrievalInstructions,
-    // treat selected configs from /configs/select as "saved",
-    // and in-progress "new" configs as unsaved
     saved: flow === "saved",
   };
 
-  // --- EFFECTS ---
-
-  // When coming back from /configs/new after saving/working on a config,
-  // ensure "New Config" is selected.
   useEffect(() => {
     if (location.state?.fromConfigNew) {
       setFlow("new");
@@ -135,8 +118,6 @@ function Home() {
     }
   }, [location.state, navigate, setFlow]);
 
-  // On initial/plain page load with no config, don't pre-select any flow.
-  // Run this only once, on first mount.
   const didRunInitialFlowReset = useRef(false);
   useEffect(() => {
     if (didRunInitialFlowReset.current) return;
@@ -147,9 +128,12 @@ function Home() {
     }
   }, [location.state, hasCurrentConfig, flow, setFlow]);
 
-  // Effective value for the toggle group:
-  // - If there is no current config and flow === "new", show *nothing* selected.
-  // - Otherwise, just use whatever flow is in context (may be "new" or "saved").
+  useEffect(() => {
+    if (!hasCurrentConfig && flow === "saved") {
+      setFlow(null);
+    }
+  }, [hasCurrentConfig, flow, setFlow]);
+
   const effectiveFlow =
     !hasCurrentConfig && flow === "new" ? null : flow ?? null;
 
@@ -164,7 +148,6 @@ function Home() {
         alignItems: "center",
       }}
     >
-      {/* Title */}
       <Typography
         component="h1"
         sx={{
@@ -179,7 +162,6 @@ function Home() {
         ScrapeGoat
       </Typography>
 
-      {/* Main card */}
       <Paper
         sx={{
           p: 3,
@@ -190,14 +172,12 @@ function Home() {
         }}
       >
         <Stack spacing={2}>
-          {/* Header text */}
           <Stack alignItems="center" textAlign="center" spacing={0.5}>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Choose Configuration Source
             </Typography>
           </Stack>
 
-          {/* Toggle buttons */}
           <Stack direction="row" justifyContent="center">
             <ToggleButtonGroup
               value={effectiveFlow}
@@ -217,7 +197,6 @@ function Home() {
             </ToggleButtonGroup>
           </Stack>
 
-          {/* Current config (either in-progress "new" OR selected "saved") */}
           {hasCurrentConfig && (
             <Box sx={{ mt: 1 }}>
               <ConfigListItem
@@ -228,24 +207,9 @@ function Home() {
               />
             </Box>
           )}
-
-          {/* Saved flow but nothing selected yet */}
-          {effectiveFlow === "saved" && !hasCurrentConfig && (
-            <Typography
-              variant="body2"
-              sx={{
-                opacity: 0.7,
-                fontSize: "0.85rem",
-                textAlign: "center",
-              }}
-            >
-              Log in to see your saved configurations!
-            </Typography>
-          )}
         </Stack>
       </Paper>
 
-      {/* Scrape button */}
       <Stack spacing={2} alignItems="center" textAlign="center" sx={{ mt: 1 }}>
         <Button
           variant="contained"
