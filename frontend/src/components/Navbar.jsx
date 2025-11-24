@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AppBar, Toolbar, Typography, Button, Box, Stack, Avatar } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Stack, Avatar } from "@mui/material";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
@@ -36,7 +36,6 @@ function Navbar() {
       sx={{
         bgcolor: "background.paper",
         color: "text.primary",
-        borderBottom: "1px solid",
       }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -54,6 +53,16 @@ function Navbar() {
             <Button
               color={activeTab === "home" ? "primary" : "inherit"}
               onClick={go("/", "home")}
+              sx={{
+                textDecoration: activeTab === "home" ? "underline" : "none",
+                textUnderlineOffset: "4px",
+                textDecorationThickness: "1px",
+                transition: "none",
+                "&:hover": {
+                  textDecoration: activeTab === "home" ? "underline" : "none",
+                  backgroundColor: "transparent",
+                },
+              }}
             >
               Home
             </Button>
@@ -61,6 +70,16 @@ function Navbar() {
             <Button
               color={activeTab === "configs" ? "primary" : "inherit"}
               onClick={go("/configs", "configs")}
+              sx={{
+                textDecoration: activeTab === "configs" ? "underline" : "none",
+                textUnderlineOffset: "4px",
+                textDecorationThickness: "1px",
+                transition: "none",
+                "&:hover": {
+                  textDecoration: activeTab === "configs" ? "underline" : "none",
+                  backgroundColor: "transparent",
+                },
+              }}
             >
               My Configs
             </Button>
@@ -68,9 +87,9 @@ function Navbar() {
         </Stack>
 
         {/* RIGHT: User panel */}
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={1} alignItems="center">
           <Avatar sx={{ width: 36, height: 36 }} />
-          <Typography variant="body2" noWrap>
+          <Typography variant="body2" sx={{ pr: 2 }} noWrap>
             {userName}
           </Typography>
           <Button

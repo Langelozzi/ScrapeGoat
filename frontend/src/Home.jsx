@@ -77,14 +77,10 @@ function Home() {
     await postConfig("My first config");
   };
 
+  // Only responsible for updating flow based on toggle value
   const handleFlowChange = (_, val) => {
-    if (!val) return;
+    if (!val) return; // ignore attempts to unselect
     setFlow(val);
-
-    if (val === "saved") {
-      // When user chooses "Saved Config", go to selection screen
-      navigate("/configs/select");
-    }
   };
 
   const handleNewConfigClick = () => {
@@ -98,6 +94,17 @@ function Home() {
     navigate("/configs/new", {
       state: { placeholderRoot, from: "/" },
     });
+  };
+
+  const handleSavedConfigClick = () => {
+    // keep flow in sync
+    if (flow !== "saved") {
+      setFlow("saved");
+    }
+
+    // always allow clicking Saved Config to open selection,
+    // even if it's already the active flow
+    navigate("/configs/select");
   };
 
   // Build a pseudo-config from context for displaying on Home
@@ -203,7 +210,7 @@ function Home() {
                 New Config
               </ToggleButton>
 
-              <ToggleButton value="saved">
+              <ToggleButton value="saved" onClick={handleSavedConfigClick}>
                 <LibraryBooksIcon sx={{ mr: 1 }} />
                 Saved Config
               </ToggleButton>

@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useConfigs } from "../context/ConfigContext";
 import { useRetrievalInstructions } from "../context/RetrievalInstructionContext.jsx";
 
@@ -28,6 +28,7 @@ function ConfigListItem({
 }) {
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const { deleteConfig } = useConfigs();
   const {
     resetConfig,
@@ -37,6 +38,7 @@ function ConfigListItem({
     setRetrievalInstructions,
     setFlow,
     setTree,
+    flow,
   } = useRetrievalInstructions();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -45,6 +47,9 @@ function ConfigListItem({
   const description = cfg?.description || "";
   const retrievalInstructions = cfg?.retrieval_instructions || [];
   const isSaved = cfg?.saved !== false; // treat undefined as saved
+
+  const isHome = location.pathname === "/";
+  const isHomeSavedFlow = isHome && flow === "saved";
 
   const handleDeleteConfirm = async () => {
     // If this item represents an actual saved config with an id,
@@ -57,6 +62,11 @@ function ConfigListItem({
     // clear retrieval context and optionally redirect.
     if (isSaved) {
       resetConfig();
+
+      // Only used for Home's unsaved/pseudo config behavior
+      if (redirectOnDeleteToNewConfig) {
+        navigate("/configs/new", { state: { from: "/" } });
+      }
     }
 
     setConfirmOpen(false);
@@ -101,6 +111,12 @@ function ConfigListItem({
 
     // Go back to Home
     navigate("/", { replace: true });
+  };
+
+  const handleSwapClick = () => {
+    // Same behavior as choosing "Saved Config" on Home
+    setFlow("saved");
+    navigate("/configs/select");
   };
 
   return (
@@ -198,14 +214,35 @@ function ConfigListItem({
                   <EditIcon fontSize="small" />
                 </IconButton>
 
-                {/* Delete button only if saved */}
-                {isSaved && (
+                {/* 
+                  On Home + saved flow:
+                  show "Swap" button instead of Delete.
+                */}
+                {isHomeSavedFlow ? (
                   <IconButton
                     size="small"
-                    onClick={() => setConfirmOpen(true)}
+                    onClick={handleSwapClick}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
                   >
-                    <DeleteOutlineIcon fontSize="small" />
+                    ⇄
                   </IconButton>
+                ) : (
+                  // Delete button only if saved and not in the special Home+saved-case
+                  isSaved && (
+                    <IconButton
+                      size="small"
+                      onClick={() => setConfirmOpen(true)}
+                    >
+                      <DeleteOutlineIcon fontSize="small" />
+                    </IconButton>
+                  )
                 )}
               </>
             )}
@@ -237,15 +274,13 @@ function ConfigListItem({
                     <div
                       key={idx}
                       className="px-4 py-3 rounded-lg border flex flex-wrap items-center gap-4"
-                      style={
-                        {
-                          borderColor: alpha(theme.palette.divider, 0.7),
-                          backgroundColor: alpha(
-                            theme.palette.background.default,
-                            0.7
-                          ),
-                        }
-                      }
+                      style={{
+                        borderColor: alpha(theme.palette.divider, 0.7),
+                        backgroundColor: alpha(
+                          theme.palette.background.default,
+                          0.7
+                        ),
+                      }}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div
@@ -292,7 +327,9 @@ function ConfigListItem({
                             key:{" "}
                             <span
                               className="font-mono"
-                              style={{ color: theme.palette.text.primary }}
+                              style={{
+                                color: theme.palette.text.primary,
+                              }}
                             >
                               {currentKey}
                             </span>

@@ -12,14 +12,14 @@ const theme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "#0E1116",
+      default: "#1b2125",
       paper: "#3c4d49",
     },
     primary: {
-      main: "#4FC3F7",
-      light: "#81D4FA",
-      dark: "#0288D1",
-      contrastText: "#0E1116",
+      main: "#dbfffc",
+      light: "#8BC782",
+      dark: "#4E7B44",
+      contrastText: "#000000ff",
     },
     secondary: {
       main: "#CE93D8",
@@ -44,6 +44,7 @@ const theme = createTheme({
   },
   shape: { borderRadius: 14 },
 });
+
 
 
 function Layout({ children }) {
