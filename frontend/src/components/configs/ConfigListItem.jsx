@@ -71,7 +71,7 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
 
           <div className="flex items-baseline gap-3 min-w-0 flex-1">
             <span
-              className="font-mono text-lg leading-none truncate"
+              className="font-mono text-lg leading-tight truncate"
               style={{ color: theme.palette.primary.main }}
             >
               {name}
@@ -80,7 +80,12 @@ function ConfigListItem({ cfg, index, isOpen, onToggle, onEdit }) {
             {url && (
               <span
                 className="text-sm truncate"
-                style={{ color: theme.palette.text.secondary }}
+                style={{
+                  color: theme.palette.text.secondary,
+                  lineHeight: "1.5rem",      // <-- THIS is the fix
+                  display: "flex",
+                  alignItems: "center",
+                }}
               >
                 {url}
               </span>

@@ -16,7 +16,7 @@ import { useConfigs } from "./context/ConfigContext.jsx";
 import { useRetrievalInstructions } from "./context/RetrievalInstructionContext.jsx";
 import { useTheme } from "@mui/material/styles";
 
-function ConfigEditor({ placeholderRoot }) {
+function ConfigEditor() {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,6 +25,7 @@ function ConfigEditor({ placeholderRoot }) {
   const {
     url,
     setUrl,
+    tree,
     setTree,
     lastBuiltUrlRef,
     name,
@@ -36,6 +37,7 @@ function ConfigEditor({ placeholderRoot }) {
     clearInstructions,
   } = useRetrievalInstructions();
 
+  // --- LOAD CONFIG (new/edit) ---
   useEffect(() => {
     const path = location.pathname;
 
@@ -68,6 +70,7 @@ function ConfigEditor({ placeholderRoot }) {
     }
   }, [location.pathname]);
 
+  // --- BUILD TREE --- (only on button click)
   const buildTree = async (givenUrl) => {
     const targetUrl = givenUrl ?? url;
     if (!targetUrl) return;
@@ -93,14 +96,6 @@ function ConfigEditor({ placeholderRoot }) {
     }
   };
 
-  useEffect(() => {
-    if (url === lastBuiltUrlRef.current) return;
-    if (!url) return;
-
-    const t = setTimeout(() => buildTree(url), 700);
-    return () => clearTimeout(t);
-  }, [url]);
-
   const saveAndContinue = async () => {
     await postConfig(name ?? "", description ?? "", retrievalInstructions);
   };
@@ -113,11 +108,10 @@ function ConfigEditor({ placeholderRoot }) {
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        height: "calc(100vh - 120px)",
         p: 2,
       }}
     >
-      {/* Title row with back button */}
+      {/* Title row */}
       <Box
         sx={{
           display: "flex",
@@ -150,78 +144,85 @@ function ConfigEditor({ placeholderRoot }) {
         </h2>
       </Box>
 
-      <Paper sx={{ p: { xs: 2.5, md: 3 }, mb: 2 }}>
-        <Stack spacing={1} alignItems="center" textAlign="center">
-          <Typography variant="h6">Website URL</Typography>
+      {/* Website URL card (unchanged) */}
+      <Paper
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        <Box sx={{ px: 3, py: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Website URL
+          </Typography>
+        </Box>
 
-          <Box sx={{ width: "100%", maxWidth: 760, mx: "auto" }}>
-            <TextField
-              fullWidth
-              label="Website URL"
-              placeholder="https://example.com"
-              value={url ?? ""}
-              onChange={(e) => setUrl(e.target.value)}
-              slotProps={{
-                input: {
-                  sx: {
-                    fontSize: 16,
-                    height: 52,
-                    "& .MuiInputBase-input": { py: 1, lineHeight: 1.5 },
-                  },
-                },
-              }}
-            />
-          </Box>
-        </Stack>
+        <Box
+          sx={{
+            px: 3,
+            pb: 3,
+            maxWidth: 520,
+            display: "flex",
+            gap: 1.5,
+            alignItems: "center",
+          }}
+        >
+          <TextField
+            fullWidth
+            placeholder="https://example.com"
+            size="small"
+            value={url ?? ""}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+
+          <Button
+            variant="contained"
+            size="medium"
+            onClick={() => buildTree()}
+            sx={{ whiteSpace: "nowrap", px: 3 }}
+          >
+            Build tree
+          </Button>
+        </Box>
       </Paper>
 
-      <Box sx={{ flex: 1, display: "flex", gap: 2, minHeight: 0 }}>
+      {/* DOM Tree + Selection – no internal styling here now */}
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          gap: 2,
+          minHeight: 600,
+          overflow: "hidden",
+        }}
+      >
+        {/* Left: DomTree handles its own look */}
         <Box
           sx={{
             flex: 2,
-            overflow: "hidden",
+            minWidth: 0,
             display: "flex",
             flexDirection: "column",
           }}
         >
-          <DomTree placeholderRoot={placeholderRoot} />
+          <DomTree />
         </Box>
 
+        {/* Right: NodeSelection handles its own look */}
         <Box
           sx={{
             flex: 1,
-            overflow: "hidden",
+            minWidth: 0,
             display: "flex",
             flexDirection: "column",
           }}
         >
-          <Paper
-            sx={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-            }}
-          >
-            <Box
-              sx={{
-                px: 3,
-                py: 2,
-                borderBottom: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Your Selection
-              </Typography>
-            </Box>
-
-            <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
-              <NodeSelection />
-            </Box>
-          </Paper>
+          <NodeSelection />
         </Box>
       </Box>
 
+      {/* Bottom section (unchanged) */}
       <Paper sx={{ p: 2 }}>
         <Box sx={{ display: "flex", gap: 2 }}>
           <Box sx={{ flex: 1 }}>
@@ -260,7 +261,7 @@ function ConfigEditor({ placeholderRoot }) {
               justifyContent: "center",
             }}
           >
-            <Button variant="text" onClick={continueWithoutSaving}>
+            <Button variant="outlined" onClick={continueWithoutSaving}>
               Continue without saving
             </Button>
           </Box>
