@@ -41,7 +41,7 @@ async def scrape_existing(db: AsyncSession, config_id: str) -> ScrapedDataset:
 def __scrape_single(
     tree_root: HTMLNode, instruction: RetrievalInstruction
 ) -> list[dict]:
-    query = __build_goatspeek_query(instruction)
+    query = __build_goatspeak_query(instruction)
     scraped_nodes = shepherd.herd_from_node(query=query, root=tree_root)
     raw_results = [node.to_dict() for node in scraped_nodes]
     mapped_results = __remap_dict_keys(raw_results, instruction.output)
@@ -53,7 +53,7 @@ def __get_tree_root(url: str) -> HTMLNode:
     return gardener.grow_tree(raw_html=seed)
 
 
-def __build_goatspeek_query(instruction: RetrievalInstruction) -> str:
+def __build_goatspeak_query(instruction: RetrievalInstruction) -> str:
     query = instruction.node_query
     extract_statement = __build_extract_statement_from_output(instruction.output)
 
@@ -66,5 +66,11 @@ def __build_extract_statement_from_output(output: NodeOutput) -> str:
 
 def __remap_dict_keys(raw_results: list[dict], output: NodeOutput) -> list[dict]:
     default_key = output.location
+
+    # First remove any keys that the user doesn't want
+    clean_data = []
+    for res in raw_results:
+        clean_data.append({ default_key: res[default_key] } if default_key in res else {})
+
     new_key = output.key
-    return [rename_key(res, default_key, new_key) for res in raw_results]
+    return [rename_key(res, default_key, new_key) for res in clean_data]
