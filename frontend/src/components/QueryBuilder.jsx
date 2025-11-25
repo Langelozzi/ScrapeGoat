@@ -119,21 +119,27 @@ export default function QueryBuilder({ open, onClose, onSubmit, initialTag, outp
           </FormControl>
 
           <TextField
-            label="Amount (number or 'ALL')"
+            label="Amount (number or blank for ALL)"
             value={amount}
             onChange={(e) => {
-              const v = e.target.value.toUpperCase();
+              setAmount(e.target.value);
+            }}
+            onBlur={() => {
+              const v = amount.trim().toUpperCase();
 
-              // allow ALL
+              // Translate 'ALL' into empty, or accept raw ALL if you prefer
               if (v === "ALL") {
                 setAmount("");
                 return;
               }
 
-              // allow only numbers
+              // If it's numeric: keep it
               if (/^\d+$/.test(v)) {
                 setAmount(v);
+                return;
               }
+
+              setAmount("");
             }}
             fullWidth
           />

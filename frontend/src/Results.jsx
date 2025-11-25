@@ -68,16 +68,11 @@ function Results() {
             margin: 0,
           }}
         >
-          Back
+          Scrape Results
         </h2>
       </Box>
 
-      <br/>
-
-      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '14px' }}>
-        {JSON.stringify(dataset, null, 2)}
-      </pre>
-
+      
       <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
         <Button variant="contained" onClick={exportJSON}>
           Export as JSON
@@ -87,6 +82,11 @@ function Results() {
           Export as CSV
         </Button>
       </div>
+
+      <br/>
+      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '14px' }}>
+        {JSON.stringify(dataset, null, 2)}
+      </pre>
     </div>
   );
 }
