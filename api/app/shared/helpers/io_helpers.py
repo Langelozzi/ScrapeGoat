@@ -24,9 +24,11 @@ def to_csv_stream(data: list[dict]) -> io.BytesIO:
     if not data:
         raise ValueError("No data provided to convert to CSV.")
 
+    fieldnames = {key for row in data for key in row.keys()}
+
     # Create an in-memory text stream
     output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=data[0].keys())
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
 
     # Write headers and rows
     writer.writeheader()
