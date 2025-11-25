@@ -4,35 +4,20 @@ import { IconButton } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { buildQuery } from "../utils/buildQuery.js";
+import QueryAddMenu from "./QueryAddMenu.jsx";
+import QueryBuilder from "./QueryBuilder.jsx";
 
-function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
+
+
+function TreeNode({ node, addToInstructions = () => {}, level = 0, virtualized = false }) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [openBuilder, setOpenBuilder] = useState(false);
+  const [outputType, setOutputType] = useState("body");
 
   if (!node) return null;
-
-  // Build query string safely
-  const buildNodeQuery = () =>
-    typeof node?.retrieval_instructions === "string"
-      ? node.retrieval_instructions
-      : `SCRAPE 1 ${node.tag_type};`;
-
-  // --- Handle add for ATTRIBUTE ---
-  const handleAddAttr = (e, attrKey) => {
-    e.stopPropagation();
-    addToInstructions({
-      node_query: buildNodeQuery(),
-      output: { location: attrKey, key: node.tag_type },
-      flags: {},
-      _preview: {
-        id: node.id,
-        tag_type: node.tag_type,
-        raw: node.raw,
-        level,
-        attribute: attrKey,
-      },
-    });
-  };
 
   const attrs =
     node?.html_attributes && typeof node.html_attributes === "object"
@@ -132,28 +117,21 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
                     flex: "1 1 auto",
                     minWidth: 0,
                     color:
-                      node.body.length === 0
+                      node.body?.length === 0
                         ? theme.palette.text.secondary
                         : theme.palette.text.primary,
                     whiteSpace: "pre-wrap",
                     overflowWrap: "anywhere",
                   }}
                 >
-                  {node.body.length === 0 ? "(no body)" : node.body}
+                  {node.body?.length === 0 ? "(no body)" : node.body}
                 </div>
 
                 <IconButton
                   size="small"
-                  onClick={(e) => handleAddAttr(e, "body")}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  sx={{
-                    alignSelf: "center",
-                    color: theme.palette.success.main,
-                    "&:hover": {
-                      color: theme.palette.success.light,
-                      transform: "scale(1.1)",
-                    },
-                    transition: "all 0.15s ease",
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuAnchor(e.currentTarget);
                   }}
                 >
                   <AddCircleOutlineIcon fontSize="small" />
@@ -178,19 +156,6 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
                         <span style={{ color: theme.palette.primary.main }}>{k}</span>:{" "}
                         <span>{String(v)}</span>
                       </div>
-                      <IconButton
-                        size="small"
-                        title={`Add ${k}`}
-                        onClick={(e) => handleAddAttr(e, k)}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        sx={{
-                          color: theme.palette.success.main,
-                          "&:hover": { color: theme.palette.success.light, transform: "scale(1.1)" },
-                          transition: "all 0.15s ease",
-                        }}
-                      >
-                        <AddCircleOutlineIcon fontSize="small" />
-                      </IconButton>
                     </li>
                   ))}
                 </ul>
@@ -201,7 +166,7 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
       </div>
 
       {/* --- Recursively render children --- */}
-      {node.children?.length > 0 && (
+      {!virtualized && node.children?.length > 0 && (
         <div>
           {node.children.map((child) => (
             <TreeNode
@@ -213,6 +178,77 @@ function TreeNode({ node, addToInstructions = () => {}, level = 0 }) {
           ))}
         </div>
       )}
+
+
+      <QueryAddMenu
+        anchorEl={menuAnchor}
+        onClose={() => setMenuAnchor(null)}
+        node={node}
+        onStartCustomQuery={() => setOpenBuilder(true)}
+        onSelectOutputType={setOutputType}
+
+        onAddAttribute={(attr) => {
+          const value = node.html_attributes?.[attr];
+          const cleanAttr = attr.startsWith("@") ? attr.slice(1) : attr;
+
+          const query = buildQuery({
+            action: "SCRAPE",
+            amount: "",
+            tag: node.tag_type,
+            conditionals: [
+              { type: "IF", key: cleanAttr, value }
+            ]
+          });
+
+          addToInstructions({
+            node_query: query,
+            output: { location: outputType, key: node.tag_type },
+            flags: {},
+            _preview: { id: node.id, attribute: cleanAttr, value }
+          });
+        }}
+
+        onQuickQuery={(type) => {
+          let query = "";
+          if (type === "SCRAPE_THIS_NODE") {
+            query = buildQuery({
+              action: "SCRAPE",
+              amount: "1",
+              tag: node.tag_type,
+              conditionals: [
+                { type: "POSITION", value: node.position }
+              ]
+            });
+          }
+
+          if (type === "SCRAPE_ALL_OF_TAG") {
+            query = buildQuery({ action: "SCRAPE", amount: "", tag: node.tag_type });
+          }
+
+          addToInstructions({
+            node_query: query,
+            output: { location: outputType, key: node.tag_type },
+            flags: {}
+          });
+        }}
+      />
+
+      <QueryBuilder
+        open={openBuilder}
+        onClose={() => setOpenBuilder(false)}
+        initialTag={node.tag_type}
+        outputType={outputType}
+        setOutputType={setOutputType}
+        onSubmit={(queryObj) => {const q = buildQuery(queryObj);
+
+        addToInstructions({
+          node_query: q,
+          output: { location: outputType, key: node.tag_type },
+          flags: {},
+        });
+        }}
+
+      />
     </div>
   );
 }

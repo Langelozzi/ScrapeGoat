@@ -20,7 +20,7 @@ def test_build_goatspeek_query_and_extract_statement():
     stmt = scraper.__build_extract_statement_from_output(out)
     assert stmt == "EXTRACT text;"
 
-    q = scraper.__build_goatspeek_query(instr)
+    q = scraper.__build_goatspeak_query(instr)
     assert q == "SCRAPE 1 p IN POSITION 1;EXTRACT text;"
 
 

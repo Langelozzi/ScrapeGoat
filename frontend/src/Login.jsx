@@ -1,6 +1,19 @@
-import { useState } from 'react';
-import { Box, Paper, TextField, Typography, Button, Tabs, Tab, Divider, Alert } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import {
+  Box,
+  Paper,
+  TextField,
+  Typography,
+  Button,
+  Tabs,
+  Tab,
+  Divider,
+  Alert,
+  Stack,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
+import { useTheme, alpha } from "@mui/material/styles";
 import { useUser } from "./context/UserContext.jsx";
 
 function Login() {
@@ -10,40 +23,40 @@ function Login() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const { login, register, error, loading } = useUser();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (mode === "login") await login(email, password)
-    else await register(email, password, firstName, lastName)
+    if (mode === "login") await login(email, password);
+    else await register(email, password, firstName, lastName);
 
-    navigate("/")
-  }
+    navigate("/");
+  };
 
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        height: "90vh",
+        overflow: "hidden",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        color: "text.primary",
         bgcolor: "background.default",
-        p: 3,
       }}
     >
       <Paper
-        elevation={10}
         sx={{
           p: { xs: 4, sm: 6 },
           width: "100%",
           maxWidth: 600,
-          borderRadius: 3,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          bgcolor: "background.light",
+          bgcolor: "background.paper",
           gap: 3,
         }}
       >
@@ -67,10 +80,18 @@ function Login() {
               },
             }}
           >
-            <Tab label="Log In" value="login" sx={{ flex: 1, fontSize: 16 }} />
-            <Tab label="Register" value="register" sx={{ flex: 1, fontSize: 16 }} />
+            <Tab
+              label="Log In"
+              value="login"
+              sx={{ flex: 1, fontSize: 16, color: "text.secondary" }}
+            />
+            <Tab
+              label="Register"
+              value="register"
+              sx={{ flex: 1, fontSize: 16, color: "text.secondary" }}
+            />
           </Tabs>
-          <Divider sx={{ mt: 1 }} />
+          <Divider sx={{ mt: 1, borderColor: "divider" }} />
         </Box>
 
         {/* Form */}
@@ -79,69 +100,112 @@ function Login() {
           onSubmit={handleSubmit}
           sx={{
             width: "100%",
-            mt: 2,
+            mt: 1,
             display: "flex",
             flexDirection: "column",
             gap: 2.5,
           }}
         >
-          {/* Only show name fields during sign up */}
           {mode === "register" && (
-            <>
+            <Stack spacing={2}>
               <TextField
                 label="First Name"
-                required
-                fullWidth
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                slotProps={{
-                  input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
-                  inputLabel: {sx: { color: "DimGray" }}
-                }}
-              />
-
-              <TextField
-                label="Last Name"
                 required
                 fullWidth
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                variant="outlined"
                 slotProps={{
-                  input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
-                  inputLabel: {sx: { color: "DimGray" }}
+                  input: {
+                    sx: (theme) => ({
+                      bgcolor: theme.palette.background.default,
+                      color: theme.palette.text.primary,
+                    }),
+                  },
+                  inputLabel: {
+                    sx: (theme) => ({
+                      color: theme.palette.text.secondary,
+                    }),
+                  },
                 }}
               />
-            </>
+              <TextField
+                label="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                fullWidth
+                slotProps={{
+                  input: {
+                    sx: (theme) => ({
+                      bgcolor: theme.palette.background.default,
+                      color: theme.palette.text.primary,
+                    }),
+                  },
+                  inputLabel: {
+                    sx: (theme) => ({
+                      color: theme.palette.text.secondary,
+                    }),
+                  },
+                }}
+              />
+            </Stack>
           )}
 
           <TextField
             label="Email Address"
             type="email"
-            required
-            fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
+            fullWidth
             slotProps={{
-              input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
-              inputLabel: {sx: { color: "DimGray" }}
+              input: {
+                sx: (theme) => ({
+                  bgcolor: theme.palette.background.default,
+                  color: theme.palette.text.primary,
+                }),
+              },
+              inputLabel: {
+                sx: (theme) => ({
+                  color: theme.palette.text.secondary,
+                }),
+              },
             }}
           />
 
           <TextField
             label="Password"
             type="password"
-            required
-            fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+            fullWidth
             slotProps={{
-              input: {sx: { fontSize: 16, bgcolor: "white", color: "black", py: 1 }},
-              inputLabel: {sx: { color: "DimGray" }}
+              input: {
+                sx: (theme) => ({
+                  bgcolor: theme.palette.background.default,
+                  color: theme.palette.text.primary,
+                }),
+              },
+              inputLabel: {
+                sx: (theme) => ({
+                  color: theme.palette.text.secondary,
+                }),
+              },
             }}
           />
 
           {error && (
-            <Alert severity="error" sx={{ fontSize: 14 }}>
+            <Alert
+              severity="error"
+              sx={(theme) => ({
+                bgcolor: alpha(theme.palette.error.main, 0.12),
+                color: theme.palette.error.main,
+                border: `1px solid ${alpha(theme.palette.error.main, 0.3)}`,
+                fontSize: 14,
+              })}
+            >
               {error}
             </Alert>
           )}
@@ -151,20 +215,43 @@ function Login() {
             variant="contained"
             disabled={loading}
             fullWidth
-            sx={{
+            sx={(theme) => ({
               mt: 1,
-              py: 1.4,
+              py: 1.3,
               fontSize: "1rem",
               borderRadius: 3,
               textTransform: "none",
-              fontWeight: 600,
-            }}
+              fontWeight: 700,
+              background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+              color: theme.palette.primary.contrastText,
+              "&:hover": {
+                background: `linear-gradient(90deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
+              },
+            })}
           >
-            {loading
-              ? "Please wait..."
-              : mode === "login"
-              ? "Log In"
-              : "Register"}
+            {loading ? "Please wait..." : mode === "login" ? "Log In" : "Register"}
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBack />}
+            onClick={() => navigate("/")}
+            sx={(theme) => ({
+              mt: 1,
+              py: 1.2,
+              fontSize: "0.95rem",
+              borderRadius: 3,
+              textTransform: "none",
+              fontWeight: 600,
+              color: theme.palette.primary.main,
+              borderColor: alpha(theme.palette.primary.main, 0.5),
+              "&:hover": {
+                borderColor: theme.palette.primary.main,
+                backgroundColor: alpha(theme.palette.primary.main, 0.08),
+              },
+            })}
+          >
+            Back to Home
           </Button>
         </Box>
       </Paper>
