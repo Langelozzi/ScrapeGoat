@@ -62,6 +62,13 @@ Access the App
 - The API will be running at: <http://127.0.0.1:8000>
 - Interactive API docs are available at: <http://127.0.0.1:8000/docs>
 
+Internal Documentation
+----------------------
+
+Throughout this repository, different modules and directories contain their own README.md and other documentation files with instructions and details on the contents of that directory.
+
+The `/docs` directory contains some misc. documentation regarding the project and environment required to develop in it.
+
 Notes
 -----
 

@@ -27,7 +27,7 @@ class ConfigCreateRequest(BaseModel):
 class ConfigResponse(BaseModel):
     id: str | uuid.UUID
     name: str
-    description: str
+    description: str | None
     url: str
     retrieval_instructions: list[dict]
     folder_id: str | uuid.UUID

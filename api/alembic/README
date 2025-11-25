@@ -1,1 +1,52 @@
-Generic single-database configuration.
+# Alembic — Database Migrations
+This folder contains Alembic configuration and migration scripts used to manage the database schema over time.
+
+## Purpose
+- Alembic provides a versioned migration system for SQLAlchemy projects. It lets you track schema changes (create/alter/drop tables, columns, constraints) in source control and apply them reliably across environments (development, CI, staging, production).
+
+## Why use Alembic
+- Keep schema changes explicit, reviewable and reversible.
+- Ensure the same changes are applied in CI and production.
+- Support rolling back changes when necessary (with caution).
+
+## Common workflow & commands
+- Create a new revision (autogenerate from models):
+	```bash
+	alembic revision --autogenerate -m "describe change"
+	```
+	After autogenerate, always review and edit the generated migration file before committing.
+
+- Apply migrations (upgrade to latest):
+	```bash
+	alembic upgrade head
+	```
+
+- Rollback (downgrade one revision):
+	```bash
+	alembic downgrade -1
+	```
+
+- Inspect history and current head:
+	```bash
+	alembic history --verbose
+	alembic current
+	```
+
+## Integration notes
+- `env.py` configures Alembic's runtime and imports the application's SQLAlchemy metadata. For `--autogenerate` to detect model changes, ensure the ORM models are importable when Alembic runs (i.e., correct Python path / package imports in `env.py`).
+- If your models live under `app/shared/db/models`, make sure those modules are imported (directly or indirectly) inside `env.py` so the metadata is available to Alembic.
+
+## Best practices and caveats
+- Autogenerate is a convenience — always review the diff. Some operations (e.g., renamed columns, complex type changes) require manual migration edits.
+- Keep migration files focused and small. Use descriptive revision messages.
+- Avoid destructive operations in production without backups and a rollback plan.
+
+## CI / Deployment
+- Include `alembic upgrade head` in your deployment or migration job so the DB schema is ready before the app starts. For zero-downtime, coordinate schema changes with deploy strategies.
+
+## Troubleshooting
+- If autogenerate does not pick up a model, confirm the model module is imported in `env.py` and that SQLAlchemy `MetaData` is attached to the model(s).
+- If you get multiple heads, create a merge migration or coordinate with the team to consolidate changes.
+
+## See also
+- `alembic/versions/` — existing migration files for examples in this project.

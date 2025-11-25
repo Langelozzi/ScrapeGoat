@@ -1,171 +1,253 @@
 import { useTheme, alpha } from "@mui/material/styles";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import {
+  Paper,
+  Box,
+  Typography,
+  TextField,
+  IconButton,
+  Stack,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import IconButton from "@mui/material/IconButton";
-import { useRetrievalInstructions } from "../context/RetrievalInstructionsContext.jsx";
+import { useRetrievalInstructions } from "../context/RetrievalInstructionContext.jsx";
 
 export default function NodeSelection() {
   const theme = useTheme();
   const { retrievalInstructions, setKey, deleteInstruction } =
     useRetrievalInstructions();
 
-  if (!retrievalInstructions?.length) {
-    return (
-      <div
-        className="w-full max-w-[1400px] mx-auto mt-6"
-        style={{ paddingInline: theme.spacing(3) }}
-      >
-        <div
-          className="p-10 rounded-2xl shadow-xl border"
-          style={{
-            color: theme.palette.text.primary,
-            borderColor: alpha(theme.palette.divider, 0.6),
-          }}
-        >
-          <div
-            className="text-xl font-semibold mb-3"
-            style={{ color: theme.palette.text.primary }}
-          >
-            Nothing selected yet
-          </div>
-          <p
-            className="text-sm"
-            style={{ color: theme.palette.text.secondary, opacity: 0.9 }}
-          >
-            Click the <AddCircleOutlineIcon /> icon on any node to add it here.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const handleKeyChange = (idx, val) => setKey(idx, val);
 
   return (
-    <div
-      className="w-full max-w-[1400px] mx-auto mt-6 space-y-4"
-      style={{ paddingInline: theme.spacing(3) }}
+    <Box
+      sx={{
+        flex: 1,
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
-      {retrievalInstructions.map((inst, idx) => {
-        const pv = inst._preview || {};
-        const currentKey = inst?.output?.key ?? "";
-        const currentLocation = inst?.output?.location ?? "body";
+      <Paper
+        sx={{
+          p: 0,
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          bgcolor: "background.paper",
+          overflow: "hidden",
+        }}
+      >
+        {/* Header */}
+        <Box
+          sx={{
+            px: 3,
+            py: 2.2,
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            flexShrink: 0,
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+            Your Selection
+          </Typography>
+        </Box>
 
-        return (
-          <div
-            key={idx}
-            className="relative px-6 py-5 rounded-xl border transition-all duration-200"
-            style={{
-              borderColor: alpha(theme.palette.divider, 0.6),
-              boxShadow: `0 6px 18px ${alpha(theme.palette.common.black, 0.25)}`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = theme.palette.primary.main;
-              e.currentTarget.style.boxShadow = `0 10px 24px ${alpha(
-                theme.palette.primary.main,
-                0.25
-              )}`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = alpha(
-                theme.palette.divider,
-                0.6
-              );
-              e.currentTarget.style.boxShadow = `0 6px 18px ${alpha(
-                theme.palette.common.black,
-                0.25
-              )}`;
-            }}
-          >
-            <div className="flex flex-wrap items-center gap-5">
-              {/* Left row: number + tag + static location */}
-              <div className="flex items-center gap-3 min-w-0">
-                <div
-                  className="w-7 h-7 rounded-full text-black text-xs font-bold flex items-center justify-center shadow-md"
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                >
-                  {idx + 1}
-                </div>
+        {/* Body (scroll area) */}
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            overflowX: "hidden",
+            p: 3,
+            pt: 2,
+            minWidth: 0,
+          }}
+        >
+          {retrievalInstructions.length > 0 && (
+            <Stack spacing={2}>
+              {retrievalInstructions.map((inst, idx) => {
+                const pv = inst._preview || {};
+                const currentKey = inst?.output?.key ?? "";
+                const currentLocation = inst?.output?.location ?? "body";
 
-                <div className="flex items-center gap-2 min-w-0">
-                  <span
-                    className="font-mono text-lg leading-none"
-                    style={{ color: theme.palette.primary.main }}
-                  >
-                    &lt;{pv.tag_type || inst.output?.key || "node"}&gt;
-                  </span>
-
-                  {/* Static location text */}
-                  <span
-                    className="text-sm px-2 py-0.5 rounded-md"
-                    style={{
-                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                      color: theme.palette.primary.main,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {currentLocation}
-                  </span>
-                </div>
-              </div>
-
-              {/* Controls row: wraps below on small widths */}
-              <div className="flex flex-wrap items-end gap-4 w-full md:w-auto md:ml-auto">
-                {/* Key input */}
-                <div className="flex flex-col w-[11rem] shrink-0">
-                  <label
-                    className="text-xs uppercase tracking-wide mb-1"
-                    style={{ color: alpha(theme.palette.text.secondary, 0.9) }}
-                  >
-                    Key
-                  </label>
-                  <input
-                    type="text"
-                    value={currentKey}
-                    onChange={(e) => handleKeyChange(idx, e.target.value)}
-                    placeholder="enter key..."
-                    className="h-8 w-full px-2 rounded-md outline-none transition"
-                    style={{
-                      backgroundColor: alpha(
-                        theme.palette.background.default,
-                        0.9
-                      ),
-                      color: theme.palette.text.primary,
-                      border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.border = `1px solid ${alpha(
-                        theme.palette.primary.main,
-                        0.9
-                      )}`;
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${alpha(
-                        theme.palette.primary.main,
-                        0.25
-                      )}`;
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.border = `1px solid ${alpha(
+                return (
+                  <Box
+                    key={idx}
+                    sx={{
+                      px: 2.5,
+                      py: 2,
+                      borderRadius: 2.5,
+                      border: `1px solid ${alpha(
                         theme.palette.divider,
-                        0.7
-                      )}`;
-                      e.currentTarget.style.boxShadow = "none";
+                        0.6
+                      )}`,
+                      boxShadow: `0 6px 18px ${alpha(
+                        theme.palette.common.black,
+                        0.25
+                      )}`,
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        borderColor: theme.palette.primary.main,
+                        boxShadow: `0 10px 24px ${alpha(
+                          theme.palette.primary.main,
+                          0.25
+                        )}`,
+                      },
                     }}
-                  />
-                </div>
+                  >
+                    <Stack spacing={2}>
+                      {/* Row 1 — index + tag + location + delete */}
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        alignItems="center"
+                        justifyContent="space-between"
+                        sx={{ flexWrap: "wrap", rowGap: 1.5 }}
+                      >
+                        {/* Left: index + tag + location */}
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          alignItems="center"
+                          sx={{ flexWrap: "wrap" }}
+                        >
+                          {/* index */}
+                          <Box
+                            sx={{
+                              width: 28,
+                              height: 28,
+                              borderRadius: "50%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: 12,
+                              fontWeight: "bold",
+                              color: theme.palette.getContrastText(
+                                theme.palette.primary.main
+                              ),
+                              bgcolor: theme.palette.primary.main,
+                              boxShadow: 2,
+                            }}
+                          >
+                            {idx + 1}
+                          </Box>
 
-                {/* Delete button */}
-                <IconButton
-                  onClick={() => deleteInstruction(idx)}
-                  color="error"
-                  className="ml-auto"
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+                          {/* tag + location */}
+                          <Stack
+                            direction="row"
+                            spacing={1.5}
+                            alignItems="center"
+                            sx={{ flexWrap: "wrap" }}
+                          >
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                fontFamily: "monospace",
+                                fontSize: "1rem",
+                                color: theme.palette.primary.main,
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              &lt;{pv.tag_type || inst.output?.key || "node"}&gt;
+                            </Typography>
+
+                            <Box
+                              sx={{
+                                fontSize: 12,
+                                px: 1.2,
+                                py: 0.4,
+                                borderRadius: 999,
+                                bgcolor: alpha(
+                                  theme.palette.primary.main,
+                                  0.12
+                                ),
+                                color: theme.palette.primary.main,
+                                fontWeight: 500,
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              @{currentLocation}
+                            </Box>
+                          </Stack>
+                        </Stack>
+
+                        {/* delete */}
+                        <IconButton
+                          onClick={() => deleteInstruction(idx)}
+                          color="error"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Stack>
+
+                      {/* Row 2 — KEY + inline input */}
+                      <Stack
+                        direction="row"
+                        spacing={1.5}
+                        alignItems="center"
+                        sx={{ width: "100%" }}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            textTransform: "uppercase",
+                            letterSpacing: 0.8,
+                            color: alpha(
+                              theme.palette.text.secondary,
+                              0.9
+                            ),
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          Key
+                        </Typography>
+
+                        <TextField
+                          size="small"
+                          fullWidth
+                          value={currentKey}
+                          placeholder="enter key..."
+                          onChange={(e) =>
+                            handleKeyChange(idx, e.target.value)
+                          }
+                          sx={{
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: 999,
+                              backgroundColor: alpha(
+                                theme.palette.background.default,
+                                0.9
+                              ),
+                            },
+                          }}
+                        />
+                      </Stack>
+
+                      {/* Row 3 — QUERY DISPLAY */}
+                      {inst?.node_query && (
+                        <Box
+                          sx={{
+                            mt: 1,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: alpha(theme.palette.grey[900], 0.35),
+                            border: `1px solid ${alpha(theme.palette.divider, 0.3)}`,
+                            fontFamily: "monospace",
+                            fontSize: "0.85rem",
+                            whiteSpace: "pre-wrap",
+                            color: theme.palette.success.light,
+                            overflowX: "auto",
+                          }}
+                        >
+                          {inst.node_query}
+                        </Box>
+                      )}
+                    </Stack>
+                  </Box>
+                );
+              })}
+            </Stack>
+          )}
+        </Box>
+      </Paper>
+    </Box>
   );
 }
