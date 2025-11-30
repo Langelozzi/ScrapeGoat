@@ -9,7 +9,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useUser } from "./context/UserContext";
 
-function normalizeConfigs(configs) {
+export function normalizeConfigs(configs) {
   if (!configs) return [];
 
   if (Array.isArray(configs)) return configs;
